@@ -66,6 +66,7 @@ namespace :dotfiles do
     puts "\n\n"
   end
 
+    
   task :install_zsh do
     print_header("UPDATING ZSH")
     good = system "zsh --version"
@@ -75,6 +76,8 @@ namespace :dotfiles do
     else
       system "brew upgrade zsh"
     end
+
+    system "git clone git://github.com/robbyrussell/oh-my-zsh.git #{dotfile_path}/oh-my-zsh"
 
     cur_shell = `echo $SHELL`
     if !(cur_shell =~ /zsh/)
