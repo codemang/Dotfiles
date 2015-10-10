@@ -5,6 +5,8 @@ export EDITOR="/Applications/MacVim.app/Contents/MacOS/Vim"
 export ARCHFLAGS="-arch x86_64"
 source "$ZSH/oh-my-zsh.sh"
 setopt CORRECT
+unsetopt inc_append_history
+unsetopt share_history
 
 # --------------------------------------------------------
 #                TERMINAL PROMPT

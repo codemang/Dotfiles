@@ -1,12 +1,6 @@
 namespace :dotfiles do
-  @dotfile_dir = "Dotfiles"
-  @dotfile_root = File.expand_path "~/"
-  @symlink_files_root = File.join @dotfile_root, @dotfile_dir, "symlink_files"
-
-  def dotfile_path
-    File.join @dotfile_root, @dotfile_dir
-  end
-
+  @dotfile_dir = File.dirname(__FILE__)
+  @symlink_files_dir = File.join @dotfile_dir, "symlink_files"
 
   def print_header(message)
     puts "--------------------------------------------"
@@ -15,23 +9,24 @@ namespace :dotfiles do
   end
 
   def create_if_no_dir(dir)
-    if !File.directory? File.join @dotfile_root, dir
-      system "mkdir #{File.join @dotfile_root, dir}"
+    if !File.directory? File.join @dotfile_dir, dir
+      system "mkdir #{File.join @dotfile_dir, dir}"
     end
   end
 
   task :install_vim_plugins do
     print_header "INSTALLING VIM PLUGINS"
-    create_if_no_dir ".vim"
-    create_if_no_dir ".vim/bundle"
-    create_if_no_dir ".vim/autoload"
-    create_if_no_dir ".vim/colors"
+    create_if_no_dir File.join "symlink_files/.vim"
+    create_if_no_dir File.join "symlink_files/.vim/bundle"
+    create_if_no_dir File.join "symlink_files/.vim/autoload"
+    create_if_no_dir File.join "symlink_files/.vim/colors"
 
-    color_dir = File.join @dotfile_root, ".vim/colors"
+    color_dir = File.join @symlink_files_dir, ".vim/colors"
     system "curl https://raw.githubusercontent.com/altercation/vim-colors-solarized/master/colors/solarized.vim > #{color_dir}/solarized.vim"
 
-    if !File.file? File.join @dotfile_root, ".vim/autoload/plug.vim"
-      system "curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+    plug_dir = File.join @symlink_files_dir, ".vim/autoload/plug.vim"
+    if !File.file? plug_dir
+      system "curl -fLo #{plug_dir} --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
       system "$EDITOR -c ':PlugInstall' -c 'qa!'"
     else
       system "$EDITOR -c 'PlugUpgrade' -c 'qa!'"
@@ -42,27 +37,26 @@ namespace :dotfiles do
 
   task :symlink do
     print_header("SYMLINKING DOTFILES")
-    Dir.foreach(@symlink_files_root) do |item|
-      next if item == '.' or item == '..'
-      system "ln -s #{@symlink_files_root}/#{item} ~/#{item}" 
+    symlink_files = %w{.vim .oh-my-zsh .zhsrc .vimrc .gitconfig}
+    for file in symlink_files
+    	system "ln -s #{@symlink_files_dir}/#{file} ~/#{file}" 
     end
-    puts "\n\n"
   end
 
   task :download_dotfiles do
     print_header("DOWNLOADING DOTFILES")
-    if File.directory? dotfile_path
-      Dir.chdir dotfile_path
+    if File.directory? @dotfile_dir
+      Dir.chdir @dotfile_dir
       system "git fetch --all; git reset --hard origin/master"
     else
-      system "git clone https://github.com/codemang/Dotfiles #{dotfile_path}"
+      system "git clone https://github.com/codemang/Dotfiles #{@dotfile_dir}"
     end
     puts "\n\n"
   end
 
   task :source_files do
     print_header("SOURCING DOTFILES")
-    system "source #{@dotfile_root}/.zshrc"
+    system "source #{@dotfile_dir}/.zshrc"
     puts "\n\n"
   end
 
@@ -77,7 +71,9 @@ namespace :dotfiles do
       system "brew upgrade zsh"
     end
 
-    system "git clone git://github.com/robbyrussell/oh-my-zsh.git #{dotfile_path}/oh-my-zsh"
+    if !File.directory? File.join @symlink_files_dir, ".oh-my-zsh"
+      system "git clone git://github.com/robbyrussell/oh-my-zsh.git #{@symlink_files_dir}/.oh-my-zsh"
+    end
 
     cur_shell = `echo $SHELL`
     if !(cur_shell =~ /zsh/)
@@ -105,9 +101,8 @@ namespace :dotfiles do
   end
 
   task :set_args do
-    puts "#{ENV['path']}!"
     if ENV['path'] != nil
-      @dotfile_dir = ENV['path']
+      @dotfile_dir = File.expand_path ENV['path']
     end
   end
 
@@ -125,3 +120,5 @@ task :test do
   ENV['path'] = "test-dotfiles"
   Rake.application.invoke_task("default")
 end
+
+
