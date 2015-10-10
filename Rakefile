@@ -31,7 +31,7 @@ namespace :dotfiles do
     else
       system "$EDITOR -c 'PlugUpgrade' -c 'qa!'"
     end
-   
+
     puts "\n\n"
   end
 
@@ -39,7 +39,7 @@ namespace :dotfiles do
     print_header("SYMLINKING DOTFILES")
     symlink_files = %w{.vim .oh-my-zsh .zhsrc .vimrc .gitconfig}
     for file in symlink_files
-    	system "ln -s #{@symlink_files_dir}/#{file} ~/#{file}" 
+      system "ln -s #{@symlink_files_dir}/#{file} ~/#{file}"
     end
   end
 
@@ -60,7 +60,7 @@ namespace :dotfiles do
     puts "\n\n"
   end
 
-    
+
   task :install_zsh do
     print_header("UPDATING ZSH")
     good = system "zsh --version"
@@ -120,5 +120,3 @@ task :test do
   ENV['path'] = "test-dotfiles"
   Rake.application.invoke_task("default")
 end
-
-
