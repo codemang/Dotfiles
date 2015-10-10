@@ -95,6 +95,12 @@ namespace :dotfiles do
     else
       system "brew update -v"
     end
+
+    good = `brew --version`
+    if !good =~ /\d\.\d\.\d/
+      fail "There was an error when trying to install/update homebrew. Possible causes are a broken ruby installation."
+    end
+
     puts "\n\n"
   end
 
