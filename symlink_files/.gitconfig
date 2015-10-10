@@ -1,0 +1,17 @@
+[user]
+	name = Nathaniel Rubin
+	email = nateboop@gmail.com
+[core]
+	editor = vim
+	askpass = git-gui--askpass
+[merge]
+	tool = vim.diff
+[color]
+	ui = auto
+	status = auto
+[filter "hawser"]
+	clean = git hawser clean %f
+	smudge = git hawser smudge %f
+	required = true
+[push]
+	default = matching
