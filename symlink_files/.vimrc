@@ -30,7 +30,7 @@ call plug#begin('~/.vim/plugged')
 
 
 " Auto Complete/Suggestions
-" Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
 
 " Close braces, brackets, etc
 Plug 'tpope/vim-endwise'
