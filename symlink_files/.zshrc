@@ -37,12 +37,6 @@ function git_branch() {
 }
 
 function git_prompt() {
-  # if ! git rev-parse --git-dir > /dev/null 2>&1; then
-  #   return 0
-  # fi
-  #
-  # git_branch=$(git branch 2>/dev/null| sed -n '/^\*/s/^\* //p')
-
   echo "$GIT_BRANCH_COLOR$(git_branch)%{$reset_color%}"
 }
 
@@ -54,6 +48,9 @@ function up_stream() {
   fi
 }
 
+function parse_git_dirt {
+}
+
 function down_stream() {
   ahead=$(command git rev-list ${hook_com[branch]}@{upstream}..HEAD 2>/dev/null | wc -l)
 
@@ -63,9 +60,12 @@ function down_stream() {
   fi
 }
 
-parse_git_dirty() {
-  if command git diff-index --quiet HEAD 2> /dev/null; then
-  else
+function is_git_branch() {
+  [[ -n "$(git status -s 2> /dev/null)" ]] && echo true
+}
+
+function parse_git_dirty() {
+  if [[ $(is_git_branch) == true ]] && ! command git diff-index --quiet HEAD 2> /dev/null; then 
     echo "%F{196}●%{$reset_color%}"
   fi
 }
