@@ -43,14 +43,10 @@ namespace :dotfiles do
     end
   end
 
-  task :download_dotfiles do
-    print_header("DOWNLOADING DOTFILES")
-    if File.directory? @dotfile_dir
-      Dir.chdir @dotfile_dir
-      system "git fetch --all; git reset --hard origin/master"
-    else
-      system "git clone https://github.com/codemang/Dotfiles #{@dotfile_dir}"
-    end
+  task :update_self do
+    print_header("UPDATING DOTFILES REPO")
+    Dir.chdir @dotfile_dir
+    system "git fetch --all; git reset --hard origin/master"
     puts "\n\n"
   end
 
@@ -100,7 +96,7 @@ namespace :dotfiles do
     puts "\n\n"
   end
 
-  task :install => [:install_home_brew, :install_zsh, :download_dotfiles, :symlink, :install_vim_plugins, :source_files] do
+  task :install => [:update_self, :install_home_brew, :install_zsh, :symlink, :install_vim_plugins, :source_files] do
     puts "****************************************************"
     puts "                    All done :)"
     puts "****************************************************"
