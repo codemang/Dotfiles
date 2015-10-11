@@ -120,3 +120,4 @@ task :test do
   ENV['path'] = "test-dotfiles"
   Rake.application.invoke_task("default")
 end
+
