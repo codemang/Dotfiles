@@ -100,14 +100,7 @@ namespace :dotfiles do
     puts "\n\n"
   end
 
-  task :set_args do
-    if ENV['path'] != nil
-      @dotfile_dir = File.expand_path ENV['path']
-    end
-  end
-
-
-  task :install => [:set_args, :install_home_brew, :install_zsh, :download_dotfiles, :symlink, :install_vim_plugins, :source_files] do
+  task :install => [:install_home_brew, :install_zsh, :download_dotfiles, :symlink, :install_vim_plugins, :source_files] do
     puts "****************************************************"
     puts "                    All done :)"
     puts "****************************************************"
@@ -115,9 +108,3 @@ namespace :dotfiles do
 end
 
 task :default => ["dotfiles:install"]
-
-task :test do
-  ENV['path'] = "test-dotfiles"
-  Rake.application.invoke_task("default")
-end
-
