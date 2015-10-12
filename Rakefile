@@ -104,3 +104,4 @@ namespace :dotfiles do
 end
 
 task :default => ["dotfiles:install"]
+
