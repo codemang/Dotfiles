@@ -3,9 +3,9 @@ namespace :dotfiles do
   @symlink_files_dir = File.join @dotfile_dir, "symlink_files"
 
   def print_header(message)
-    puts "--------------------------------------------"
-    puts "            #{message}                      "
-    puts "--------------------------------------------"
+    puts "\e[0;32m--------------------------------------------\e[0m"
+    puts "\e[0;32m            #{message}                      \e[0m"
+    puts "\e[0;32m--------------------------------------------\e[0m"
   end
 
   def create_if_no_dir(dir)
@@ -45,6 +45,10 @@ namespace :dotfiles do
 
   task :update_self do
     print_header("UPDATING DOTFILES REPO")
+    # TODO
+    # if dirty changes
+    #   abort 
+    # end
     Dir.chdir @dotfile_dir
     system "git fetch --all; git reset --hard origin/master"
     puts "\n\n"
@@ -79,6 +83,10 @@ namespace :dotfiles do
     puts "\n\n"
   end
 
+  task :check_for_existing_dotfiles do
+
+  end
+
   task :install_home_brew do
     print_header("UPDATING BREW")
     good = system "brew --version"
@@ -90,7 +98,7 @@ namespace :dotfiles do
 
     good = `brew --version`
     if !good =~ /\d\.\d\.\d/
-      fail "There was an error when trying to install/update homebrew. Possible causes are a broken ruby installation."
+      fail "\e[0;31mThere was an error when trying to install/update homebrew. Possible causes are a broken ruby installation.\e[0m"
     end
 
     puts "\n\n"

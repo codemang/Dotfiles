@@ -12,6 +12,12 @@ $ git clone https://github.com/codemang/Dotfiles.git
 $ rake
 ```
 
+Assumptions
+-----------
+
+1. You have macvim installed via homebrew.
+
+1. You have CMake installed via homebrew. This is used by the You Complete Me Vim plugin.
 
 My Setup
 --------
