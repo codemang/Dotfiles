@@ -1,12 +1,22 @@
 #!/usr/local/bin/zsh
 #
-export ZSH=/Users/codemang/.oh-my-zsh
+export ZSH="$HOME/.oh-my-zsh"
 export EDITOR="/Applications/MacVim.app/Contents/MacOS/Vim"
 export ARCHFLAGS="-arch x86_64"
 source "$ZSH/oh-my-zsh.sh"
 setopt CORRECT
+unsetopt inc_append_history
+unsetopt share_history
 
-# Allow for vim mode in shell
+# Enable vim mode in the shell
+bindkey -v
+bindkey kj vi-cmd-mode
+
+function print_colors() {
+  for code in {000..255}; do
+    print -P -- "$code: %F{$code}$ZSH_SPECTRUM_TEXT%f"
+  done
+}
 
 # --------------------------------------------------------
 #                TERMINAL PROMPT
@@ -19,9 +29,18 @@ BAD_EXIT_STATUS_COLOR=%F{197}
 WORKING_DIRECTORY_COLOR=%F{159}
 GIT_BRANCH_COLOR=%F{213}
 
-bindkey -v
-bindkey kj vi-cmd-mode
 
+# Detect if git is initialized in this directory
+function is_git_branch() {
+  [[ -n "$(git status -s 2> /dev/null)" ]] && echo true
+}
+
+# Find the current git branch, if any
+function git_branch() {
+  echo "$(git branch 2>/dev/null| sed -n '/^\*/s/^\* //p')"
+}
+
+# Show return code of last command
 function exit_status(){
 if [ $? -eq 0 ]
   then
@@ -31,27 +50,18 @@ if [ $? -eq 0 ]
   fi
 }
 
+# Show the current working directory
 function working_directory() {
   echo "${WORKING_DIRECTORY_COLOR}%~%{$reset_color%}"
 }
 
-function git_branch() {
-  echo "$(git branch 2>/dev/null| sed -n '/^\*/s/^\* //p')"
-}
 
+# Show the current git branch, if any
 function git_prompt() {
   echo "$GIT_BRANCH_COLOR$(git_branch)%{$reset_color%}"
 }
 
-function tmux_session() {
-  if $(command tmux ls | grep -q attach)
-  then
-    echo $(command tmux display-message -p '#S')
-  else
-    echo "ASDF"
-  fi
-}
-
+# Show if there are upstream changes
 function up_stream() {
   behind=$(command git rev-list HEAD..${hook_com[branch]}@{upstream} 2>/dev/null | wc -l)
   if [ $behind -gt 0 ]
@@ -60,6 +70,7 @@ function up_stream() {
   fi
 }
 
+# Show if there are downstream changes
 function down_stream() {
   ahead=$(command git rev-list ${hook_com[branch]}@{upstream}..HEAD 2>/dev/null | wc -l)
 
@@ -69,23 +80,20 @@ function down_stream() {
   fi
 }
 
+# Show if there are changes to be committed.
 function parse_git_dirty() {
-  if command git diff-index --quiet HEAD 2> /dev/null; then
-  else
+  if [[ $(is_git_branch) == true ]] && ! command git diff-index --quiet HEAD 2> /dev/null; then 
     echo "%F{196}●%{$reset_color%}"
   fi
 }
 
-function print_colors() {
-  for code in {000..255}; do
-    print -P -- "$code: %F{$code}$ZSH_SPECTRUM_TEXT%f"
-  done
-}
-
+# Show the orange arrows
 function arrow() {
   echo "%F{202}❯%F{208}❯%F{214}❯%{$reset_color%}"
 }
 
+
+# Show if currently in vim mode
 vim_ins_mode=""
 vim_cmd_mode="%F{221}[vim-mode] %{$reset_color%}"
 vim_mode=$vim_ins_mode
@@ -110,13 +118,16 @@ function TRAPINT() {
   return $(( 128 + $1 ))
 }
 
+zle -N zle-line-init
+zle -N zle-keymap-select
+export KEYTIMEOUT=60
+
+
+# Generate prompt
 PS1='
 $(exit_status) $(working_directory) $(git_prompt) $(parse_git_dirty)$(up_stream)$(down_stream)${vim_mode}
 $(arrow) '
 
-zle -N zle-line-init
-zle -N zle-keymap-select
-export KEYTIMEOUT=60
 
 # --------------------------------------------------------
 #                ALIASES

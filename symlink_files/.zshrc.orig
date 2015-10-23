@@ -48,9 +48,6 @@ function up_stream() {
   fi
 }
 
-function parse_git_dirt {
-}
-
 function down_stream() {
   ahead=$(command git rev-list ${hook_com[branch]}@{upstream}..HEAD 2>/dev/null | wc -l)
 
