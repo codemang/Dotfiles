@@ -101,9 +101,10 @@ function zle-line-finish {
 }
 zle -N zle-line-finish
 
-# Fix a bug when you C-c in CMD mode and you'd be prompted with CMD mode indicator, while in fact you would be in INS mode
-# Fixed by catching SIGINT (C-c), set vim_mode to INS and then repropagate the SIGINT, so if anything else depends on it, we will not break it
-# Thanks Ron! (see comments)
+# Fix a bug when you C-c in CMD mode and you'd be prompted with CMD mode
+# indicator, while in fact you would be in INS mode Fixed by catching SIGINT
+# (C-c), set vim_mode to INS and then repropagate the SIGINT, so if anything
+# else depends on it, we will not break it Thanks Ron! (see comments)
 function TRAPINT() {
   vim_mode=$vim_ins_mode
   return $(( 128 + $1 ))
@@ -160,7 +161,8 @@ alias pullo="git pull origin"
 
 # commit
 alias cmt="git commit -am"
-alias amend="git commit -a --amend --no-edit"
+alias amend="git commit -a --amend"
+alias amendn="git commit -a --amend --no-edit"
 alias wip="git commit -am 'WIP'"
 
 # reset
@@ -225,7 +227,9 @@ alias cherry="git cherry -v"
 # rebase
 alias gm="git checkout master && git pull origin master"
 alias rem="git rebase -i master"
-alias re="git rebase -i"
+function re() {
+  git rebase -i HEAD~${1-1}
+}
 
 # MISCELLENEOUS SHORTCUTS
 alias unsu="sudo -k;"
