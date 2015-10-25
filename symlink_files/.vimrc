@@ -68,6 +68,8 @@ Plug 'christoomey/vim-tmux-navigator'
 " Autogenerate ctags
 Plug 'szw/vim-tags'
 
+Plug 'vim-ruby/vim-ruby'
+
 call plug#end()
 
 

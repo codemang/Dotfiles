@@ -23,6 +23,7 @@ namespace :dotfiles do
 
     color_dir = File.join @symlink_files_dir, ".vim/colors"
     system "curl https://raw.githubusercontent.com/altercation/vim-colors-solarized/master/colors/solarized.vim > #{color_dir}/solarized.vim"
+    system "curl https://github.com/flazz/vim-colorschemes/blob/master/colors/codeschool.vim > #{color_dir}/codeschool.vim"
 
     plug_dir = File.join @symlink_files_dir, ".vim/autoload/plug.vim"
     if !File.file? plug_dir
