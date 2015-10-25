@@ -97,7 +97,7 @@ map <Leader>nc :NERDTreeFind <CR>
 map <Leader>t :FZF <CR>
 
 let g:ruby_path = system('/usr/bin/ruby')
-" set re=1
+set re=1
 
 " let g:ackprg = 'ag --nogroup --nocolor --column'
 

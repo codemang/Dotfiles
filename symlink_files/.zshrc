@@ -1,9 +1,14 @@
 #!/usr/local/bin/zsh
 #
 export ZSH="$HOME/.oh-my-zsh"
-export EDITOR="/Applications/MacVim.app/Contents/MacOS/Vim"
+# export EDITOR="/Applications/MacVim.app/Contents/MacOS/Vim"
+export EDITOR="/usr/local/Cellar/macvim/7.4-77/MacVim.app/Contents/MacOS/Vim"
 export ARCHFLAGS="-arch x86_64"
+export HOMEBREW_CASK_OPTS="--appdir=/Applications"
+
 source "$ZSH/oh-my-zsh.sh"
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
 setopt CORRECT
 unsetopt inc_append_history
 unsetopt share_history
@@ -215,7 +220,6 @@ alias vnerd="vim -c ':NERDTree'"
 # alias vim="/Applications/MacVim.app/Contents/MacOS/Vim"
 alias vim="/usr/local/Cellar/macvim/7.4-77/MacVim.app/Contents/MacOS/Vim"
 alias vack="vim -c ':Ack'"
-EDITOR="/usr/local/Cellar/macvim/7.4-77/MacVim.app/Contents/MacOS/Vim"
 
 # TMUX
 alias tkill="tmux kill"
@@ -237,4 +241,3 @@ export LD_BIND_NOW=1
 export CLICOLOR=1
 export LSCOLORS=gxBxhxDxfxhxhxhxhxcxcx
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
