@@ -112,4 +112,15 @@ namespace :dotfiles do
   end
 end
 
+namespace :clean do
+  task :remove_files do
+    system "rm ~/.zshrc"
+    system "rm ~/.vimrc"
+    system "rm ~/.oh-my-zsh"
+    system "rm ~/.tmux.conf"
+    system "rm ~/.gitconfig"
+    system "rm -rf #{File.dirname(__FILE__)}"
+  end
+end
+
 task :default => ["dotfiles:install"]
