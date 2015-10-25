@@ -16,16 +16,16 @@ namespace :dotfiles do
 
   task :install_vim_plugins do
     print_header "INSTALLING VIM PLUGINS"
-    create_if_no_dir File.join "symlink_files/.vim"
-    create_if_no_dir File.join "symlink_files/.vim/bundle"
-    create_if_no_dir File.join "symlink_files/.vim/autoload"
-    create_if_no_dir File.join "symlink_files/.vim/colors"
+    create_if_no_dir File.join "symlink_files/vim"
+    create_if_no_dir File.join "symlink_files/vim/bundle"
+    create_if_no_dir File.join "symlink_files/vim/autoload"
+    create_if_no_dir File.join "symlink_files/vim/colors"
 
-    color_dir = File.join @symlink_files_dir, ".vim/colors"
+    color_dir = File.join @symlink_files_dir, "vim/colors"
     system "curl https://raw.githubusercontent.com/altercation/vim-colors-solarized/master/colors/solarized.vim > #{color_dir}/solarized.vim"
     system "curl https://github.com/flazz/vim-colorschemes/blob/master/colors/codeschool.vim > #{color_dir}/codeschool.vim"
 
-    plug_dir = File.join @symlink_files_dir, ".vim/autoload/plug.vim"
+    plug_dir = File.join @symlink_files_dir, "vim/autoload/plug.vim"
     if !File.file? plug_dir
       system "curl -fLo #{plug_dir} --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
       system "$EDITOR -c ':PlugInstall' -c 'qa!'"
