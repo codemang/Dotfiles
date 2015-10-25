@@ -1,4 +1,4 @@
-" |-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*|
+b |-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*|
 " *                                                                    *
 " |                            Nates Vimrc                             |
 " *                                                                    *
@@ -12,6 +12,7 @@
 call plug#begin('~/.vim/plugged')
 
 " Auto Complete/Suggestions
+" Needs CMake via Homebrew
 Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
 
 " Adds endif in ruby
@@ -33,6 +34,7 @@ Plug 'bling/vim-airline'
 Plug 'easymotion/vim-easymotion'
 
 " Search project
+" Needs Silver Surfer via Homebrew
 Plug 'rking/ag.vim'
 
 " Syntax highlighting for ansible
@@ -60,15 +62,21 @@ Plug 'mmozuras/vim-github-comment'
 Plug 'mattn/webapi-vim'
 
 " Fuzzy finder
+" Needs FZF via Homebrew
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
 
 " Navigate tmux/vim panes the same way
+" Needs tmux via Homebrew
 Plug 'christoomey/vim-tmux-navigator'
 
 " Autogenerate ctags
+" Needs Ctags via Homebrew
 Plug 'szw/vim-tags'
 
-Plug 'vim-ruby/vim-ruby'
+" Show git diff marks in vim
+Plug 'airblade/vim-gitgutter'
+
+Plug 'benmills/vimux'
 
 call plug#end()
 
@@ -237,6 +245,14 @@ nnoremap <leader>u :GundoToggle<CR>
 let g:airline_left_sep=''
 let g:airline_right_sep=''
 let g:airline_section_z=''
+
+" ------------------------------- Git GUtter ---------------------------
+command GutSign execute "GitGutterSignsToggle"
+
+map <Leader>vp :VimuxPromptCommand<CR>
+map <Leader>vl :VimuxRunLastCommand<CR>
+let VimuxUseNearest = 0
+
 
 
 
