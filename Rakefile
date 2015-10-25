@@ -38,7 +38,7 @@ namespace :dotfiles do
 
   task :symlink do
     print_header("SYMLINKING DOTFILES")
-    symlink_files = %w{.vim .oh-my-zsh .zshrc .vimrc .gitconfig}
+    symlink_files = %w{.tmux.conf .vim .oh-my-zsh .zshrc .vimrc .gitconfig}
     for file in symlink_files
       system "ln -s #{@symlink_files_dir}/#{file} ~/.#{file}"
     end
