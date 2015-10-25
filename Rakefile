@@ -47,7 +47,7 @@ namespace :dotfiles do
     print_header("UPDATING DOTFILES REPO")
     # TODO
     # if dirty changes
-    #   abort 
+    #   abort
     # end
     Dir.chdir @dotfile_dir
     system "git fetch --all; git reset --hard origin/master"
@@ -112,5 +112,3 @@ namespace :dotfiles do
 end
 
 task :default => ["dotfiles:install"]
-
-
