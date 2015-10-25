@@ -78,6 +78,8 @@ Plug 'airblade/vim-gitgutter'
 
 Plug 'benmills/vimux'
 
+Plug 'vim-ruby/vim-ruby'
+
 call plug#end()
 
 
@@ -252,8 +254,3 @@ command GutSign execute "GitGutterSignsToggle"
 map <Leader>vp :VimuxPromptCommand<CR>
 map <Leader>vl :VimuxRunLastCommand<CR>
 let VimuxUseNearest = 0
-
-
-
-
-
