@@ -40,7 +40,7 @@ namespace :dotfiles do
     print_header("SYMLINKING DOTFILES")
     symlink_files = %w{.vim .oh-my-zsh .zshrc .vimrc .gitconfig}
     for file in symlink_files
-      system "ln -s #{@symlink_files_dir}/#{file} ~/#{file}"
+      system "ln -s #{@symlink_files_dir}/#{file} ~/.#{file}"
     end
   end
 
