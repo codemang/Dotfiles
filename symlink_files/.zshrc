@@ -2,7 +2,8 @@
 #
 export ZSH="$HOME/.oh-my-zsh"
 # export EDITOR="/Applications/MacVim.app/Contents/MacOS/Vim"
-export EDITOR="/usr/local/Cellar/macvim/7.4-77/MacVim.app/Contents/MacOS/Vim"
+export VIM_LOCATION="/usr/local/Cellar/macvim/7.4-77/MacVim.app/Contents/MacOS/Vim"
+export EDITOR="$VIM_LOCATION"
 export ARCHFLAGS="-arch x86_64"
 export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 
@@ -263,16 +264,7 @@ alias vimrc="vim ~/.vimrc"
 alias zpref="vim ~/.zshrc"
 alias vtree="vim -c ':CommandT'"
 alias vnerd="vim -c ':NERDTree'"
-<<<<<<< HEAD
-# alias vim="/Applications/MacVim.app/Contents/MacOS/Vim"
-alias vim="/usr/local/Cellar/macvim/7.4-77/MacVim.app/Contents/MacOS/Vim"
-alias vack="vim -c ':Ack'"
-
-# TMUX
-alias tkill="tmux kill"
-=======
-alias vim="/Applications/MacVim.app/Contents/MacOS/Vim"
->>>>>>> 130727861f0dfd9980ac3ff9aa582818b8164eed
+alias vim="$VIM_LOCATION"
 
 # BOOKBUB
 alias sshs='ssh ubuntu@spine.kobubob.com'
@@ -305,7 +297,7 @@ export LSCOLORS=gxBxhxDxfxhxhxhxhxcxcx
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export FZF_COMPLETION_TRIGGER=',,'
 
-source ~/.bin/tmuxinator.zsh
+source ~/Dotfiles/tmuxinator.zsh
 
 # Toggle between vim and shell with ctrl-z
 fancy-ctrl-z () {
