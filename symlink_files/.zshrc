@@ -1,15 +1,9 @@
 #!/usr/local/bin/zsh
 #
 export ZSH="$HOME/.oh-my-zsh"
-# export EDITOR="/Applications/MacVim.app/Contents/MacOS/Vim"
-export VIM_LOCATION="/usr/local/Cellar/macvim/7.4-77/MacVim.app/Contents/MacOS/Vim"
-export EDITOR="$VIM_LOCATION"
+export EDITOR="/Applications/MacVim.app/Contents/MacOS/Vim"
 export ARCHFLAGS="-arch x86_64"
-export HOMEBREW_CASK_OPTS="--appdir=/Applications"
-
 source "$ZSH/oh-my-zsh.sh"
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
 setopt CORRECT
 unsetopt inc_append_history
 unsetopt share_history
@@ -165,6 +159,9 @@ alias spine="cd ~/spine"
 # checkout
 alias co="git checkout"
 alias cob="git checkout -b"
+zle -N zle-line-init
+zle -N zle-keymap-select
+export KEYTIMEOUT=60
 alias cod="git branch -d"
 alias codd="git branch -D"
 
@@ -264,7 +261,7 @@ alias vimrc="vim ~/.vimrc"
 alias zpref="vim ~/.zshrc"
 alias vtree="vim -c ':CommandT'"
 alias vnerd="vim -c ':NERDTree'"
-alias vim="$VIM_LOCATION"
+alias vim="/Applications/MacVim.app/Contents/MacOS/Vim"
 
 # BOOKBUB
 alias sshs='ssh ubuntu@spine.kobubob.com'
@@ -297,7 +294,7 @@ export LSCOLORS=gxBxhxDxfxhxhxhxhxcxcx
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export FZF_COMPLETION_TRIGGER=',,'
 
-source ~/Dotfiles/tmuxinator.zsh
+source ~/.bin/tmuxinator.zsh
 
 # Toggle between vim and shell with ctrl-z
 fancy-ctrl-z () {
