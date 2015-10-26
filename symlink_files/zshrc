@@ -195,12 +195,7 @@ function confirm_cmd() {
 }
 
 function undo() {
-  if [ ! -z $1 ] 
-  then 
-    git reset HEAD~$1 --mixed
-  else
-    git reset HEAD^ --mixed
-  fi
+  git reset HEAD~${1-1} --mixed
 }
 
 
@@ -212,7 +207,7 @@ function mirror() {
   else
     branch="$(git_branch)"
   fi
-  confirm_cmd "Are you sure you want to reset --hard to remote branch $branch" "git reset --hard origin/$branch"
+  confirm_cmd "Are you sure you want to reset --hard to remote branch $branch" "git fetch; git reset --hard origin/$branch"
 }
 
 function wipe() {
