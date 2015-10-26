@@ -80,6 +80,9 @@ Plug 'benmills/vimux'
 
 Plug 'vim-ruby/vim-ruby'
 
+" Zen Mode, credits to Ustasb
+Plug 'junegunn/goyo.vim'
+
 call plug#end()
 
 
@@ -254,3 +257,5 @@ command GutSign execute "GitGutterSignsToggle"
 map <Leader>vp :VimuxPromptCommand<CR>
 map <Leader>vl :VimuxRunLastCommand<CR>
 let VimuxUseNearest = 0
+
+nmap <Leader>gy :Goyo<CR>
