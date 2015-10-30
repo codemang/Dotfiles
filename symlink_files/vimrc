@@ -103,13 +103,14 @@ colorscheme solarized
 
 filetype plugin indent on
 
+set nocompatible"
+set backspace=indent,eol,start
 set background=dark
 set number                                       " Show line numbers
 set shortmess=atI                                " No welcome message
 set re=1                                         " Improve ruby speed
 set t_Co=256                                     " Set vim to use 256 colors
 set laststatus=2                                 " Always show vim-airline status
-set encoding=utf-8
 set splitbelow
 set splitright
 set noerrorbells visualbell t_vb=
@@ -117,6 +118,8 @@ set noerrorbells visualbell t_vb=
 set expandtab                                    " Make tab into spaces
 set tabstop=2                                    " Set tab width to 2 spaces
 set shiftwidth=2                                 " Make <,> tab use 2 spaces
+set softtabstop=2                                 " Make <,> tab use 2 spaces
+set shiftround
 set autoindent                                           " Auto indent
 set smartindent                                           " Smart indent
 set smarttab
@@ -234,7 +237,7 @@ let g:ansible_extra_syntaxes = "/usr/share/vim/vim73/syntax/sh.vim /usr/share/vi
 
 
 " ------------------------------- Ag Vim -------------------------------
-nmap <leader>a :Ag
+nmap <leader>a :Ag 
 let g:ag_highlight=1
 
 
@@ -259,3 +262,6 @@ map <Leader>vl :VimuxRunLastCommand<CR>
 let VimuxUseNearest = 0
 
 nmap <Leader>gy :Goyo<CR>
+
+setf dosini
+au Filetype python setl et ts=2 sw=2

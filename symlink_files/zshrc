@@ -5,6 +5,7 @@ export VIM_LOCATION="/usr/local/Cellar/macvim/7.4-77/MacVim.app/Contents/MacOS/V
 export EDITOR="$VIM_LOCATION"
 export ARCHFLAGS="-arch x86_64"
 export HOMEBREW_CASK_OPTS="--appdir=/Applications"
+export AWS_CREDENTIAL_FILE="~/.aws/credentials"
 source "$ZSH/oh-my-zsh.sh"
 setopt CORRECT
 unsetopt inc_append_history
@@ -197,7 +198,6 @@ function confirm_cmd() {
 function undo() {
   git reset HEAD~${1-1} --mixed
 }
-
 
 function mirror() {
   branch=""
