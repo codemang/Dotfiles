@@ -6,8 +6,17 @@ export EDITOR="$VIM_LOCATION"
 export ARCHFLAGS="-arch x86_64"
 export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 export AWS_CREDENTIAL_FILE="~/.aws/credentials"
+export LD_BIND_NOW=1
+export CLICOLOR=1
+export LSCOLORS=gxBxhxDxfxhxhxhxhxcxcx
+export FZF_COMPLETION_TRIGGER=',,'
+
+
 source "$ZSH/oh-my-zsh.sh"
+source "$HOME/Dotfiles/tmuxinator.zsh"
+source "$HOME/.fzf.zsh"
 setopt CORRECT
+
 unsetopt inc_append_history
 unsetopt share_history
 
@@ -284,14 +293,6 @@ alias ts="tmux switch -t"
 alias td="tmux detach"
 alias tk="tmux kill-session -t"
 
-export LD_BIND_NOW=1
-export CLICOLOR=1
-export LSCOLORS=gxBxhxDxfxhxhxhxhxcxcx
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-export FZF_COMPLETION_TRIGGER=',,'
-
-source ~/Dotfiles/tmuxinator.zsh
 
 # Toggle between vim and shell with ctrl-z
 fancy-ctrl-z () {
