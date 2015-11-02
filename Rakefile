@@ -28,10 +28,10 @@ namespace :dotfiles do
     plug_dir = File.join @symlink_files_dir, "vim/autoload/plug.vim"
     if !File.file? plug_dir
       system "curl -fLo #{plug_dir} --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
-      system "$EDITOR -c ':PlugInstall' -c 'qa!'"
-    else
-      system "$EDITOR -c 'PlugUpgrade' -c 'qa!'"
     end
+
+    system "$EDITOR -c ':PlugInstall' -c 'qa!'"
+    system "$EDITOR -c 'PlugUpgrade' -c 'qa!'"
 
     puts "\n\n"
   end
