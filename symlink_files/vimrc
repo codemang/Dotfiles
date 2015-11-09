@@ -170,11 +170,11 @@ inoremap <esc> <nop>
 nmap <Leader>v :e ~/.vimrc<CR>
 nmap <Leader>s :source ~/.vimrc<CR>
 nmap <Leader>w :w<CR>
-nmap <Leader>e :e
+nmap <Leader>e :e 
 nmap <Leader>q :q<CR>
 nmap <Leader>wq :wq<CR>
 nmap <Leader>j :e #<CR>
-nmap <Leader>h :noh<CR>
+nmap <Leader>h :noh<CR>jk
 nmap <Space>] Okj
 nmap <Space>[ okj
 
@@ -254,6 +254,8 @@ let g:airline_left_sep=''
 let g:airline_right_sep=''
 let g:airline_section_z=''
 
+let g:ycm_autoclose_preview_window_after_insertion=1
+
 " ------------------------------- Git GUtter ---------------------------
 command GutSign execute "GitGutterSignsToggle"
 
@@ -263,5 +265,4 @@ let VimuxUseNearest = 0
 
 nmap <Leader>gy :Goyo<CR>
 
-setf dosini
 au Filetype python setl et ts=2 sw=2

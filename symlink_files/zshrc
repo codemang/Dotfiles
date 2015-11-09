@@ -6,15 +6,12 @@ export EDITOR="$VIM_LOCATION"
 export ARCHFLAGS="-arch x86_64"
 export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 export AWS_CREDENTIAL_FILE="~/.aws/credentials"
-export LD_BIND_NOW=1
-export CLICOLOR=1
-export LSCOLORS=gxBxhxDxfxhxhxhxhxcxcx
-export FZF_COMPLETION_TRIGGER=',,'
-
+# export PYTHONDONTWRITEBYTECODE=true # Avoid pyc files
+export HOST_ENV="development"
+export HISTCONTROL=ignoreboth:erasedups
 
 source "$ZSH/oh-my-zsh.sh"
 source "$HOME/Dotfiles/tmuxinator.zsh"
-source "$HOME/.fzf.zsh"
 setopt CORRECT
 
 unsetopt inc_append_history
@@ -94,7 +91,7 @@ function down_stream() {
 
 # Show if there are changes to be committed.
 function parse_git_dirty() {
-  if [[ $(is_git_branch) == true ]] && ! command git diff-index --quiet HEAD 2> /dev/null; then 
+  if [[ $(is_git_branch) == true ]] && ! command git diff-index --quiet HEAD 2> /dev/null; then
     echo "%F{196}●%{$reset_color%}"
   fi
 }
@@ -147,16 +144,17 @@ $(arrow) '
 
 # LS SHORTCUTS
 alias ls="ls -G"
-alias la="ls -a"
-alias ll="ls -l"
+alias la="ls -A"
+alias ll="ls -l -h"
 alias lla="ls -al"
 alias lal="ls -al"
 alias lh="ls -d .??*"
-alias llh="ls -ld .??*"
-alias lhl="ls -ld .??*"
-alias ld="ls -d */"
-alias lt="ls | grep test"
-alias le="find . -maxdepth 1  -type f -perm -u=x"
+alias llh="ls -ld -h  .??*"
+alias lhl="ls -ld -h .??*"
+alias ld="ls -d */" # Show directories
+alias lg="ls | grep"
+alias le="find . -maxdepth 1  -type f -perm -u=x" # Show executables
+alias lf="ls | egrep -v '^d'"
 alias clr="clear"
 
 # NAV SHORTCUTS
@@ -171,11 +169,9 @@ alias spine="cd ~/spine"
 # checkout
 alias co="git checkout"
 alias cob="git checkout -b"
-zle -N zle-line-init
-zle -N zle-keymap-select
-export KEYTIMEOUT=60
 alias cod="git branch -d"
 alias codd="git branch -D"
+alias col="git checkout -"
 
 # push
 alias push="git push"
@@ -193,7 +189,7 @@ alias wip="git commit -am 'WIP'"
 
 # reset
 function confirm_cmd() {
-  echo -n "$1? [y/n]: " 
+  echo -n "$1? [y/n]: "
   read answer
 
   if [ "$answer" = "y" ]
@@ -210,8 +206,8 @@ function undo() {
 
 function mirror() {
   branch=""
-  if [ ! -z $1 ] 
-  then 
+  if [ ! -z $1 ]
+  then
     branch="$1"
   else
     branch="$(git_branch)"
@@ -227,7 +223,7 @@ function gclean() {
   git checkout master
   if [ $? -eq 0 ]
   then
-    git branch --merged ${1-master} | grep -v " ${1-master}$" | xargs git branch -d; 
+    git branch --merged ${1-master} | grep -v " ${1-master}$" | xargs git branch -d;
   fi
 }
 
@@ -260,6 +256,7 @@ alias m="make"
 alias app="cd /Applications"
 alias serv="python -m SimpleHTTPServer 8000"
 alias editcron="env EDITOR=vim crontab -e"
+alias mem="top -l 1 | ag Phys"
 
 # VIM
 alias v="vim"
@@ -270,8 +267,8 @@ alias vnerd="vim -c ':NERDTree'"
 alias vim="$VIM_LOCATION"
 
 # BOOKBUB
-alias sshs='ssh ubuntu@spine.kobubob.com'
-alias sshp='ssh ubuntu@spine.bookbub.com'
+alias sshs='ssh bookbub-staging'
+alias sshp='ssh bookbub-production'
 
 # RAILS
 alias mig="bin/rake db:migrate"
@@ -294,6 +291,8 @@ alias td="tmux detach"
 alias tk="tmux kill-session -t"
 
 
+source "$HOME/.fzf.zsh"
+export FZF_COMPLETION_TRIGGER=',,'
 # Toggle between vim and shell with ctrl-z
 fancy-ctrl-z () {
   if [[ $#BUFFER -eq 0 ]]; then
@@ -306,3 +305,7 @@ fancy-ctrl-z () {
 }
 zle -N fancy-ctrl-z
 bindkey '^Z' fancy-ctrl-z
+
+export LD_BIND_NOW=1
+export CLICOLOR=1
+export LSCOLORS=gxBxhxDxfxhxhxhxhxcxcx
