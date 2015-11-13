@@ -1,12 +1,11 @@
 #!/usr/local/bin/zsh
-#
+
 export ZSH="$HOME/.oh-my-zsh"
 export VIM_LOCATION="/usr/local/Cellar/macvim/7.4-77/MacVim.app/Contents/MacOS/Vim"
 export EDITOR="$VIM_LOCATION"
 export ARCHFLAGS="-arch x86_64"
 export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 export AWS_CREDENTIAL_FILE="~/.aws/credentials"
-# export PYTHONDONTWRITEBYTECODE=true # Avoid pyc files
 export HOST_ENV="development"
 export HISTCONTROL=ignoreboth:erasedups
 
@@ -163,6 +162,8 @@ alias vbundle="cd ~/.vim/bundle"
 alias lello="cd ~/lello"
 alias pulp="cd ~/pulp"
 alias spine="cd ~/spine"
+alias spiel="cd ~/spiel"
+alias forklift="cd ~/forklift"
 
 # GIT SHORTCUTS
 
@@ -257,18 +258,21 @@ alias app="cd /Applications"
 alias serv="python -m SimpleHTTPServer 8000"
 alias editcron="env EDITOR=vim crontab -e"
 alias mem="top -l 1 | ag Phys"
+alias notifyDone='reattach-to-user-namespace terminal-notifier -title "Codemang" -message "Done with task!"'
 
 # VIM
+alias vim="$VIM_LOCATION"
 alias v="vim"
 alias vimrc="vim ~/.vimrc"
 alias zpref="vim ~/.zshrc"
 alias vtree="vim -c ':CommandT'"
 alias vnerd="vim -c ':NERDTree'"
-alias vim="$VIM_LOCATION"
 
 # BOOKBUB
 alias sshs='ssh bookbub-staging'
 alias sshp='ssh bookbub-production'
+alias slog='ssh -N stage-tunnel'
+alias plog='ssh -N prod-tunnel'
 
 # RAILS
 alias mig="bin/rake db:migrate"
@@ -293,6 +297,8 @@ alias tk="tmux kill-session -t"
 
 source "$HOME/.fzf.zsh"
 export FZF_COMPLETION_TRIGGER=',,'
+export FZF_DEFAULT_COMMAND='ag -g ""'
+
 # Toggle between vim and shell with ctrl-z
 fancy-ctrl-z () {
   if [[ $#BUFFER -eq 0 ]]; then

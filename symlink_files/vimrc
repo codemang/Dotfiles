@@ -170,11 +170,11 @@ inoremap <esc> <nop>
 nmap <Leader>v :e ~/.vimrc<CR>
 nmap <Leader>s :source ~/.vimrc<CR>
 nmap <Leader>w :w<CR>
-nmap <Leader>e :e 
+nmap <Leader>e :e
 nmap <Leader>q :q<CR>
 nmap <Leader>wq :wq<CR>
 nmap <Leader>j :e #<CR>
-nmap <Leader>h :noh<CR>jk
+nmap <Leader>h :noh<CR>
 nmap <Space>] Okj
 nmap <Space>[ okj
 
@@ -237,7 +237,7 @@ let g:ansible_extra_syntaxes = "/usr/share/vim/vim73/syntax/sh.vim /usr/share/vi
 
 
 " ------------------------------- Ag Vim -------------------------------
-nmap <leader>a :Ag 
+nmap <leader>a :Ag
 let g:ag_highlight=1
 
 
@@ -257,7 +257,7 @@ let g:airline_section_z=''
 let g:ycm_autoclose_preview_window_after_insertion=1
 
 " ------------------------------- Git GUtter ---------------------------
-command GutSign execute "GitGutterSignsToggle"
+command! GutSign execute "GitGutterSignsToggle"
 
 map <Leader>vp :VimuxPromptCommand<CR>
 map <Leader>vl :VimuxRunLastCommand<CR>
@@ -265,4 +265,15 @@ let VimuxUseNearest = 0
 
 nmap <Leader>gy :Goyo<CR>
 
+" Python tabs
 au Filetype python setl et ts=2 sw=2
+
+" JBuilder syntax highlighting
+au BufNewFile,BufRead *.json.jbuilder set ft=ruby
+
+" Color of easy motion keys
+hi EasyMotionTarget ctermbg=none ctermfg=red
+hi EasyMotionTarget2Second ctermbg=none ctermfg=red
+hi EasyMotionTarget2First ctermbg=none ctermfg=red
+
+hi Search cterm=NONE ctermfg=black ctermbg=red
