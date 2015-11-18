@@ -11,6 +11,7 @@ export HISTCONTROL=ignoreboth:erasedups
 
 source "$ZSH/oh-my-zsh.sh"
 source "$HOME/Dotfiles/tmuxinator.zsh"
+source "$HOME/Dotfiles/vagrant/vagrant_alias"
 setopt CORRECT
 
 unsetopt inc_append_history
@@ -159,11 +160,11 @@ alias clr="clear"
 # NAV SHORTCUTS
 alias dl="cd ~/Downloads"
 alias vbundle="cd ~/.vim/bundle"
-alias lello="cd ~/lello"
-alias pulp="cd ~/pulp"
-alias spine="cd ~/spine"
-alias spiel="cd ~/spiel"
-alias forklift="cd ~/forklift"
+alias lello="cd ~/Bookbub/lello"
+alias pulp="cd ~/Bookbub/pulp"
+alias spine="cd ~/Bookbub/spine"
+alias spiel="cd ~/Bookbub/spiel"
+alias forklift="cd ~/Bookbub/forklift"
 
 # GIT SHORTCUTS
 
@@ -315,3 +316,4 @@ bindkey '^Z' fancy-ctrl-z
 export LD_BIND_NOW=1
 export CLICOLOR=1
 export LSCOLORS=gxBxhxDxfxhxhxhxhxcxcx
+

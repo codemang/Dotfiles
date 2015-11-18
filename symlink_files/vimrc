@@ -76,8 +76,10 @@ Plug 'szw/vim-tags'
 " Show git diff marks in vim
 Plug 'airblade/vim-gitgutter'
 
+" Open small tmux pane from vim and run command
 Plug 'benmills/vimux'
 
+" All purpose ruby plugin
 Plug 'vim-ruby/vim-ruby'
 
 " Zen Mode, credits to Ustasb
@@ -94,10 +96,10 @@ call plug#end()
 syntax on
 
 let mapleader=","                                " Set my leader to '-'
+let g:ruby_path = system('/usr/bin/ruby')        " Improve ruby speed
 let &t_SI = "\<Esc>]50;CursorShape=2\x7"         " Underscore in insert mode
 let &t_EI = "\<Esc>]50;CursorShape=0\x7"         " Solid block in other modes
 let @/=''                                        " Empty search register so sourcing doesn't highlight
-let g:ruby_path = system('/usr/bin/ruby')        " Improve ruby speed
 
 colorscheme solarized
 
@@ -111,17 +113,17 @@ set shortmess=atI                                " No welcome message
 set re=1                                         " Improve ruby speed
 set t_Co=256                                     " Set vim to use 256 colors
 set laststatus=2                                 " Always show vim-airline status
-set splitbelow
-set splitright
-set noerrorbells visualbell t_vb=
+set splitbelow                                   " Open new pane to the bottom
+set splitright                                   " Open new pane to the right
+set noerrorbells visualbell t_vb=                " Disable bells
 
 set expandtab                                    " Make tab into spaces
 set tabstop=2                                    " Set tab width to 2 spaces
 set shiftwidth=2                                 " Make <,> tab use 2 spaces
-set softtabstop=2                                 " Make <,> tab use 2 spaces
+set softtabstop=2                                " Make <,> tab use 2 spaces
+set autoindent                                   " Auto indent
+set smartindent                                  " Smart indent
 set shiftround
-set autoindent                                           " Auto indent
-set smartindent                                           " Smart indent
 set smarttab
 
 set hlsearch                                     " Highlight search results
@@ -167,7 +169,7 @@ highlight NonText ctermfg=0                      " Make tildas invisible below c
 inoremap kj <Esc>
 inoremap <esc> <nop>
 
-nmap <Leader>v :e ~/.vimrc<CR>
+nmap <Leader>vv :e ~/.vimrc<CR>
 nmap <Leader>s :source ~/.vimrc<CR>
 nmap <Leader>w :w<CR>
 nmap <Leader>e :e
@@ -261,6 +263,8 @@ command! GutSign execute "GitGutterSignsToggle"
 
 map <Leader>vp :VimuxPromptCommand<CR>
 map <Leader>vl :VimuxRunLastCommand<CR>
+map <Leader>vr :call VimuxRunCommand("clear; vagrant ssh -c rspec " . bufname("%"))<CR>
+
 let VimuxUseNearest = 0
 
 nmap <Leader>gy :Goyo<CR>
@@ -277,3 +281,4 @@ hi EasyMotionTarget2Second ctermbg=none ctermfg=red
 hi EasyMotionTarget2First ctermbg=none ctermfg=red
 
 hi Search cterm=NONE ctermfg=black ctermbg=red
+

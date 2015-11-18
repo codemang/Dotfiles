@@ -1,0 +1,44 @@
+# check if stdout is a terminal...
+if [ -t 1 ]; then
+
+    # see if it supports colors...
+    ncolors=$(tput colors)
+
+    if test -n "$ncolors" && test $ncolors -ge 8; then
+        bold="$(tput bold)"
+        underline="$(tput smul)"
+        standout="$(tput smso)"
+        normal="$(tput sgr0)"
+        black="$(tput setaf 0)"
+        red="$(tput setaf 1)"
+        green="$(tput setaf 2)"
+        yellow="$(tput setaf 3)"
+        blue="$(tput setaf 4)"
+        magenta="$(tput setaf 5)"
+        cyan="$(tput setaf 6)"
+        white="$(tput setaf 7)"
+    fi
+    export PS1='
+${red}VAGRNANT${normal} ${blue}\w${normal}
+${green}\$${normal} '
+fi
+
+
+
+# LS SHORTCUTS
+alias ls='ls --color'
+alias la="ls -A"
+alias ll="ls -l -h"
+alias lla="ls -al"
+alias lal="ls -al"
+alias lh="ls -d .??*"
+alias llh="ls -ld -h  .??*"
+alias lhl="ls -ld -h .??*"
+alias ld="ls -d */" # Show directories
+alias lg="ls | grep"
+alias le="find . -maxdepth 1  -type f -perm -u=x" # Show executables
+alias lf="ls | egrep -v '^d'"
+alias clr="clear"
+
+LS_COLORS='di=33:fi=0:ln=31:pi=5:so=5:bd=5:cd=5:or=31:mi=0:ex=35:*.rpm=90'
+export LS_COLORS
