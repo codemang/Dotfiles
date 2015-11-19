@@ -52,6 +52,7 @@ alias pulp="cd ~/Bookbub/pulp"
 alias spine="cd ~/Bookbub/spine"
 alias spiel="cd ~/Bookbub/spiel"
 alias forklift="cd ~/Bookbub/forklift"
+alias dot="cd ~/Dotfiles"
 
 # GIT SHORTCUTS
 
