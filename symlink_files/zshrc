@@ -12,131 +12,18 @@ export HISTCONTROL=ignoreboth:erasedups
 source "$ZSH/oh-my-zsh.sh"
 source "$HOME/Dotfiles/tmuxinator.zsh"
 source "$HOME/Dotfiles/vagrant/vagrant_alias"
+
 setopt CORRECT
 
 unsetopt inc_append_history
 unsetopt share_history
 
-# Enable vim mode in the shell
-bindkey -v
-bindkey kj vi-cmd-mode
+# Create prompt
+source "$HOME/Dotfiles/symlink_files/zshrc_prompt"
 
-function print_colors() {
-  for code in {000..255}; do
-    print -P -- "$code: %F{$code}$ZSH_SPECTRUM_TEXT%f"
-  done
-}
-
-# --------------------------------------------------------
-#                TERMINAL PROMPT
-# --------------------------------------------------------
-
-autoload -U colors && colors
-
-GOOD_EXIT_STATUS_COLOR=%F{154}
-BAD_EXIT_STATUS_COLOR=%F{197}
-WORKING_DIRECTORY_COLOR=%F{159}
-GIT_BRANCH_COLOR=%F{213}
-
-
-# Detect if git is initialized in this directory
-function is_git_branch() {
-  [[ -n "$(git status -s 2> /dev/null)" ]] && echo true
-}
-
-# Find the current git branch, if any
-function git_branch() {
-  echo "$(git branch 2>/dev/null| sed -n '/^\*/s/^\* //p')"
-}
-
-# Show return code of last command
-function exit_status(){
-if [ $? -eq 0 ]
-  then
-     echo -e "${GOOD_EXIT_STATUS_COLOR}\xE2\x9C\x93%{$reset_color%}"
-  else
-    echo -e "${BAD_EXIT_STATUS_COLOR}${$?}${NONE}"
-  fi
-}
-
-# Show the current working directory
-function working_directory() {
-  echo "${WORKING_DIRECTORY_COLOR}%~%{$reset_color%}"
-}
-
-
-# Show the current git branch, if any
-function git_prompt() {
-  echo "$GIT_BRANCH_COLOR$(git_branch)%{$reset_color%}"
-}
-
-# Show if there are upstream changes
-function up_stream() {
-  behind=$(command git rev-list HEAD..${hook_com[branch]}@{upstream} 2>/dev/null | wc -l)
-  if [ $behind -gt 0 ]
-  then
-    echo "%F{226}↑%{$reset_color%}"
-  fi
-}
-
-# Show if there are downstream changes
-function down_stream() {
-  ahead=$(command git rev-list ${hook_com[branch]}@{upstream}..HEAD 2>/dev/null | wc -l)
-
-  if [ $ahead -gt 0 ]
-  then
-    echo "%F{226}↓%{$reset_color%}"
-  fi
-}
-
-# Show if there are changes to be committed.
-function parse_git_dirty() {
-  if [[ $(is_git_branch) == true ]] && ! command git diff-index --quiet HEAD 2> /dev/null; then
-    echo "%F{196}●%{$reset_color%}"
-  fi
-}
-
-# Show the orange arrows
-function arrow() {
-  echo "%F{202}❯%F{208}❯%F{214}❯%{$reset_color%}"
-}
-
-
-# Show if currently in vim mode
-vim_ins_mode=""
-vim_cmd_mode="%F{221}[vim-mode] %{$reset_color%}"
-vim_mode=$vim_ins_mode
-
-function zle-keymap-select {
-  vim_mode="${${KEYMAP/vicmd/${vim_cmd_mode}}/(main|viins)/${vim_ins_mode}}"
-  zle reset-prompt
-}
-zle -N zle-keymap-select
-
-function zle-line-finish {
-  vim_mode=$vim_ins_mode
-}
-zle -N zle-line-finish
-
-# Fix a bug when you C-c in CMD mode and you'd be prompted with CMD mode
-# indicator, while in fact you would be in INS mode Fixed by catching SIGINT
-# (C-c), set vim_mode to INS and then repropagate the SIGINT, so if anything
-# else depends on it, we will not break it Thanks Ron! (see comments)
-function TRAPINT() {
-  vim_mode=$vim_ins_mode
-  return $(( 128 + $1 ))
-}
-
-zle -N zle-line-init
-zle -N zle-keymap-select
-export KEYTIMEOUT=60
-
-
-# Generate prompt
-PS1='
-$(exit_status) $(working_directory) $(git_prompt) $(parse_git_dirty)$(up_stream)$(down_stream)${vim_mode}
-$(arrow) '
-
+export LD_BIND_NOW=1
+export CLICOLOR=1
+export LSCOLORS=gxBxhxDxfxhxhxhxhxcxcx
 
 # --------------------------------------------------------
 #                ALIASES
@@ -312,8 +199,3 @@ fancy-ctrl-z () {
 }
 zle -N fancy-ctrl-z
 bindkey '^Z' fancy-ctrl-z
-
-export LD_BIND_NOW=1
-export CLICOLOR=1
-export LSCOLORS=gxBxhxDxfxhxhxhxhxcxcx
-
