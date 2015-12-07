@@ -8,16 +8,25 @@ function print_colors() {
   done
 }
 
+function light_prompt() {
+  WORKING_DIRECTORY_COLOR=%F{004}
+  GOOD_EXIT_STATUS_COLOR=%F{112}
+  GIT_BRANCH_COLOR=%F{128}
+  ARROW_COLOR=%F{166}
+}
+
+function dark_prompt() {
+  GOOD_EXIT_STATUS_COLOR=%F{154}
+  WORKING_DIRECTORY_COLOR=%F{159}
+  GIT_BRANCH_COLOR=%F{213}
+  ARROW_COLOR=%F{226}
+}
+
 # --------------------------------------------------------
 #                TERMINAL PROMPT
 # --------------------------------------------------------
 
 autoload -U colors && colors
-
-GOOD_EXIT_STATUS_COLOR=%F{154}
-BAD_EXIT_STATUS_COLOR=%F{197}
-WORKING_DIRECTORY_COLOR=%F{159}
-GIT_BRANCH_COLOR=%F{213}
 
 # Detect if git is initialized in this directory
 function is_git_branch() {
@@ -55,7 +64,7 @@ function up_stream() {
   behind=$(command git rev-list HEAD..${hook_com[branch]}@{upstream} 2>/dev/null | wc -l)
   if [ $behind -gt 0 ]
   then
-    echo "%F{226}↑%{$reset_color%}"
+    echo "$ARROW_COLOR↑%{$reset_color%}"
   fi
 }
 
@@ -65,7 +74,7 @@ function down_stream() {
 
   if [ $ahead -gt 0 ]
   then
-    echo "%F{226}↓%{$reset_color%}"
+    echo "$ARROW_COLOR↓%{$reset_color%}"
   fi
 }
 
@@ -112,9 +121,8 @@ zle -N zle-keymap-select
 export KEYTIMEOUT=60
 
 
+dark_prompt
 # Generate prompt
 PS1='
 $(exit_status) $(working_directory) $(git_prompt) $(parse_git_dirty)$(up_stream)$(down_stream)${vim_mode}
 $(arrow) '
-
-

@@ -172,6 +172,8 @@ alias vup="vagrant up"
 alias vdest="vagrant destroy"
 alias vssh="vagrant ssh"
 alias vprov="vagrant provision"
+alias vls="vagrant global-status"
+alias vr="vagrant resume"
 
 # TMUX
 alias tn="tmux new -s"
