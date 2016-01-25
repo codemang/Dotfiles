@@ -50,7 +50,7 @@ alias vbundle="cd ~/.vim/bundle"
 alias lello="cd ~/Bookbub/lello"
 alias pulp="cd ~/Bookbub/pulp"
 alias spine="cd ~/Bookbub/spine"
-alias spiel="cd ~/Bookbub/spiel"
+alias hedwig="cd ~/Bookbub/hedwig"
 alias forklift="cd ~/Bookbub/forklift"
 alias dot="cd ~/Dotfiles"
 
@@ -62,6 +62,7 @@ alias cob="git checkout -b"
 alias cod="git branch -d"
 alias codd="git branch -D"
 alias col="git checkout -"
+alias mirrorf="git checkout origin/master --"
 
 # push
 alias push="git push"
@@ -148,6 +149,7 @@ alias serv="python -m SimpleHTTPServer 8000"
 alias editcron="env EDITOR=vim crontab -e"
 alias mem="top -l 1 | ag Phys"
 alias notifyDone='reattach-to-user-namespace terminal-notifier -title "Codemang" -message "Done with task!"'
+alias zprompt="vim ~/Dotfiles/symlink_files/zshrc_prompt"
 
 # VIM
 alias vim="$VIM_LOCATION"

@@ -13,6 +13,8 @@ function light_prompt() {
   GOOD_EXIT_STATUS_COLOR=%F{112}
   GIT_BRANCH_COLOR=%F{128}
   ARROW_COLOR=%F{166}
+  BAD_EXIT_STATUS_COLOR=%F{160}
+  DIRTY_CHANGES=%F{160}
 }
 
 function dark_prompt() {
@@ -20,6 +22,8 @@ function dark_prompt() {
   WORKING_DIRECTORY_COLOR=%F{159}
   GIT_BRANCH_COLOR=%F{213}
   ARROW_COLOR=%F{226}
+  DIRTY_CHANGES=%F{196}
+  BAD_EXIT_STATUS_COLOR=%F{196}
 }
 
 # --------------------------------------------------------
@@ -81,7 +85,7 @@ function down_stream() {
 # Show if there are changes to be committed.
 function parse_git_dirty() {
   if [[ $(is_git_branch) == true ]] && ! command git diff-index --quiet HEAD 2> /dev/null; then
-    echo "%F{196}●%{$reset_color%}"
+    echo "$DIRTY_CHANGES●%{$reset_color%}"
   fi
 }
 

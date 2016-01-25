@@ -3,6 +3,7 @@
 	email = nateboop@gmail.com
 [core]
 	askpass = git-gui--askpass
+	excludesfile = ~/.gitignore
 [merge]
 	tool = vim.diff
 [color]
@@ -13,4 +14,4 @@
 	smudge = git hawser smudge %f
 	required = true
 [push]
-	default = matching
+	default = current
