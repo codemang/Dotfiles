@@ -14,6 +14,10 @@ namespace :dotfiles do
     end
   end
 
+  def good_exit_from_command?(command)
+    system command
+  end
+
   task :install_vim_plugins do
     print_header "INSTALLING VIM PLUGINS"
     create_if_no_dir File.join "symlink_files/vim"
@@ -44,68 +48,35 @@ namespace :dotfiles do
     end
   end
 
-  task :update_self do
-    print_header("UPDATING DOTFILES REPO")
-    # TODO
-    # if dirty changes
-    #   abort
-    # end
-    Dir.chdir @dotfile_dir
-    system "git fetch --all; git reset --hard origin/master"
-    puts "\n\n"
-  end
-
   task :source_files do
     print_header("SOURCING DOTFILES")
     system "source #{@dotfile_dir}/.zshrc"
     puts "\n\n"
   end
 
-
   task :install_zsh do
-    print_header("UPDATING ZSH")
-    good = system "zsh --version"
-
-    if !good
-      # system "brew install zsh"
-    else
+    if good_exit_from_command?('zsh --version')
       system "brew upgrade zsh"
-    end
-
-    if !File.directory? File.join @symlink_files_dir, ".oh-my-zsh"
+      system "upgrade_oh_my_zsh"
+    else
+      system "brew install zsh"
       system "git clone git://github.com/robbyrussell/oh-my-zsh.git #{@symlink_files_dir}/.oh-my-zsh"
     end
 
-    cur_shell = `echo $SHELL`
-    if !(cur_shell =~ /zsh/)
-      `chsh -s $(which zsh)`
-    end
-
-    puts "\n\n"
+    `chsh -s $(which zsh)` if `echo $SHELL` !~ /^.*zsh/
   end
 
-  task :check_for_existing_dotfiles do
-
-  end
 
   task :install_home_brew do
-    print_header("UPDATING BREW")
-    good = system "brew --version"
-    if !good
-      system "ruby -e \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)\""
+    if good_exit_from_command?('brew --version')
+      system "brew update"
     else
-      system "brew update -v"
+      system "ruby -e \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)\""
     end
-
-    good = `brew --version`
-    if !good =~ /\d\.\d\.\d/
-      fail "\e[0;31mThere was an error when trying to install/update homebrew. Possible causes are a broken ruby installation.\e[0m"
-    end
-
-    puts "\n\n"
+    system "brew doctor"
   end
 
-  task :install => [:update_self, :install_home_brew, :install_zsh, :symlink, :install_vim_plugins, :source_files] do
+  task :install => [:install_home_brew, :install_zsh, :symlink, :install_vim_plugins, :source_files] do
     puts "****************************************************"
     puts "                    All done :)"
     puts "****************************************************"
@@ -119,7 +90,6 @@ namespace :clean do
     system "rm ~/.oh-my-zsh"
     system "rm ~/.tmux.conf"
     system "rm ~/.gitconfig"
-    system "rm -rf #{File.dirname(__FILE__)}"
   end
 end
 
