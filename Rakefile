@@ -52,11 +52,8 @@ namespace :dotfiles do
   task :symlink do
     Dir.glob("**/*").select{|file| file =~ /^.*\.sym$/}.each do |sym_filepath|
       new_filename =  File.basename(sym_filepath, '.sym')
-      puts new_filename
-      # system "ln -s #{File.join(@dotfile_dir, sym_filepath)} ~/.#{new_filename}"}
+      system "ln -s #{File.join(@dotfile_dir, sym_filepath)} ~/.#{new_filename}"
     end
-
-    # symlink_files.map{|file| system "ln -s #{@symlink_files_dir}/#{file} ~/.#{file}"}
   end
 
 
