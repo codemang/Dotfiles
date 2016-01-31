@@ -37,23 +37,10 @@ namespace :dotfiles do
 
 
   task :install_vim_plugins do
-    # Create the directory structure for vim plugins
-    create_if_no_dir 'symlink_files/vim'
-    create_if_no_dir 'symlink_files/vim/bundle'
-    create_if_no_dir 'symlink_files/vim/autoload'
-    create_if_no_dir 'symlink_files/vim/colors'
-
     # Make sure vim plug is installed
     plug_dir = File.join @symlink_files_dir, 'vim/autoload/plug.vim'
     if !File.file? plug_dir
       system "curl -fLo #{plug_dir} --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
-    end
-
-    # Download vim color schemes
-    color_dir = File.join @symlink_files_dir, 'vim/colors'
-    File.read(File.join(@dotfile_dir, 'vim-colorschemes')).split("\n").each do |colorscheme_url|
-      colorscheme_name = /^.*\/(\w+?\.vim)$/.match(colorscheme_url)[1]
-      system "curl #{colorscheme_url} > #{File.join(color_dir, colorscheme_name)}"
     end
 
     # Install vim plugins and upgrade vim plug
@@ -63,8 +50,13 @@ namespace :dotfiles do
 
 
   task :symlink do
-    symlink_files = %w{tmux.conf vim oh-my-zsh zshrc vimrc gitconfig}
-    symlink_files.map{|file| system "ln -s #{@symlink_files_dir}/#{file} ~/.#{file}"}
+    Dir.glob("**/*").select{|file| file =~ /^.*\.sym$/}.each do |sym_filepath|
+      new_filename =  File.basename(sym_filepath, '.sym')
+      puts new_filename
+      # system "ln -s #{File.join(@dotfile_dir, sym_filepath)} ~/.#{new_filename}"}
+    end
+
+    # symlink_files.map{|file| system "ln -s #{@symlink_files_dir}/#{file} ~/.#{file}"}
   end
 
 

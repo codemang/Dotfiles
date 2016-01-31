@@ -1,0 +1,206 @@
+#!/usr/local/bin/zsh
+
+export ZSH="$HOME/.oh-my-zsh"
+export VIM_LOCATION="/usr/local/Cellar/macvim/7.4-77/MacVim.app/Contents/MacOS/Vim"
+export EDITOR="$VIM_LOCATION"
+export ARCHFLAGS="-arch x86_64"
+export HOMEBREW_CASK_OPTS="--appdir=/Applications"
+export AWS_CREDENTIAL_FILE="~/.aws/credentials"
+export HOST_ENV="development"
+export HISTCONTROL=ignoreboth:erasedups
+
+source "$ZSH/oh-my-zsh.sh"
+source "$HOME/Dotfiles/tmuxinator.zsh"
+source "$HOME/Dotfiles/vagrant/vagrant_alias"
+
+setopt CORRECT
+
+unsetopt inc_append_history
+unsetopt share_history
+
+# Create prompt
+source "$HOME/Dotfiles/symlink_files/zshrc_prompt"
+
+export LD_BIND_NOW=1
+export CLICOLOR=1
+export LSCOLORS=gxBxhxDxfxhxhxhxhxcxcx
+
+# --------------------------------------------------------
+#                ALIASES
+# --------------------------------------------------------
+
+# LS SHORTCUTS
+alias ls="ls -G"
+alias la="ls -A"
+alias ll="ls -l -h"
+alias lla="ls -al"
+alias lal="ls -al"
+alias lh="ls -d .??*"
+alias llh="ls -ld -h  .??*"
+alias lhl="ls -ld -h .??*"
+alias ld="ls -d */" # Show directories
+alias lg="ls | grep"
+alias le="find . -maxdepth 1  -type f -perm -u=x" # Show executables
+alias lf="ls | egrep -v '^d'"
+alias clr="clear"
+
+# NAV SHORTCUTS
+alias dl="cd ~/Downloads"
+alias vbundle="cd ~/.vim/bundle"
+alias lello="cd ~/Bookbub/lello"
+alias pulp="cd ~/Bookbub/pulp"
+alias spine="cd ~/Bookbub/spine"
+alias hedwig="cd ~/Bookbub/hedwig"
+alias forklift="cd ~/Bookbub/forklift"
+alias dot="cd ~/Dotfiles"
+
+# GIT SHORTCUTS
+
+# checkout
+alias co="git checkout"
+alias cob="git checkout -b"
+alias cod="git branch -d"
+alias codd="git branch -D"
+alias col="git checkout -"
+alias mirrorf="git checkout origin/master --"
+
+# push
+alias push="git push"
+alias pusho="git push origin "
+
+# pull
+alias pull="git pull"
+alias pullo="git pull origin"
+
+# commit
+alias cmt="git commit -am"
+alias amend="git commit -a --amend"
+alias amendn="git commit -a --amend --no-edit"
+alias wip="git commit -am 'WIP'"
+
+# reset
+function confirm_cmd() {
+  echo -n "$1? [y/n]: "
+  read answer
+
+  if [ "$answer" = "y" ]
+  then
+    eval $2
+  else
+    echo "Aborting"
+  fi
+}
+
+function undo() {
+  git reset HEAD~${1-1} --mixed
+}
+
+function mirror() {
+  branch=""
+  if [ ! -z $1 ]
+  then
+    branch="$1"
+  else
+    branch="$(git_branch)"
+  fi
+  confirm_cmd "Are you sure you want to reset --hard to remote branch $branch" "git fetch; git reset --hard origin/$branch"
+}
+
+function wipe() {
+  confirm_cmd "Are you sure you want to wipe your changes" "git add -A; git commit -qm 'WIPE SAVEPOINT'; git reset HEAD~${1-1} --hard"
+}
+
+function gclean() {
+  git checkout master
+  if [ $? -eq 0 ]
+  then
+    git branch --merged ${1-master} | grep -v " ${1-master}$" | xargs git branch -d;
+  fi
+}
+
+
+# status
+alias cubr="git branch"
+alias stat="git status"
+alias pstat="git status -s"
+alias log="git log --graph"
+alias logo="git log --graph --oneline"
+alias gls="log --pretty=format:\"%C(yellow)%h %Creset%s%Cblue [%cn]\" --decorate"
+alias gll="log --pretty=format:\"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]\" --decorate --numstat"
+
+alias diff="git diff"
+alias cherry="git cherry -v"
+
+# rebase
+alias gm="git checkout master && git pull origin master"
+alias rem="git rebase -i master"
+function re() {
+  git rebase -i HEAD~${1-1}
+}
+
+# MISCELLENEOUS SHORTCUTS
+alias unsu="sudo -k;"
+alias su="sudo -s"
+alias sub="/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl"
+alias src="source ~/.zshrc"
+alias m="make"
+alias app="cd /Applications"
+alias serv="python -m SimpleHTTPServer 8000"
+alias editcron="env EDITOR=vim crontab -e"
+alias mem="top -l 1 | ag Phys"
+alias notifyDone='reattach-to-user-namespace terminal-notifier -title "Hey Nate" -message "Done with task!"'
+alias zprompt="vim ~/Dotfiles/symlink_files/zshrc_prompt"
+
+# VIM
+alias vim="$VIM_LOCATION"
+alias v="vim"
+alias vimrc="vim ~/.vimrc"
+alias zpref="vim ~/.zshrc"
+alias vtree="vim -c ':CommandT'"
+alias vnerd="vim -c ':NERDTree'"
+
+# BOOKBUB
+alias sshs='ssh bookbub-staging'
+alias sshp='ssh bookbub-production'
+alias slog='ssh -N stage-tunnel'
+alias plog='ssh -N prod-tunnel'
+
+# RAILS
+alias mig="bin/rake db:migrate"
+alias prep="bin/rake db:test:prepare"
+
+# VAGRANT
+alias vup="vagrant up"
+alias vdest="vagrant destroy"
+alias vssh="vagrant ssh"
+alias vprov="vagrant provision"
+alias vls="vagrant global-status"
+alias vr="vagrant resume"
+
+# TMUX
+alias tn="tmux new -s"
+alias ta="tmux attach -t"
+alias tpref="vim ~/.tmux.conf"
+alias tsource="tmux source-file $HOME/.tmux.conf"
+alias tls="tmux list-sessions"
+alias ts="tmux switch -t"
+alias td="tmux detach"
+alias tk="tmux kill-session -t"
+
+
+source "$HOME/.fzf.zsh"
+export FZF_COMPLETION_TRIGGER=',,'
+export FZF_DEFAULT_COMMAND='ag -g ""'
+
+# Toggle between vim and shell with ctrl-z
+fancy-ctrl-z () {
+  if [[ $#BUFFER -eq 0 ]]; then
+    BUFFER="fg"
+    zle accept-line
+  else
+    zle push-input
+    zle clear-screen
+  fi
+}
+zle -N fancy-ctrl-z
+bindkey '^Z' fancy-ctrl-z
