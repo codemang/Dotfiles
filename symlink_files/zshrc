@@ -148,7 +148,7 @@ alias app="cd /Applications"
 alias serv="python -m SimpleHTTPServer 8000"
 alias editcron="env EDITOR=vim crontab -e"
 alias mem="top -l 1 | ag Phys"
-alias notifyDone='reattach-to-user-namespace terminal-notifier -title "Codemang" -message "Done with task!"'
+alias notifyDone='reattach-to-user-namespace terminal-notifier -title "Hey Nate" -message "Done with task!"'
 alias zprompt="vim ~/Dotfiles/symlink_files/zshrc_prompt"
 
 # VIM
@@ -181,7 +181,7 @@ alias vr="vagrant resume"
 alias tn="tmux new -s"
 alias ta="tmux attach -t"
 alias tpref="vim ~/.tmux.conf"
-alias tsource="tmux source-file /Users/codemang/.tmux.conf"
+alias tsource="tmux source-file $HOME/.tmux.conf"
 alias tls="tmux list-sessions"
 alias ts="tmux switch -t"
 alias td="tmux detach"
