@@ -21,9 +21,13 @@ namespace :dotfiles do
 
     if good_exit_from_command?('zsh --version')
       system 'brew upgrade zsh'
-      system 'upgrade_oh_my_zsh'
     else
       system 'brew install zsh'
+    end
+
+    if File.exist? File.expand_path("~/.oh-my-zsh")
+      system 'upgrade_oh_my_zsh'
+    else
       system "git clone git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh"
     end
 
@@ -67,9 +71,9 @@ namespace :dotfiles do
     system "rm ~/.zshrc"
     system "rm ~/.vimrc"
     system "rm ~/.vim"
-    system "rm ~/.oh-my-zsh"
     system "rm ~/.tmux.conf"
     system "rm ~/.gitconfig"
+    system "rm -rf ~/.oh-my-zsh"
   end
 end
 

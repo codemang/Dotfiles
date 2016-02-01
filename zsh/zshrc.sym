@@ -19,7 +19,7 @@ unsetopt inc_append_history
 unsetopt share_history
 
 # Create prompt
-source "$HOME/Dotfiles/symlink_files/zshrc_prompt"
+source "$HOME/Dotfiles/zsh/zshrc_prompt"
 
 export LD_BIND_NOW=1
 export CLICOLOR=1
@@ -149,7 +149,7 @@ alias serv="python -m SimpleHTTPServer 8000"
 alias editcron="env EDITOR=vim crontab -e"
 alias mem="top -l 1 | ag Phys"
 alias notifyDone='reattach-to-user-namespace terminal-notifier -title "Hey Nate" -message "Done with task!"'
-alias zprompt="vim ~/Dotfiles/symlink_files/zshrc_prompt"
+alias zprompt="vim ~/Dotfiles/zsh/zshrc_prompt"
 
 # VIM
 alias vim="$VIM_LOCATION"
