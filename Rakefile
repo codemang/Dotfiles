@@ -46,8 +46,8 @@ namespace :dotfiles do
     end
 
     # Install vim plugins and upgrade vim plug
-    system "$EDITOR -c ':PlugInstall' -c 'qa!'"
-    system "$EDITOR -c 'PlugUpgrade' -c 'qa!'"
+    system "vim -c ':PlugInstall' -c 'qa!'"
+    system "vim -c 'PlugUpgrade' -c 'qa!'"
     print_footer
   end
 
@@ -61,7 +61,6 @@ namespace :dotfiles do
     end
     print_footer
   end
-
 
   task :install => [:install_home_brew, :install_zsh, :symlink, :install_vim_plugins] do
     print_header "Done! You da best!"
