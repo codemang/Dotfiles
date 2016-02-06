@@ -47,7 +47,6 @@ namespace :dotfiles do
     # Install vim plugins and upgrade vim plug
     system "$EDITOR -c ':PlugInstall' -c 'qa!'"
     system "$EDITOR -c 'PlugUpgrade' -c 'qa!'"
-    print_footer
   end
 
 
@@ -63,10 +62,9 @@ namespace :dotfiles do
 
   task :setup => [:install_home_brew, :install_zsh, :symlink] do
     print_header "Source your .zshrc and run 'rake update'"
-    print_footer
   end
 
-  task :setup => [:install_vim_plugins] do
+  task :update => [:install_vim_plugins] do
   end
 
   task :remove_files do
@@ -80,5 +78,6 @@ namespace :dotfiles do
 end
 
 task :default => ["dotfiles:update"]
+task :update => ["dotfiles:update"]
 task :setup => ["dotfiles:setup"]
 task :clean => ["dotfiles:remove_files"]
