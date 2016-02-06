@@ -2,7 +2,6 @@ require_relative 'functional_helpers'
 include FunctionalHelpers
 
 namespace :dotfiles do
-
   task :install_home_brew do
     print_header 'Installing/Upgrading homebrew and all brews/casks'
 
@@ -46,8 +45,8 @@ namespace :dotfiles do
     end
 
     # Install vim plugins and upgrade vim plug
-    system "vim -c ':PlugInstall' -c 'qa!'"
-    system "vim -c 'PlugUpgrade' -c 'qa!'"
+    system "$EDITOR -c ':PlugInstall' -c 'qa!'"
+    system "$EDITOR -c 'PlugUpgrade' -c 'qa!'"
     print_footer
   end
 
@@ -62,8 +61,12 @@ namespace :dotfiles do
     print_footer
   end
 
-  task :install => [:install_home_brew, :install_zsh, :symlink, :install_vim_plugins] do
-    print_header "Done! You da best!"
+  task :setup => [:install_home_brew, :install_zsh, :symlink] do
+    print_header "Source your .zshrc and run 'rake update'"
+    print_footer
+  end
+
+  task :setup => [:install_vim_plugins] do
   end
 
   task :remove_files do
@@ -76,5 +79,6 @@ namespace :dotfiles do
   end
 end
 
-task :default => ["dotfiles:install"]
+task :default => ["dotfiles:update"]
+task :setup => ["dotfiles:setup"]
 task :clean => ["dotfiles:remove_files"]

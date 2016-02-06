@@ -112,7 +112,7 @@ set backspace=indent,eol,start
 set background=dark
 set number                                       " Show line numbers
 set shortmess=atI                                " No welcome message
-set re=1                                         " Improve ruby speed
+" set re=1                                         " Improve ruby speed
 set t_Co=256                                     " Set vim to use 256 colors
 set laststatus=2                                 " Always show vim-airline status
 set splitbelow                                   " Open new pane to the bottom
