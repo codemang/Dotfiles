@@ -13,7 +13,7 @@ call plug#begin('~/.vim/plugged')
 
 " Auto Complete/Suggestions
 " Needs CMake via Homebrew
-" Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
 
 " Adds endif in ruby
 Plug 'tpope/vim-endwise'

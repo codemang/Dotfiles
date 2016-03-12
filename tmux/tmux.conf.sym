@@ -22,14 +22,7 @@ unbind C-b
 
 set -g history-limit 5000
 set-option -g -q mouse on
-# set -ga terminal-overrides ',xterm*:smcup@:rmcup@'
-# set-window-option -g mode-mouse on
-# set-option -g mouse-select-pane on
-# set-option -g mouse-select-window on
-# setw -g mode-mouse on
 
-# set -g mouse-utf8 on
-# set -g mouse on
 
 # command delay? We don't want that, make it short
 set -sg escape-time 1
@@ -37,14 +30,16 @@ set -sg escape-time 1
 # Allow us to reload our Tmux configuration while
 # using Tmux
 bind r source-file ~/.tmux.conf \; display "Reloaded!"
+bind s tmux set-option default-path "$PWD"
 
 # Getting interesting now, we use the vertical and horizontal
 # symbols to split the screen
 bind | split-window -h
 bind - split-window -v
 
-# smart pane switching with awareness of vim splits
-is_vim='echo "#{pane_current_command}" | grep -iqE "(^|\/)g?(view|n?vim?)(diff)?$"'
+# Smart pane switching with awareness of vim splits
+# # See: https://github.com/christoomey/vim-tmux-navigator
+is_vim='echo "#{pane_current_command}" | grep -iqE "(^|\/)g?(view|n?vim?x?)(diff)?$"'
 bind -n C-h if-shell "$is_vim" "send-keys C-h" "select-pane -L"
 bind -n C-j if-shell "$is_vim" "send-keys C-j" "select-pane -D"
 bind -n C-k if-shell "$is_vim" "send-keys C-k" "select-pane -U"
@@ -56,8 +51,6 @@ bind -r H resize-pane -L 5
 bind -r J resize-pane -D 5
 bind -r K resize-pane -U 5
 bind -r L resize-pane -R 5
-# set -g status off
-
 
 # Set border color options
 set -g pane-border-style fg=black
