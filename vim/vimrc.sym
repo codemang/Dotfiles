@@ -109,7 +109,7 @@ filetype plugin indent on
 
 set nocompatible"
 set backspace=indent,eol,start
-set background=dark
+set background=light
 set number                                       " Show line numbers
 set shortmess=atI                                " No welcome message
 " set re=1                                         " Improve ruby speed
