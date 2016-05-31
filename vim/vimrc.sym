@@ -87,6 +87,8 @@ Plug 'junegunn/goyo.vim'
 
 Plug 'ntpeters/vim-better-whitespace'
 
+Plug 'henrik/vim-indexed-search'
+
 call plug#end()
 
 
@@ -103,13 +105,17 @@ let &t_SI = "\<Esc>]50;CursorShape=2\x7"         " Underscore in insert mode
 let &t_EI = "\<Esc>]50;CursorShape=0\x7"         " Solid block in other modes
 let @/=''                                        " Empty search register so sourcing doesn't highlight
 
-colorscheme solarized
+
+
+
+
+set background=dark
+colorscheme onedark
 
 filetype plugin indent on
 
 set nocompatible"
 set backspace=indent,eol,start
-set background=light
 set number                                       " Show line numbers
 set shortmess=atI                                " No welcome message
 " set re=1                                         " Improve ruby speed
@@ -148,6 +154,7 @@ hi WildMenu ctermbg=black ctermfg=white
 
 highlight NonText ctermfg=0                      " Make tildas invisible below code
 " highlight LineNr ctermfg=161 ctermbg=0           " Color left column
+hi Search cterm=NONE ctermfg=black ctermbg=white
 
 
 
@@ -242,7 +249,9 @@ let g:ansible_extra_syntaxes = "/usr/share/vim/vim73/syntax/sh.vim /usr/share/vi
 
 
 " ------------------------------- Ag Vim -------------------------------
-nmap <leader>a :Ag
+nmap <leader>ag :Ag '
+nmap <leader>as :Ag "<C-R><C-W>"<CR>
+" nmap <leader>as :Ag "<C-R><C-W>"<CR>:cw<CR>
 let g:ag_highlight=1
 
 
@@ -260,6 +269,7 @@ let g:airline_right_sep=''
 let g:airline_section_z=''
 
 let g:ycm_autoclose_preview_window_after_insertion=1
+let g:airline_powerline_fonts = 1
 
 " ------------------------------- Git GUtter ---------------------------
 command! GutSign execute "GitGutterSignsToggle"
@@ -282,5 +292,3 @@ au BufNewFile,BufRead *.json.jbuilder set ft=ruby
 hi EasyMotionTarget ctermbg=none ctermfg=red
 hi EasyMotionTarget2Second ctermbg=none ctermfg=red
 hi EasyMotionTarget2First ctermbg=none ctermfg=red
-
-hi Search cterm=NONE ctermfg=black ctermbg=red

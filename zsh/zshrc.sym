@@ -25,6 +25,10 @@ export LD_BIND_NOW=1
 export CLICOLOR=1
 export LSCOLORS=gxBxhxDxfxhxhxhxhxcxcx
 
+zstyle ':completion:*' list-colors "${(@s.:.)LS_COLORS}"
+autoload -Uz compinit
+compinit
+
 # --------------------------------------------------------
 #                ALIASES
 # --------------------------------------------------------
@@ -124,11 +128,9 @@ alias cubr="git branch"
 alias stat="git status"
 alias pstat="git status -s"
 alias log="git log --graph"
-alias logo="git log --graph --oneline"
-alias gls="log --pretty=format:\"%C(yellow)%h %Creset%s%Cblue [%cn]\" --decorate"
-alias gll="log --pretty=format:\"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]\" --decorate --numstat"
+alias logo="git log --pretty=format:'%Cred%h%Creset - %s %Cgreen(%cr) %C(blue)<%an>%Creset' --abbrev-commit"
 
-alias diff="git diff"
+# alias diff="git diff"
 alias cherry="git cherry -v"
 
 # rebase
@@ -165,6 +167,9 @@ alias sshp='ssh bookbub-production'
 alias slog='ssh -N stage-tunnel'
 alias plog='ssh -N prod-tunnel'
 
+# SSH
+alias tunnel='autossh -M 20055 -f -N'
+
 # RAILS
 alias mig="bin/rake db:migrate"
 alias prep="bin/rake db:test:prepare"
@@ -191,6 +196,11 @@ alias tk="tmux kill-session -t"
 source "$HOME/.fzf.zsh"
 export FZF_COMPLETION_TRIGGER=',,'
 export FZF_DEFAULT_COMMAND='ag -g ""'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_DEFAULT_COMMAND='
+  (git ls-tree -r --name-only HEAD ||
+       find . -path "*/\.*" -prune -o -type f -print -o -type l -print |
+        sed s/^..//) 2> /dev/null'
 
 # Toggle between vim and shell with ctrl-z
 fancy-ctrl-z () {
