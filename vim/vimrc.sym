@@ -89,6 +89,8 @@ Plug 'ntpeters/vim-better-whitespace'
 
 Plug 'henrik/vim-indexed-search'
 
+Plug 'suan/vim-instant-markdown'
+
 call plug#end()
 
 
