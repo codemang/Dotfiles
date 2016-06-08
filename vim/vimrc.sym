@@ -91,6 +91,8 @@ Plug 'henrik/vim-indexed-search'
 
 Plug 'suan/vim-instant-markdown'
 
+Plug 'tpope/vim-unimpaired'
+
 call plug#end()
 
 
@@ -107,10 +109,7 @@ let &t_SI = "\<Esc>]50;CursorShape=2\x7"         " Underscore in insert mode
 let &t_EI = "\<Esc>]50;CursorShape=0\x7"         " Solid block in other modes
 let @/=''                                        " Empty search register so sourcing doesn't highlight
 
-
-
-
-
+set t_Co=256                                     " Set vim to use 256 colors
 set background=dark
 colorscheme onedark
 
@@ -121,7 +120,6 @@ set backspace=indent,eol,start
 set number                                       " Show line numbers
 set shortmess=atI                                " No welcome message
 " set re=1                                         " Improve ruby speed
-set t_Co=256                                     " Set vim to use 256 colors
 set laststatus=2                                 " Always show vim-airline status
 set splitbelow                                   " Open new pane to the bottom
 set splitright                                   " Open new pane to the right
