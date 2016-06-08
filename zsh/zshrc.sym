@@ -152,6 +152,7 @@ alias editcron="env EDITOR=vim crontab -e"
 alias mem="top -l 1 | ag Phys"
 alias notifyDone='reattach-to-user-namespace terminal-notifier -title "Hey Nate" -message "Done with task!"'
 alias zprompt="vim ~/Dotfiles/zsh/zshrc_prompt"
+alias findc="ps aux | grep"
 
 # VIM
 alias vim="$VIM_LOCATION"

@@ -19,7 +19,6 @@ set -g pane-base-index 1
 set -g prefix C-a
 unbind C-b
 
-
 set -g history-limit 5000
 set-option -g -q mouse on
 
@@ -30,11 +29,10 @@ set -sg escape-time 1
 # Allow us to reload our Tmux configuration while
 # using Tmux
 bind r source-file ~/.tmux.conf \; display "Reloaded!"
-bind s tmux set-option default-path "$PWD"
 
 # Getting interesting now, we use the vertical and horizontal
 # symbols to split the screen
-bind | split-window -h
+bind \ split-window -h
 bind - split-window -v
 
 # Smart pane switching with awareness of vim splits
