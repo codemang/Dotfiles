@@ -149,6 +149,8 @@ alias rem="git rebase -i master"
 function re() {
   git rebase -i HEAD~${1-1}
 }
+alias rec="git rebase --continue"
+alias rea="git rebase --abort"
 
 # MISCELLENEOUS SHORTCUTS
 alias unsu="sudo -k;"

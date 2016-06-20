@@ -4,8 +4,11 @@
 [core]
 	askpass = git-gui--askpass
 	excludesfile = ~/.gitignore
+  editor = /usr/local/Cellar/macvim/7.4-77/MacVim.app/Contents/MacOS/Vim
 [merge]
-	tool = vim.diff
+	tool = vimdiff
+  conflictstyle = diff3
+  prompt = false
 [color]
 	ui = auto
 	status = auto

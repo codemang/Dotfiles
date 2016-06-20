@@ -157,6 +157,9 @@ highlight NonText ctermfg=0                      " Make tildas invisible below c
 hi Search cterm=NONE ctermfg=black ctermbg=white
 
 
+" Reselect visual block after indent/outdent.
+vnoremap < <gv
+vnoremap > >gv
 
 " --------------------- To consider ---------------------
 " set lazyredraw
