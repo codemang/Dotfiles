@@ -1,14 +1,3 @@
-" |-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*|
-" *                                                                    *
-" |                            Nates Vimrc                             |
-" *                                                                    *
-" |-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*|
-
-
-" |-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*|
-"                                 Plugins
-" |-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*|
-
 call plug#begin('~/.vim/plugged')
 
 " Auto Complete/Suggestions
@@ -38,13 +27,7 @@ Plug 'easymotion/vim-easymotion'
 Plug 'rking/ag.vim'
 
 " Syntax highlighting for ansible
-Plug 'pearofducks/ansible-vim'
-
-" Syntax highlighting for ansible
 Plug 'Glench/Vim-Jinja2-Syntax'
-
-" Undo tree
-Plug 'sjl/gundo.vim'
 
 " Use git commands in vim
 Plug 'tpope/vim-fugitive'
@@ -85,110 +68,149 @@ Plug 'vim-ruby/vim-ruby'
 " Zen Mode, credits to Ustasb
 Plug 'junegunn/goyo.vim'
 
+" Highlight extra whitespace
 Plug 'ntpeters/vim-better-whitespace'
 
+" Show match number when searching
 Plug 'henrik/vim-indexed-search'
 
+" Pull up chrome tab when viewing markdown
 Plug 'suan/vim-instant-markdown'
 
+" Key mappings for navigating git commit history
 Plug 'tpope/vim-unimpaired'
+
+Plug 'vim-airline/vim-airline-themes'
+
+Plug 'thoughtbot/vim-rspec'
+Plug 'jgdavey/tslime.vim'
+
+Plug 'tpope/vim-rails'
+
+Plug 'isRuslan/vim-es6'
+
+Plug 'chriskempson/base16-vim'
+
+Plug 'scrooloose/syntastic'
+
+" Close xhtml tags
+Plug 'alvan/vim-closetag'
 
 call plug#end()
 
-
-
-" |-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*|
-"                                 Custom Vim Settings
-" |-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*|
-
-syntax on
-
-let mapleader=","                                " Set my leader to '-'
-let g:ruby_path = system('/usr/bin/ruby')        " Improve ruby speed
-let &t_SI = "\<Esc>]50;CursorShape=2\x7"         " Underscore in insert mode
-let &t_EI = "\<Esc>]50;CursorShape=0\x7"         " Solid block in other modes
-let @/=''                                        " Empty search register so sourcing doesn't highlight
-
-set t_Co=256                                     " Set vim to use 256 colors
-set background=dark
-colorscheme onedark
-
 filetype plugin indent on
+syntax enable
 
-set nocompatible"
-set backspace=indent,eol,start
-set number                                       " Show line numbers
-set shortmess=atI                                " No welcome message
-" set re=1                                         " Improve ruby speed
-set laststatus=2                                 " Always show vim-airline status
-set splitbelow                                   " Open new pane to the bottom
-set splitright                                   " Open new pane to the right
-set noerrorbells visualbell t_vb=                " Disable bells
+" Use 24-bit (true-color) mode in Vim/Neovim when outside tmux.
+" If you're using tmux version 2.2 or later, you can remove the outermost $TMUX check and use tmux's 24-bit color support
+" (see < http://sunaku.github.io/tmux-24bit-color.html#usage > for more information.)
+if (empty($TMUX))
+  if (has("nvim"))
+  "For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
+  let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+  endif
+  "For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
+  "Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
+  " < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
+  if (has("termguicolors"))
+    set termguicolors
+  endif
+endif
 
-set expandtab                                    " Make tab into spaces
-set tabstop=2                                    " Set tab width to 2 spaces
-set shiftwidth=2                                 " Make <,> tab use 2 spaces
-set softtabstop=2                                " Make <,> tab use 2 spaces
-set autoindent                                   " Auto indent
-set smartindent                                  " Smart indent
+" Color theme
+set t_Co=256
+set background=dark
+" colorscheme base16-chalk
+colorscheme base16-ashes
+
+let g:one_allow_italics = 1
+
+let mapleader=","
+
+" Misc
+set mouse=a
+set nocompatible " Use all new vim functionality, as opposed to vi
+set backspace=indent,eol,start " Make backspace work as expected
+set number " Show line numbers
+set shortmess=atI " No welcome message
+set laststatus=2 " Always show vim-airline status
+set splitbelow " Open new pane to the bottom
+set splitright " Open new pane to the right
+set noerrorbells visualbell t_vb= " Disable bells
+
+" Tabs and indenting
+set expandtab
+set tabstop=2
+set shiftwidth=2
+set softtabstop=2
+set autoindent
+set smartindent
 set shiftround
 set smarttab
 
-set hlsearch                                     " Highlight search results
-set incsearch                                    " Search as characters are entered
-set ignorecase                                   " Ignore case when searching
-set smartcase                                    " Unless capital letter
-
-set scrolloff=3                                  " Keep 5 rows beneath cursor when scrolling
+" Scroll relative to cursor
+set scrolloff=3
 set sidescrolloff=15
 
-set wildmenu
-set wildmode=full
-
+" No swp files
 set noswapfile
 set nobackup
 set nowb
 
+" Wild menu
+set wildmenu
+set wildmode=full
 hi StatusLine ctermbg=white ctermfg=black
 hi WildMenu ctermbg=black ctermfg=white
 
-highlight NonText ctermfg=0                      " Make tildas invisible below code
-" highlight LineNr ctermfg=161 ctermbg=0           " Color left column
-hi Search cterm=NONE ctermfg=black ctermbg=white
+" Make tildas invisible below code
+highlight NonText ctermfg=0
 
+" Search
+set hlsearch
+set incsearch
+set ignorecase
+set smartcase
+hi Search cterm=NONE ctermfg=white ctermbg=red
+
+" Set ruby path for more speed
+let g:ruby_path = system('/usr/bin/ruby')
+
+" Prevent highlighting when sourcing vimrc
+let @/=''
 
 " Reselect visual block after indent/outdent.
 vnoremap < <gv
 vnoremap > >gv
 
-" --------------------- To consider ---------------------
-" set lazyredraw
-" copy to clipboard
-" no swp files
-" nnoremap j gj
-" nnoremap k gk
-" set ttyfast
-" set gdefault
-" set autoread                    "Reload files changed outside vim
+" Move up and down through visual lines
+nnoremap j gj
+nnoremap k gk
 
-
-
-" |-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*|
-"                                 Custom Vim Mappings
-" |-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*|
+" Auto format with new lines in visual mode
+vmap Q gq
 
 " Remap escape to fd
 inoremap kj <Esc>
 inoremap <esc> <nop>
 
+" Vimrc editing and sourcing
 nmap <Leader>vv :e ~/.vimrc<CR>
 nmap <Leader>s :source ~/.vimrc<CR>
+
+" Basic save/open/quit operations
 nmap <Leader>w :w<CR>
 nmap <Leader>e :e
 nmap <Leader>q :q<CR>
 nmap <Leader>wq :wq<CR>
+
+" Toggle buffers
 nmap <Leader>j :e #<CR>
+
+" Remove highlighting
 nmap <Leader>h :noh<CR>
+
+" Add a line below/above and stay in normal mode
 nmap <Space>] Okj
 nmap <Space>[ okj
 
@@ -222,12 +244,7 @@ function! SudoSaveFile()
 endfunction
 command! SudoSave call SudoSaveFile()
 
-
-" |-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*|
-"                      Custom Plugin Settings And Mappings
-" |-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*|
-
-" ------------------------------- NERD Tree ----------------------------
+" ---- NERD Tree ----
 let g:NERDTreeWinSize = 40
 
 nmap <Leader>nn :NERDTree <CR>
@@ -238,12 +255,11 @@ nmap <Leader>nm :NERDTreeMirror <CR>
 nmap <Leader>nw :NERDTreeCWD <CR>
 nmap <Leader>nc :NERDTreeFind <CR>
 
-" ----------------------------- GitHub Comment -------------------------
+" ---- GitHub Comment ----
 nmap <Leader>ghc :GHComment
 let g:github_user = 'codemang'
 
-
-" ------------------------------- FZF ----------------------------------
+" ---- FZF ----
 nmap <Leader>t :FZF! <CR>
 command! FZFMru call fzf#run({
 \  'source':  v:oldfiles,
@@ -252,44 +268,83 @@ command! FZFMru call fzf#run({
 \  'down':    '40%'})
 nmap <Leader>r :FZFMru <CR>
 
-
-" ------------------------------- Ansible Vim --------------------------
+" ---- Ansible Vim ----
 let g:ansible_extra_syntaxes = "/usr/share/vim/vim73/syntax/sh.vim /usr/share/vim/vim73/syntax/ruby.vim"
 
-
-" ------------------------------- Ag Vim -------------------------------
+" ---- Ag Vim ----
 nmap <leader>ag :Ag '
 nmap <leader>as :Ag "<C-R><C-W>"<CR>
-" nmap <leader>as :Ag "<C-R><C-W>"<CR>:cw<CR>
 let g:ag_highlight=1
 
-
-" ------------------------------- Vim Markdown -------------------------
+" ---- Vim Markdown ----
 let g:vim_markdown_folding_disabled=1
 
-
-" ------------------------------- Gundo --------------------------------
-nnoremap <leader>u :GundoToggle<CR>
-
-
-" ------------------------------- Airline Vim --------------------------
-let g:airline_left_sep=''
-let g:airline_right_sep=''
+" ---- Airline Vim ----
+" let g:airline_left_sep=''
+" let g:airline_right_sep=''
 let g:airline_section_z=''
 
-let g:ycm_autoclose_preview_window_after_insertion=1
-let g:airline_powerline_fonts = 1
+set encoding=utf-8
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#fnamemod = ':t'
+let g:airline_theme = 'deep_space'
 
-" ------------------------------- Git GUtter ---------------------------
+let g:airline_powerline_fonts = 1
+if !exists('g:airline_symbols')
+  let g:airline_symbols = {}
+endif
+
+" unicode symbols
+let g:airline_left_sep = '»'
+let g:airline_left_sep = ''
+let g:airline_right_sep = '«'
+let g:airline_right_sep = ''
+let g:airline_symbols.linenr = '␊'
+let g:airline_symbols.linenr = '␤'
+let g:airline_symbols.linenr = '¶'
+let g:airline_symbols.branch = '⎇'
+let g:airline_symbols.paste = 'ρ'
+let g:airline_symbols.paste = 'Þ'
+let g:airline_symbols.paste = '∥'
+let g:airline_symbols.whitespace = 'Ξ'
+
+
+" This allows buffers to be hidden if you've modified a buffer.
+" This is almost a must if you wish to use buffers in this way.
+set hidden
+
+" To open a new empty buffer
+" This replaces :tabnew which I used to bind to this mapping
+nmap <Space>t :enew<cr>
+
+" Move to the next buffer
+nmap <Space>l :bnext<CR>
+
+" Move to the previous buffer
+nmap <Space>h :bprevious<CR>
+
+" Close the current buffer and move to the previous one
+" This replicates the idea of closing a tab
+nmap <Space>q :bp <BAR> bd #<CR>
+
+
+" ---- Git Gutter ----
 command! GutSign execute "GitGutterSignsToggle"
 
+" ---- Vimux ----
 map <Leader>vp :VimuxPromptCommand<CR>
 map <Leader>vl :VimuxRunLastCommand<CR>
 map <Leader>vr :call VimuxRunCommand("clear; vagrant ssh -c rspec " . bufname("%"))<CR>
 
 let VimuxUseNearest = 0
 
+" ---- Goyo Vim ----
 nmap <Leader>gy :Goyo<CR>
+
+" ---- Easy Motion
+hi EasyMotionTarget ctermbg=none ctermfg=red
+hi EasyMotionTarget2Second ctermbg=none ctermfg=red
+hi EasyMotionTarget2First ctermbg=none ctermfg=red
 
 " Python tabs
 au Filetype python setl et ts=2 sw=2
@@ -297,7 +352,38 @@ au Filetype python setl et ts=2 sw=2
 " JBuilder syntax highlighting
 au BufNewFile,BufRead *.json.jbuilder set ft=ruby
 
-" Color of easy motion keys
-hi EasyMotionTarget ctermbg=none ctermfg=red
-hi EasyMotionTarget2Second ctermbg=none ctermfg=red
-hi EasyMotionTarget2First ctermbg=none ctermfg=red
+highlight Comment cterm=italic
+
+let g:rspec_command = 'call Send_to_Tmux("rspec {spec}\n")'
+
+" vim-rspec mappings
+map <Space>rf :call RunCurrentSpecFile()<CR>
+map <Space>rc :call RunNearestSpec()<CR>
+map <Space>rl :call RunLastSpec()<CR>
+map <Space>ra :call RunAllSpecs()<CR>
+
+let g:tslime_always_current_session = 1
+let g:tslime_always_current_window = 1
+
+" set cursorline
+" hi CursorLine   cterm=NONE ctermbg=darkgray ctermfg=NONE
+
+let g:syntastic_check_on_open = 0
+let g:syntastic_check_on_wq = 0
+let g:syntastic_auto_loc_list = 0
+let g:syntastic_always_populate_loc_list = 0
+let g:syntastic_loc_list_height = 5
+" Start in passive mode. Auto-linting is slow...
+let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
+nnoremap <Leader>l :SyntasticCheck<CR>
+" C++ 11 support
+let g:syntastic_cpp_checkers = ['gcc']
+let g:syntastic_cpp_compiler = 'g++-4.8'
+let g:syntastic_cpp_compiler_options = '-std=c++11'
+" JS support
+let g:syntastic_javascript_checkers = ['eslint']
+" Highlighting
+let g:syntastic_error_symbol = '❌'
+highlight link SyntasticErrorSign SignColumn
+
+let g:closetag_filenames = "*.html,*.xhtml,*.phtml,*.jsx,*.es6"

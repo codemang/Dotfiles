@@ -124,8 +124,8 @@ zle -N zle-line-init
 zle -N zle-keymap-select
 export KEYTIMEOUT=60
 
-
 dark_prompt
+
 # Generate prompt
 PS1='
 $(exit_status) $(working_directory) $(git_prompt) $(parse_git_dirty)$(up_stream)$(down_stream)${vim_mode}

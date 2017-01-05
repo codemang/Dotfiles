@@ -8,16 +8,13 @@ export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 export AWS_CREDENTIAL_FILE="~/.aws/credentials"
 export HOST_ENV="development"
 export HISTCONTROL=ignoreboth:erasedups
-
-# Set TERM to support italic inside/outside tmux
-export TERM=xterm-256color
-[ -n "$TMUX" ] && export TERM=screen-256color
-
-# Source private BB files
-source "$HOME/bb_zshrc.zsh" 2> /dev/null
+export TERM=xterm-256color-italic
+[ -n "$TMUX" ] && export TERM=screen-256color-italic
 
 source "$ZSH/oh-my-zsh.sh"
+source "$HOME/Dotfiles/tmuxinator.zsh"
 source "$HOME/Dotfiles/vagrant/vagrant_alias"
+source "$HOME/bb_zshrc.zsh" 2> /dev/null
 
 setopt CORRECT
 
@@ -35,7 +32,10 @@ zstyle ':completion:*' list-colors "${(@s.:.)LS_COLORS}"
 autoload -Uz compinit
 compinit
 
-# Set TERM when sshing to avoid problem with italics
+# --------------------------------------------------------
+#                ALIASES
+# --------------------------------------------------------
+
 function ssh() {
   if [[ "${TERM}" = xterm* ]]; then
     env TERM=xterm-256color ssh "$@"
@@ -73,22 +73,15 @@ alias dot="cd ~/Dotfiles"
 
 # GIT SHORTCUTS
 
-# Manipulating branches
-alias co="git checkout" # Switch branches
-alias cob="git checkout -b" # Create new branch
-alias cod="git branch -d" # Delete branch if merged
-alias codd="git branch -D" # Force delete branch
-alias col="git checkout -" # Switch to last branch
+# checkout
+alias co="git checkout"
+alias cob="git checkout -b"
+alias cod="git branch -d"
+alias codd="git branch -D"
+alias col="git checkout -"
+alias mirrorf="git checkout origin/master --"
 
-# Checkout git branch with fzf
-function cof() {
-  local branches branch
-  branches=$(git branch) &&
-  branch=$(echo "$branches" | fzf-tmux -d 15 +m) &&
-  git checkout $(echo "$branch" | sed "s/.* //")
-}
-
-# Push
+# push
 alias push="git push"
 alias pusho="git push origin "
 
@@ -123,10 +116,10 @@ function confirm_cmd() {
   fi
 }
 
- # Set contents of file to that of origin.
-alias mirrorf="git checkout origin/master --"
+function undo() {
+  git reset HEAD~${1-1} --mixed
+}
 
-# Set contents of repo to that of origin, overwriting any changes, with no chance of retrieval.
 function mirror() {
   branch=""
   if [ ! -z $1 ]
@@ -138,18 +131,8 @@ function mirror() {
   confirm_cmd "Are you sure you want to reset --hard to remote branch $branch" "git fetch; git reset --hard origin/$branch"
 }
 
-function mirrorm() {
-  mirror master
-}
-
-# Remove last #{n} commit/s, removing any changes, with no chance of retrieving.
 function wipe() {
   confirm_cmd "Are you sure you want to wipe your changes" "git add -A; git commit -qm 'WIPE SAVEPOINT'; git reset HEAD~${1-1} --hard"
-}
-
-# Remove last #{n} commit/s, with changes still present.
-function undo() {
-  git reset HEAD~${1-1} --mixed
 }
 
 function gclean() {
@@ -158,6 +141,14 @@ function gclean() {
   then
     git branch --merged ${1-master} | grep -v " ${1-master}$" | xargs git branch -d;
   fi
+}
+
+# Checkout git branch with fzf
+function cof() {
+  local branches branch
+  branches=$(git branch) &&
+  branch=$(echo "$branches" | fzf-tmux -d 15 +m) &&
+  git checkout $(echo "$branch" | sed "s/.* //")
 }
 
 # status
@@ -184,18 +175,22 @@ alias unsu="sudo -k;"
 alias su="sudo -s"
 alias sub="/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl"
 alias src="source ~/.zshrc"
+alias m="make"
+alias app="cd /Applications"
 alias serv="python -m SimpleHTTPServer 8000"
 alias editcron="env EDITOR=vim crontab -e"
 alias mem="top -l 1 | ag Phys"
 alias notifyDone='reattach-to-user-namespace terminal-notifier -title "Hey Nate" -message "Done with task!"'
 alias zprompt="vim ~/Dotfiles/zsh/zshrc_prompt"
-alias findp="ps aux | grep"
+alias findc="ps aux | grep"
 
 # VIM
 alias vim="$VIM_LOCATION"
 alias v="vim"
 alias vimrc="vim ~/.vimrc"
 alias zpref="vim ~/.zshrc"
+alias vtree="vim -c ':CommandT'"
+alias vnerd="vim -c ':NERDTree'"
 
 # BOOKBUB
 alias sshs='ssh bookbub-staging'
@@ -206,16 +201,17 @@ alias plog='ssh -N prod-tunnel'
 # SSH
 alias tunnel='autossh -M 20055 -f -N'
 
+# RAILS
+alias mig="bin/rake db:migrate"
+alias prep="bin/rake db:test:prepare"
+
 # VAGRANT
 alias vup="vagrant up"
 alias vdest="vagrant destroy"
+alias vssh="vagrant ssh"
 alias vprov="vagrant provision"
 alias vls="vagrant global-status"
 alias vr="vagrant resume"
-
-function vssh() {
-  ssh $(vagrant ssh-config ${1-default} | awk '{print " -o "$1"="$2}') localhost
-}
 
 # TMUX
 alias tn="tmux new -s"
@@ -227,7 +223,7 @@ alias ts="tmux switch -t"
 alias td="tmux detach"
 alias tk="tmux kill-session -t"
 
-# FZF
+
 source "$HOME/.fzf.zsh"
 export FZF_COMPLETION_TRIGGER=',,'
 export FZF_DEFAULT_COMMAND='ag -g ""'
@@ -251,60 +247,3 @@ zle -N fancy-ctrl-z
 bindkey '^Z' fancy-ctrl-z
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-# Colorized man pages
-man() {
-	env \
-		LESS_TERMCAP_mb=$(printf "\e[1;31m") \
-		LESS_TERMCAP_md=$(printf "\e[1;31m") \
-		LESS_TERMCAP_me=$(printf "\e[0m") \
-		LESS_TERMCAP_se=$(printf "\e[0m") \
-		LESS_TERMCAP_so=$(printf "\e[1;44;33m") \
-		LESS_TERMCAP_ue=$(printf "\e[0m") \
-		LESS_TERMCAP_us=$(printf "\e[1;32m") \
-		man "$@"
-}
-
-# Lint any tracked files that have changes
-function eslint() {
-  changed_files=$(git diff --name-only `git merge-base origin/master HEAD` | grep -E 'js$|jsx$|es6$')
-  changed_files_without_newlines=$(echo $changed_files | tr '\n' ' ')
-
-  if [[ -z "${changed_files// }" ]]; then
-    echo "There are no changed files that need linting."
-  else
-    echo "--- You have changed the following files ---"
-    echo $changed_files
-
-    echo "\n--- Starting linting process ---"
-    eval "./node_modules/eslint/bin/eslint.js --color --cache $changed_files_without_newlines"
-    if [ $? -eq 0 ]; then
-      echo "There are no linting errors in the changed files"
-    fi
-  fi
-}
-
-function eslint_compare() {
-  ruby ~/.eslint_compare.rb
-}
-
-function _vim-fzf {
-  zle kill-whole-line
-  zle -U "vim $(fzf)"
-  zle complete-word
-}
-
-zle -N _vim-fzf
-
-bindkey '^v' _vim-fzf
-
-# Bind \eg to `git status`
-function _git-status {
-  zle kill-whole-line
-  zle -U "git status"
-  zle accept-line
-}
-zle -N _git-status
-bindkey '^g' _git-status
-
-source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

@@ -1,11 +1,8 @@
 # set Zsh as your default Tmux shell
 set-option -g default-shell /usr/local/bin/zsh
 
-# UTF is great, let us use that
-set -g utf8
-set-window-option -g utf8 on
-
 # Tmux should be pretty, we need 256 color for that
+# set -g default-terminal "tmux"
 set -g default-terminal "screen-256color"
 
 # start window numbering at 1
@@ -20,9 +17,11 @@ set -g prefix C-a
 unbind C-b
 
 set -g history-limit 5000
-set-option -g -q mouse on
 
+# Use current directory in new window
 bind c new-window -c '#{pane_current_path}'
+
+set-option -g mouse on
 
 # command delay? We don't want that, make it short
 set -sg escape-time 1
@@ -52,8 +51,8 @@ bind -r K resize-pane -U 5
 bind -r L resize-pane -R 5
 
 # Set border color options
-# set -g pane-border-style fg=black
-# set-option -g pane-active-border-fg blue
+set -g pane-border-style fg=black
+set-option -g pane-active-border-fg blue
 
 # Restore 'clear screen'.
 bind C-l send-keys 'C-l'
