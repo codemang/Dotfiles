@@ -365,9 +365,6 @@ map <Space>ra :call RunAllSpecs()<CR>
 let g:tslime_always_current_session = 1
 let g:tslime_always_current_window = 1
 
-" set cursorline
-" hi CursorLine   cterm=NONE ctermbg=darkgray ctermfg=NONE
-
 let g:syntastic_check_on_open = 0
 let g:syntastic_check_on_wq = 0
 let g:syntastic_auto_loc_list = 0
@@ -387,3 +384,19 @@ let g:syntastic_error_symbol = '❌'
 highlight link SyntasticErrorSign SignColumn
 
 let g:closetag_filenames = "*.html,*.xhtml,*.phtml,*.jsx,*.es6"
+
+" https://github.com/tmux/tmux/issues/543
+set clipboard=unnamed
+highlight LineNr ctermfg=grey ctermbg=black
+
+highlight Comment ctermbg=243 ctermfg=black
+
+let g:gitgutter_override_sign_column_highlight = 0
+highlight SignColumn ctermbg=black
+highlight SignColumn guibg=black
+highlight GitGutterAdd ctermbg=black
+highlight GitGutterChange ctermbg=black
+highlight GitGutterDelete ctermbg=black
+highlight GitGutterChangeDelete ctermbg=black
+
+hi Visual ctermbg=238
