@@ -400,3 +400,7 @@ highlight GitGutterDelete ctermbg=black
 highlight GitGutterChangeDelete ctermbg=black
 
 hi Visual ctermbg=238
+
+" Remove yellow border on splits
+highlight VertSplit ctermbg=NONE
+highlight VertSplit ctermfg=NONE

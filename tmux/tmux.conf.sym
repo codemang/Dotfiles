@@ -51,8 +51,8 @@ bind -r K resize-pane -U 5
 bind -r L resize-pane -R 5
 
 # Set border color options
-set -g pane-border-style fg=black
-set-option -g pane-active-border-fg blue
+set -g pane-border-style fg="#585858"
+set-option -g pane-active-border-fg "#af005f"
 
 # Restore 'clear screen'.
 bind C-l send-keys 'C-l'
