@@ -1,13 +1,16 @@
 #!/usr/local/bin/zsh
 
 export ZSH="$HOME/.oh-my-zsh"
-export VIM_LOCATION="/usr/local/Cellar/macvim/7.4-104/MacVim.app/Contents/MacOS/Vim"
+export VIM_LOCATION="/usr/local/opt/macvim/MacVim.app/Contents/MacOS/Vim"
 export EDITOR="$VIM_LOCATION"
 export ARCHFLAGS="-arch x86_64"
 export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 export AWS_CREDENTIAL_FILE="~/.aws/credentials"
 export HOST_ENV="development"
 export HISTCONTROL=ignoreboth:erasedups
+setopt hist_ignore_dups
+bindkey "^P" up-line-or-search
+bindkey "^N" down-line-or-search
 
 # Set TERM to support italic inside/outside tmux
 export TERM=xterm-256color
@@ -307,4 +310,6 @@ function _git-status {
 zle -N _git-status
 bindkey '^g' _git-status
 
-source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+zsh_syntax_highlighting="/usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+
+[[ -f "$zsh_syntax_highlighting" ]] && source "$zsh_syntax_highlighting"
