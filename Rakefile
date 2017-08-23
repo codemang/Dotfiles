@@ -55,7 +55,11 @@ namespace :dotfiles do
 
     Dir.glob("**/*").select{|file| file =~ /^.*\.sym$/}.each do |sym_filepath|
       new_filepath =  Dir.home + "/." + File.basename(sym_filepath, '.sym')
-      system "ln -v -s #{File.expand_path(sym_filepath)} #{new_filepath}" if !File.exists?(new_filepath)
+      if File.exists?(new_filepath)
+      else
+        puts "Symlinking to #{File.expand_path(sym_filepath)} #{new_filepath}"
+        system "ln -v -s #{File.expand_path(sym_filepath)} #{new_filepath}"
+      end
     end
     print_footer
   end
