@@ -1,23 +1,24 @@
 #!/usr/local/bin/zsh
 
-export ZSH="$HOME/.oh-my-zsh"
+export ZSH=$HOME/.oh-my-zsh
 export VIM_LOCATION="/usr/local/Cellar/macvim/7.4-104/MacVim.app/Contents/MacOS/Vim"
-export EDITOR="$VIM_LOCATION"
+export EDITOR=$VIM_LOCATION
 export ARCHFLAGS="-arch x86_64"
 export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 export AWS_CREDENTIAL_FILE="~/.aws/credentials"
 export HOST_ENV="development"
-export HISTCONTROL=ignoreboth:erasedups
+export HISTCONTROL=ignoreboth:erasedupsG
+export CIRCLE_ESLINT_SCRIPT_ENV="dev"
 
-# Set TERM to support italic inside/outside tmux
-export TERM=xterm-256color
-[ -n "$TMUX" ] && export TERM=screen-256color
+PATH=$PATH:/Library/Ruby/Gems/2.0.0/gems/rubocop-0.47.1/bin/rubocop
+
+plugins=(bundler osx rake ruby rails gem brew zsh-completions)
+autoload -U compinit && compinit
+
 
 # Source private BB files
-source "$HOME/bb_zshrc.zsh" 2> /dev/null
-
-source "$ZSH/oh-my-zsh.sh"
-source "$HOME/Dotfiles/vagrant/vagrant_alias"
+source $HOME/bb_zshrc.zsh
+source $HOME/Dotfiles/vagrant/vagrant_alias
 
 setopt CORRECT
 
@@ -35,16 +36,7 @@ zstyle ':completion:*' list-colors "${(@s.:.)LS_COLORS}"
 autoload -Uz compinit
 compinit
 
-# Set TERM when sshing to avoid problem with italics
-function ssh() {
-  if [[ "${TERM}" = xterm* ]]; then
-    env TERM=xterm-256color ssh "$@"
-  elif [[ "${TERM}" = screen* ]]; then
-    env TERM=screen-256color ssh "$@"
-  else
-    ssh "$@"
-  fi
-}
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 
 # LS SHORTCUTS
 alias ls="ls -G"
@@ -79,6 +71,7 @@ alias cob="git checkout -b" # Create new branch
 alias cod="git branch -d" # Delete branch if merged
 alias codd="git branch -D" # Force delete branch
 alias col="git checkout -" # Switch to last branch
+alias unstage="git reset HEAD"
 
 # Checkout git branch with fzf
 function cof() {
@@ -173,11 +166,11 @@ alias cherry="git cherry -v"
 # rebase
 alias gm="git checkout master && git pull origin master"
 alias rem="git rebase -i master"
+alias rec="git rebase --continue"
+alias rea="git rebase --abort"
 function re() {
   git rebase -i HEAD~${1-1}
 }
-alias rec="git rebase --continue"
-alias rea="git rebase --abort"
 
 # MISCELLENEOUS SHORTCUTS
 alias unsu="sudo -k;"
@@ -192,7 +185,8 @@ alias zprompt="vim ~/Dotfiles/zsh/zshrc_prompt"
 alias findp="ps aux | grep"
 
 # VIM
-alias vim="$VIM_LOCATION"
+# alias vim="$VIM_LOCATION"
+alias vim="mvim -v"
 alias v="vim"
 alias vimrc="vim ~/.vimrc"
 alias zpref="vim ~/.zshrc"
@@ -213,8 +207,11 @@ alias vprov="vagrant provision"
 alias vls="vagrant global-status"
 alias vr="vagrant resume"
 
+# function vssh() {
+#   ssh $(vagrant ssh-config ${1-default} | awk '{print " -o "$1"="$2}') localhost
+# }
 function vssh() {
-  ssh $(vagrant ssh-config ${1-default} | awk '{print " -o "$1"="$2}') localhost
+  vagrant ssh
 }
 
 # TMUX
@@ -226,16 +223,14 @@ alias tls="tmux list-sessions"
 alias ts="tmux switch -t"
 alias td="tmux detach"
 alias tk="tmux kill-session -t"
+alias tname="tmux display-message -p '#S'"
 
 # FZF
 source "$HOME/.fzf.zsh"
 export FZF_COMPLETION_TRIGGER=',,'
 export FZF_DEFAULT_COMMAND='ag -g ""'
+export FZF_DEFAULT_OPTS='--height 80%'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-export FZF_DEFAULT_COMMAND='
-  (git ls-tree -r --name-only HEAD ||
-       find . -path "*/\.*" -prune -o -type f -print -o -type l -print |
-        sed s/^..//) 2> /dev/null'
 
 # Toggle between vim and shell with ctrl-z
 fancy-ctrl-z () {
@@ -266,7 +261,7 @@ man() {
 }
 
 # Lint any tracked files that have changes
-function eslint() {
+function eslint_changes() {
   changed_files=$(git diff --name-only `git merge-base origin/master HEAD` | grep -E 'js$|jsx$|es6$')
   changed_files_without_newlines=$(echo $changed_files | tr '\n' ' ')
 
@@ -288,23 +283,23 @@ function eslint_compare() {
   ruby ~/.eslint_compare.rb
 }
 
-function _vim-fzf {
-  zle kill-whole-line
-  zle -U "vim $(fzf)"
-  zle complete-word
-}
-
-zle -N _vim-fzf
-
-bindkey '^v' _vim-fzf
-
-# Bind \eg to `git status`
-function _git-status {
-  zle kill-whole-line
-  zle -U "git status"
-  zle accept-line
-}
-zle -N _git-status
-bindkey '^g' _git-status
-
 source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+function fuck() {
+  last_cmd=$(fc -ln | tail -2 | tail -1)
+  echo "Going to execute: sudo $last_cmd"
+  eval "sudo $last_cmd"
+}
+
+# https://github.com/BookBub/local-config/blob/master/bake/README.md
+eval $(dinghy env)
+
+function rc() {
+  bk runcmd -c "$*" ${PWD##*/}
+}
+
+alias console="bk runcmd ${PWD##*/}"
+
+export BBWORKSPACE=/Users/codemang/Bookbub
+
+alias g="git"
