@@ -4,97 +4,42 @@ call plug#begin('~/.vim/plugged')
 " Needs CMake via Homebrew
 Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
 
-" Adds endif in ruby
-Plug 'tpope/vim-endwise'
-
-" Close braces, brackets, etc
-Plug 'Raimondi/delimitMate'
-
-" Comment big chunks of code
-Plug 'tComment'
-
-" Navigate file system
-Plug 'scrooloose/nerdtree'
-
-" Show file name, other info
-Plug 'bling/vim-airline'
-
-" Helpful navigation
-Plug 'easymotion/vim-easymotion'
-
-" Search project
-" Needs Silver Surfer via Homebrew
-Plug 'rking/ag.vim'
-
-" Syntax highlighting for ansible
-Plug 'Glench/Vim-Jinja2-Syntax'
-
-" Use git commands in vim
-Plug 'tpope/vim-fugitive'
-
-" Markdown in vim
-Plug 'godlygeek/tabular'
-
-" Markdown in vim
-Plug 'plasticboy/vim-markdown'
-
-" Make a comment to Github from vim
-Plug 'mmozuras/vim-github-comment'
-
-" Use the Github API in vim, works with github comment
-Plug 'mattn/webapi-vim'
-
 " Fuzzy finder
 " Needs FZF via Homebrew
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
-
-" Navigate tmux/vim panes the same way
-" Needs tmux via Homebrew
-Plug 'christoomey/vim-tmux-navigator'
 
 " Autogenerate ctags
 " Needs Ctags via Homebrew
 Plug 'szw/vim-tags'
 
-" Show git diff marks in vim
-Plug 'airblade/vim-gitgutter'
-
-" Open small tmux pane from vim and run command
-Plug 'benmills/vimux'
-
-" All purpose ruby plugin
-Plug 'vim-ruby/vim-ruby'
-
-" Zen Mode, credits to Ustasb
-Plug 'junegunn/goyo.vim'
-
-" Highlight extra whitespace
-Plug 'ntpeters/vim-better-whitespace'
-
-" Show match number when searching
-Plug 'henrik/vim-indexed-search'
-
-" Pull up chrome tab when viewing markdown
-Plug 'suan/vim-instant-markdown'
-
-" Key mappings for navigating git commit history
-Plug 'tpope/vim-unimpaired'
-
-Plug 'vim-airline/vim-airline-themes'
-
-Plug 'thoughtbot/vim-rspec'
-Plug 'jgdavey/tslime.vim'
+Plug 'tpope/vim-endwise' " Adds endif in ruby
+Plug 'jiangmiao/auto-pairs' " Close braces, brackets, etc
+Plug 'tComment' " Comment big chunks of code
+Plug 'scrooloose/nerdtree' " Navigate file system'
+Plug 'bling/vim-airline' " Show metadata in footer
+Plug 'vim-airline/vim-airline-themes' " Themes for footer
+Plug 'easymotion/vim-easymotion' " Helpful navigation
+Plug 'rking/ag.vim' " Search project, needs Silver Surfer via Homebrew
+Plug 'Glench/Vim-Jinja2-Syntax' " Syntax highlighting for ansible
+Plug 'tpope/vim-fugitive' " Use git commands in vim
+Plug 'plasticboy/vim-markdown' " Markdown in vim
+Plug 'christoomey/vim-tmux-navigator' " Navigate tmux/vim panes the same way
+Plug 'vim-ruby/vim-ruby' " All purpose ruby plugin
+Plug 'junegunn/goyo.vim' " Zen Mode, credits to Ustasb
+Plug 'ntpeters/vim-better-whitespace' " Highlight extra whitespace
+Plug 'henrik/vim-indexed-search' " Show match number when searching
+Plug 'suan/vim-instant-markdown' " Pull up chrome tab when viewing markdown
+Plug 'tpope/vim-unimpaired' " Key mappings for navigating git commit history
+Plug 'chriskempson/base16-vim' " Nice colorthemes
+Plug 'scrooloose/syntastic' " Syntax checking
+Plug 'alvan/vim-closetag' " Close xhtml tags
+Plug 'junegunn/vim-slash' " Better searching
+Plug 'Valloric/MatchTagAlways' " Highlight enclosing html tags
 
 Plug 'tpope/vim-rails'
-
 Plug 'isRuslan/vim-es6'
-
-Plug 'chriskempson/base16-vim'
-
-Plug 'scrooloose/syntastic'
-
-" Close xhtml tags
-Plug 'alvan/vim-closetag'
+Plug 'mxw/vim-jsx'
+Plug 'pangloss/vim-javascript'
 
 call plug#end()
 
@@ -117,14 +62,9 @@ if (empty($TMUX))
   endif
 endif
 
-" Color theme
 set t_Co=256
 set background=dark
-" colorscheme base16-chalk
-colorscheme base16-ashes
-
-let g:one_allow_italics = 1
-
+colorscheme base16-oceanicnext
 let mapleader=","
 
 " Misc
@@ -255,10 +195,6 @@ nmap <Leader>nm :NERDTreeMirror <CR>
 nmap <Leader>nw :NERDTreeCWD <CR>
 nmap <Leader>nc :NERDTreeFind <CR>
 
-" ---- GitHub Comment ----
-nmap <Leader>ghc :GHComment
-let g:github_user = 'codemang'
-
 " ---- FZF ----
 nmap <Leader>t :FZF! <CR>
 command! FZFMru call fzf#run({
@@ -280,8 +216,6 @@ let g:ag_highlight=1
 let g:vim_markdown_folding_disabled=1
 
 " ---- Airline Vim ----
-" let g:airline_left_sep=''
-" let g:airline_right_sep=''
 let g:airline_section_z=''
 
 set encoding=utf-8
@@ -308,35 +242,13 @@ let g:airline_symbols.paste = 'Þ'
 let g:airline_symbols.paste = '∥'
 let g:airline_symbols.whitespace = 'Ξ'
 
-
 " This allows buffers to be hidden if you've modified a buffer.
 " This is almost a must if you wish to use buffers in this way.
 set hidden
 
-" To open a new empty buffer
-" This replaces :tabnew which I used to bind to this mapping
-nmap <Space>t :enew<cr>
-
-" Move to the next buffer
-nmap <Space>l :bnext<CR>
-
-" Move to the previous buffer
-nmap <Space>h :bprevious<CR>
-
-" Close the current buffer and move to the previous one
-" This replicates the idea of closing a tab
-nmap <Space>q :bp <BAR> bd #<CR>
-
-
-" ---- Git Gutter ----
-command! GutSign execute "GitGutterSignsToggle"
-
-" ---- Vimux ----
-map <Leader>vp :VimuxPromptCommand<CR>
-map <Leader>vl :VimuxRunLastCommand<CR>
-map <Leader>vr :call VimuxRunCommand("clear; vagrant ssh -c rspec " . bufname("%"))<CR>
-
-let VimuxUseNearest = 0
+nmap <Space>l :bnext<CR> " Move to the next buffer tab
+nmap <Space>h :bprevious<CR> " Move to the previous buffer tab
+nmap <Space>q :bp <BAR> bd #<CR> " Close the current buffer tab
 
 " ---- Goyo Vim ----
 nmap <Leader>gy :Goyo<CR>
@@ -352,33 +264,24 @@ au Filetype python setl et ts=2 sw=2
 " JBuilder syntax highlighting
 au BufNewFile,BufRead *.json.jbuilder set ft=ruby
 
-highlight Comment cterm=italic
-
-let g:rspec_command = 'call Send_to_Tmux("rspec {spec}\n")'
-
-" vim-rspec mappings
-map <Space>rf :call RunCurrentSpecFile()<CR>
-map <Space>rc :call RunNearestSpec()<CR>
-map <Space>rl :call RunLastSpec()<CR>
-map <Space>ra :call RunAllSpecs()<CR>
-
-let g:tslime_always_current_session = 1
-let g:tslime_always_current_window = 1
 
 let g:syntastic_check_on_open = 0
 let g:syntastic_check_on_wq = 0
 let g:syntastic_auto_loc_list = 0
 let g:syntastic_always_populate_loc_list = 0
 let g:syntastic_loc_list_height = 5
+
 " Start in passive mode. Auto-linting is slow...
 let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
 nnoremap <Leader>l :SyntasticCheck<CR>
+
 " C++ 11 support
 let g:syntastic_cpp_checkers = ['gcc']
 let g:syntastic_cpp_compiler = 'g++-4.8'
 let g:syntastic_cpp_compiler_options = '-std=c++11'
 " JS support
 let g:syntastic_javascript_checkers = ['eslint']
+
 " Highlighting
 let g:syntastic_error_symbol = '❌'
 highlight link SyntasticErrorSign SignColumn
@@ -387,20 +290,56 @@ let g:closetag_filenames = "*.html,*.xhtml,*.phtml,*.jsx,*.es6"
 
 " https://github.com/tmux/tmux/issues/543
 set clipboard=unnamed
-highlight LineNr ctermfg=grey ctermbg=black
 
-highlight Comment ctermbg=243 ctermfg=black
+" Misc coloring
+highlight Visual ctermbg=238
+highlight VertSplit ctermbg=none
+highlight VertSplit ctermfg=none
+highlight Comment ctermbg=none ctermfg=243
+highlight Pmenu ctermbg=238
+highlight CursorLine ctermbg=238
+highlight SignColumn guibg=darkgrey ctermbg=none ctermfg=none
 
-let g:gitgutter_override_sign_column_highlight = 0
-highlight SignColumn ctermbg=black
-highlight SignColumn guibg=black
-highlight GitGutterAdd ctermbg=black
-highlight GitGutterChange ctermbg=black
-highlight GitGutterDelete ctermbg=black
-highlight GitGutterChangeDelete ctermbg=black
+" https://stackoverflow.com/questions/16902317/vim-slow-with-ruby-syntax-highlighting
+set re=1
 
-hi Visual ctermbg=238
+" Blinking line after search
+function! s:flash()
+  set cursorline!
+  redraw
+  sleep 20m
+  set cursorline!
+  return ''
+endfunction
+noremap <expr> <plug>(slash-after) <sid>flash()
 
-" Remove yellow border on splits
-highlight VertSplit ctermbg=NONE
-highlight VertSplit ctermfg=NONE
+let g:mta_filetypes = {
+    \ 'html' : 1,
+    \ 'xhtml' : 1,
+    \ 'xml' : 1,
+    \ 'jinja' : 1,
+    \ 'javascript.jsx': 1,
+    \}
+
+
+" Syntastic
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_quiet_messages = {'level': 'warnings'}
+
+let g:mta_set_default_matchtag_color = 0
+let g:mta_use_matchparen_group = 0
+highlight MatchTag ctermfg=white ctermbg=238
+
+nnoremap <leader>% :MtaJumpToOtherTag<cr>
+
+let g:syntastic_ruby_checkers = ['rubocop']
+let g:syntastic_ruby_rubocop_exec = "rubocop"
+
+highlight LineNr ctermbg=none
