@@ -1,305 +1,54 @@
 #!/usr/local/bin/zsh
 
 export ZSH=$HOME/.oh-my-zsh
-export VIM_LOCATION="/usr/local/Cellar/macvim/7.4-104/MacVim.app/Contents/MacOS/Vim"
-export EDITOR=$VIM_LOCATION
 export ARCHFLAGS="-arch x86_64"
 export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 export AWS_CREDENTIAL_FILE="~/.aws/credentials"
 export HOST_ENV="development"
 export HISTCONTROL=ignoreboth:erasedupsG
 export CIRCLE_ESLINT_SCRIPT_ENV="dev"
+export DOTFILES=$HOME/Dotfiles
+export TERM=xterm-256color
 
-PATH=$PATH:/Library/Ruby/Gems/2.0.0/gems/rubocop-0.47.1/bin/rubocop
+PATH=/usr/local/sbin:$PATH
 
 plugins=(bundler osx rake ruby rails gem brew zsh-completions)
 autoload -U compinit && compinit
 
+# Create prompt
+source $HOME/Dotfiles/zsh/zshrc_prompt
 
-# Source private BB files
-source $HOME/bb_zshrc.zsh
-source $HOME/Dotfiles/vagrant/vagrant_alias
+# Helper aliases/functions
+source $DOTFILES/zsh/git.zsh
+source $DOTFILES/zsh/tmux.zsh
+source $DOTFILES/zsh/vagrant.zsh
+source $DOTFILES/zsh/eslint.zsh
+source $DOTFILES/zsh/fzf.zsh
+source $DOTFILES/zsh/vim.zsh
+source $DOTFILES/zsh/misc.zsh
+
+# Bookbub specific helpers, not checked into public github
+[ -f ~/.bookbub.zsh ] && source ~/.bookbub.zsh
 
 setopt CORRECT
-
 unsetopt inc_append_history
 unsetopt share_history
 
-# Create prompt
-source "$HOME/Dotfiles/zsh/zshrc_prompt"
-
+# Colors when listing
 export LD_BIND_NOW=1
 export CLICOLOR=1
 export LSCOLORS=gxBxhxDxfxhxhxhxhxcxcx
 
+# Colors when using tab-completion in the command line
 zstyle ':completion:*' list-colors "${(@s.:.)LS_COLORS}"
 autoload -Uz compinit
 compinit
-
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 
-# LS SHORTCUTS
-alias ls="ls -G"
-alias la="ls -A"
-alias ll="ls -l -h"
-alias lla="ls -al"
-alias lal="ls -al"
-alias lh="ls -d .??*"
-alias llh="ls -ld -h  .??*"
-alias lhl="ls -ld -h .??*"
-alias ld="ls -d */" # Show directories
-alias lg="ls | grep"
-alias le="find . -maxdepth 1  -type f -perm -u=x" # Show executables
-alias lf="ls | egrep -v '^d'"
-alias clr="clear"
-
-# NAV SHORTCUTS
-alias dl="cd ~/Downloads"
-alias vbundle="cd ~/.vim/bundle"
-alias lello="cd ~/Bookbub/lello"
-alias pulp="cd ~/Bookbub/pulp"
-alias spine="cd ~/Bookbub/spine"
-alias hedwig="cd ~/Bookbub/hedwig"
-alias forklift="cd ~/Bookbub/forklift"
-alias dot="cd ~/Dotfiles"
-
-# GIT SHORTCUTS
-
-# Manipulating branches
-alias co="git checkout" # Switch branches
-alias cob="git checkout -b" # Create new branch
-alias cod="git branch -d" # Delete branch if merged
-alias codd="git branch -D" # Force delete branch
-alias col="git checkout -" # Switch to last branch
-alias unstage="git reset HEAD"
-
-# Checkout git branch with fzf
-function cof() {
-  local branches branch
-  branches=$(git branch) &&
-  branch=$(echo "$branches" | fzf-tmux -d 15 +m) &&
-  git checkout $(echo "$branch" | sed "s/.* //")
-}
-
-# Push
-alias push="git push"
-alias pusho="git push origin "
-
-function git_branch() {
-  echo "$(git branch 2>/dev/null| sed -n '/^\*/s/^\* //p')"
-}
-
-function pushn() {
-  git push origin $(git_branch)
-}
-
-# pull
-alias pull="git pull"
-alias pullo="git pull origin"
-
-# commit
-alias cmt="git commit -am"
-alias amend="git commit -a --amend"
-alias amendn="git commit -a --amend --no-edit"
-alias wip="git commit -am 'WIP'"
-
-# reset
-function confirm_cmd() {
-  echo -n "$1? [y/n]: "
-  read answer
-
-  if [ "$answer" = "y" ]
-  then
-    eval $2
-  else
-    echo "Aborting"
-  fi
-}
-
- # Set contents of file to that of origin.
-alias mirrorf="git checkout origin/master --"
-
-# Set contents of repo to that of origin, overwriting any changes, with no chance of retrieval.
-function mirror() {
-  branch=""
-  if [ ! -z $1 ]
-  then
-    branch="$1"
-  else
-    branch="$(git_branch)"
-  fi
-  confirm_cmd "Are you sure you want to reset --hard to remote branch $branch" "git fetch; git reset --hard origin/$branch"
-}
-
-function mirrorm() {
-  mirror master
-}
-
-# Remove last #{n} commit/s, removing any changes, with no chance of retrieving.
-function wipe() {
-  confirm_cmd "Are you sure you want to wipe your changes" "git add -A; git commit -qm 'WIPE SAVEPOINT'; git reset HEAD~${1-1} --hard"
-}
-
-# Remove last #{n} commit/s, with changes still present.
-function undo() {
-  git reset HEAD~${1-1} --mixed
-}
-
-function gclean() {
-  git checkout master
-  if [ $? -eq 0 ]
-  then
-    git branch --merged ${1-master} | grep -v " ${1-master}$" | xargs git branch -d;
-  fi
-}
-
-# status
-alias cubr="git branch"
-alias stat="git status"
-alias pstat="git status -s"
-alias log="git log --graph"
-alias logo="git log --pretty=format:'%Cred%h%Creset - %s %Cgreen(%cr) %C(blue)<%an>%Creset' --abbrev-commit"
-
-# alias diff="git diff"
-alias cherry="git cherry -v"
-
-# rebase
-alias gm="git checkout master && git pull origin master"
-alias rem="git rebase -i master"
-alias rec="git rebase --continue"
-alias rea="git rebase --abort"
-function re() {
-  git rebase -i HEAD~${1-1}
-}
-
-# MISCELLENEOUS SHORTCUTS
-alias unsu="sudo -k;"
-alias su="sudo -s"
-alias sub="/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl"
-alias src="source ~/.zshrc"
-alias serv="python -m SimpleHTTPServer 8000"
-alias editcron="env EDITOR=vim crontab -e"
-alias mem="top -l 1 | ag Phys"
-alias notifyDone='reattach-to-user-namespace terminal-notifier -title "Hey Nate" -message "Done with task!"'
-alias zprompt="vim ~/Dotfiles/zsh/zshrc_prompt"
-alias findp="ps aux | grep"
-
-# VIM
-# alias vim="$VIM_LOCATION"
-alias vim="mvim -v"
-alias v="vim"
-alias vimrc="vim ~/.vimrc"
-alias zpref="vim ~/.zshrc"
-
-# BOOKBUB
-alias sshs='ssh bookbub-staging'
-alias sshp='ssh bookbub-production'
-alias slog='ssh -N stage-tunnel'
-alias plog='ssh -N prod-tunnel'
-
-# SSH
-alias tunnel='autossh -M 20055 -f -N'
-
-# VAGRANT
-alias vup="vagrant up"
-alias vdest="vagrant destroy"
-alias vprov="vagrant provision"
-alias vls="vagrant global-status"
-alias vr="vagrant resume"
-
-# function vssh() {
-#   ssh $(vagrant ssh-config ${1-default} | awk '{print " -o "$1"="$2}') localhost
-# }
-function vssh() {
-  vagrant ssh
-}
-
-# TMUX
-alias tn="tmux new -s"
-alias ta="tmux attach -t"
-alias tpref="vim ~/.tmux.conf"
-alias tsource="tmux source-file $HOME/.tmux.conf"
-alias tls="tmux list-sessions"
-alias ts="tmux switch -t"
-alias td="tmux detach"
-alias tk="tmux kill-session -t"
-alias tname="tmux display-message -p '#S'"
-
-# FZF
-source "$HOME/.fzf.zsh"
-export FZF_COMPLETION_TRIGGER=',,'
-export FZF_DEFAULT_COMMAND='ag -g ""'
-export FZF_DEFAULT_OPTS='--height 80%'
-export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-
-# Toggle between vim and shell with ctrl-z
-fancy-ctrl-z () {
-  if [[ $#BUFFER -eq 0 ]]; then
-    BUFFER="fg"
-    zle accept-line
-  else
-    zle push-input
-    zle clear-screen
-  fi
-}
-zle -N fancy-ctrl-z
-bindkey '^Z' fancy-ctrl-z
-
+# Initialize FZF
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-# Colorized man pages
-man() {
-	env \
-		LESS_TERMCAP_mb=$(printf "\e[1;31m") \
-		LESS_TERMCAP_md=$(printf "\e[1;31m") \
-		LESS_TERMCAP_me=$(printf "\e[0m") \
-		LESS_TERMCAP_se=$(printf "\e[0m") \
-		LESS_TERMCAP_so=$(printf "\e[1;44;33m") \
-		LESS_TERMCAP_ue=$(printf "\e[0m") \
-		LESS_TERMCAP_us=$(printf "\e[1;32m") \
-		man "$@"
-}
-
-# Lint any tracked files that have changes
-function eslint_changes() {
-  changed_files=$(git diff --name-only `git merge-base origin/master HEAD` | grep -E 'js$|jsx$|es6$')
-  changed_files_without_newlines=$(echo $changed_files | tr '\n' ' ')
-
-  if [[ -z "${changed_files// }" ]]; then
-    echo "There are no changed files that need linting."
-  else
-    echo "--- You have changed the following files ---"
-    echo $changed_files
-
-    echo "\n--- Starting linting process ---"
-    eval "./node_modules/eslint/bin/eslint.js --color --cache $changed_files_without_newlines"
-    if [ $? -eq 0 ]; then
-      echo "There are no linting errors in the changed files"
-    fi
-  fi
-}
-
-function eslint_compare() {
-  ruby ~/.eslint_compare.rb
-}
+# Initialize rbenv
+if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
 
 source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-function fuck() {
-  last_cmd=$(fc -ln | tail -2 | tail -1)
-  echo "Going to execute: sudo $last_cmd"
-  eval "sudo $last_cmd"
-}
-
-# https://github.com/BookBub/local-config/blob/master/bake/README.md
-eval $(dinghy env)
-
-function rc() {
-  bk runcmd -c "$*" ${PWD##*/}
-}
-
-alias console="bk runcmd ${PWD##*/}"
-
-export BBWORKSPACE=/Users/codemang/Bookbub
-
-alias g="git"

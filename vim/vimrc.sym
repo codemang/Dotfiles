@@ -1,27 +1,27 @@
 call plug#begin('~/.vim/plugged')
 
-" Auto Complete/Suggestions
-" Needs CMake via Homebrew
+" Auto Complete/Suggestions, needs CMake via Homebrew
 Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
-
+"
 " Fuzzy finder
 " Needs FZF via Homebrew
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
 
-" Autogenerate ctags
-" Needs Ctags via Homebrew
-Plug 'szw/vim-tags'
-
 Plug 'tpope/vim-endwise' " Adds endif in ruby
 Plug 'jiangmiao/auto-pairs' " Close braces, brackets, etc
-Plug 'tComment' " Comment big chunks of code
 Plug 'scrooloose/nerdtree' " Navigate file system'
-Plug 'bling/vim-airline' " Show metadata in footer
-Plug 'vim-airline/vim-airline-themes' " Themes for footer
+
+Plug 'scrooloose/nerdcommenter' " Comment chunks of code
+Plug 'itchyny/lightline.vim'
+" Plug 'mgee/lightline-bufferline'
+" Plug 'bagrat/vim-workspace'
+Plug 'vim-airline/vim-airline'
+
 Plug 'easymotion/vim-easymotion' " Helpful navigation
 Plug 'rking/ag.vim' " Search project, needs Silver Surfer via Homebrew
 Plug 'Glench/Vim-Jinja2-Syntax' " Syntax highlighting for ansible
 Plug 'tpope/vim-fugitive' " Use git commands in vim
+
 Plug 'plasticboy/vim-markdown' " Markdown in vim
 Plug 'christoomey/vim-tmux-navigator' " Navigate tmux/vim panes the same way
 Plug 'vim-ruby/vim-ruby' " All purpose ruby plugin
@@ -29,6 +29,7 @@ Plug 'junegunn/goyo.vim' " Zen Mode, credits to Ustasb
 Plug 'ntpeters/vim-better-whitespace' " Highlight extra whitespace
 Plug 'henrik/vim-indexed-search' " Show match number when searching
 Plug 'suan/vim-instant-markdown' " Pull up chrome tab when viewing markdown
+
 Plug 'tpope/vim-unimpaired' " Key mappings for navigating git commit history
 Plug 'chriskempson/base16-vim' " Nice colorthemes
 Plug 'scrooloose/syntastic' " Syntax checking
@@ -221,7 +222,6 @@ let g:airline_section_z=''
 set encoding=utf-8
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#fnamemod = ':t'
-let g:airline_theme = 'deep_space'
 
 let g:airline_powerline_fonts = 1
 if !exists('g:airline_symbols')
@@ -343,3 +343,20 @@ let g:syntastic_ruby_checkers = ['rubocop']
 let g:syntastic_ruby_rubocop_exec = "rubocop"
 
 highlight LineNr ctermbg=none
+
+
+" Add spaces after comment delimiters by default
+let g:NERDSpaceDelims = 1
+
+" Use compact syntax for prettified multi-line comments
+let g:NERDCompactSexyComs = 1
+
+" Align line-wise comment delimiters flush left instead of following code
+" indentation
+let g:NERDDefaultAlign = 'left'
+
+" Allow commenting and inverting empty lines (useful when commenting a region)
+let g:NERDCommentEmptyLines = 1
+
+" Enable trimming of trailing whitespace when uncommenting
+let g:NERDTrimTrailingWhitespace = 1

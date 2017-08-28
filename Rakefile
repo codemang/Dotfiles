@@ -53,14 +53,51 @@ namespace :dotfiles do
   task :symlink do
     print_header 'Symlinking files to home directory'
 
+    properly_symlinked_files = []
+    newly_symlinked_files = []
+    replaced_symlinked_files = []
+
     Dir.glob("**/*").select{|file| file =~ /^.*\.sym$/}.each do |sym_filepath|
       new_filepath =  Dir.home + "/." + File.basename(sym_filepath, '.sym')
       if File.exists?(new_filepath)
+        symlink_location = `readlink -n #{new_filepath}`
+        if symlink_location == File.expand_path(sym_filepath)
+          properly_symlinked_files << new_filepath
+        else
+          replaced_symlinked_files << new_filepath
+          `mv #{new_filepath} #{new_filepath}.replaced`
+          system "ln -s #{File.expand_path(sym_filepath)} #{new_filepath}"
+        end
       else
-        puts "Symlinking to #{File.expand_path(sym_filepath)} #{new_filepath}"
-        system "ln -v -s #{File.expand_path(sym_filepath)} #{new_filepath}"
+        newly_symlinked_files << new_filepath
+        system "ln -s #{File.expand_path(sym_filepath)} #{new_filepath}"
       end
     end
+
+    if properly_symlinked_files.count > 0
+      puts 'These files were already properly symlinked to the Dotfiles repo'
+      properly_symlinked_files.each do |file|
+        puts " * #{file}"
+      end
+      puts
+    end
+
+    if newly_symlinked_files.count > 0
+      puts 'These files were newly symlinked to the Dotfiles repo'
+      newly_symlinked_files.each do |file|
+        puts " * #{file}"
+      end
+      puts
+    end
+
+    if replaced_symlinked_files.count > 0
+      puts 'These files already existed in the home directory and were replaced. Copies were made to "filename.replaced"'
+      replaced_symlinked_files.each do |file|
+        puts " * #{file}"
+      end
+      puts
+    end
+
     print_footer
   end
 
