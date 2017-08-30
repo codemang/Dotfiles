@@ -4,7 +4,7 @@
 [core]
 	askpass = git-gui--askpass
 	excludesfile = ~/.gitignore
-  editor = vim
+  editor = mvim -v
 [merge]
 	tool = vimdiff
   conflictstyle = diff3
