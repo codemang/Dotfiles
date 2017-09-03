@@ -46,6 +46,7 @@
     "pcre",
     "pkg-config",
     "python",
+    "rbenv",
     "readline",
     "reattach-to-user-namespace",
     "ruby",
