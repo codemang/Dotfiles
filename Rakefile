@@ -1,10 +1,18 @@
 Dir['./lib/*.rb'].each {|file| require file }
 
-namespace :dotfiles do
-  task :setup do
-    Homebrew.install_kegs(PackageList.kegs)
-    Zsh.install
-  end
+task :packages do
+  Homebrew.install_kegs(PackageList.kegs)
+  Homebrew.install_casks(PackageList.casks)
+  Ruby.install
+  RubyGems.install_gems(PackageList.gems)
+  Zsh.install
 end
+
+task :dotfiles do
+
+end
+
+
+
 
 task :setup => ["dotfiles:setup"]

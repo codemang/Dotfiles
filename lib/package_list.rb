@@ -1,23 +1,38 @@
 require 'json'
-require './homebrew'
+require_relative './homebrew'
+require_relative './ruby_gems'
 
 class PackageList
-  def self.kegs
-    package_list['kegs']
+  def self.method_missing(m, *args, &block)
+    if package_list.keys.include?(m.to_s)
+      package_list[m.to_s]
+    else
+      raise ArgumentError, "No function '#{m}' in #{self.name}"
+    end
   end
 
   def self.package_list
-    @package_list ||= begin
+    @package_list ||= JSON.parse(File.read(package_filepath))
+  end
+
+  def self.package_filepath
+    @package_filepath ||= begin
       dot_dir = File.expand_path('..', File.dirname(__FILE__))
-      contents = File.read(File.join(dot_dir, 'packages.json'))
-      JSON.parse(contents)
+      File.join(dot_dir, 'packages.json')
     end
-    @package_list
   end
 
   def self.build_package_list
     {
       kegs: Homebrew.list_kegs,
+      casks: Homebrew.list_casks,
+      gems: RubyGems.list_gems,
     }
+  end
+
+  def self.save_package_list
+    file = File.open(package_filepath, 'w')
+    file.truncate(0)
+    file.write(JSON.pretty_generate(build_package_list))
   end
 end
