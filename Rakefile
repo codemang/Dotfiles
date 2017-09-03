@@ -1,6 +1,7 @@
 Dir['./lib/*.rb'].each {|file| require file }
 
 task :packages do
+  Xcode.install
   Homebrew.install_kegs(PackageList.kegs)
   Homebrew.install_casks(PackageList.casks)
   Ruby.install
@@ -9,7 +10,7 @@ task :packages do
 end
 
 task :dotfiles do
-
+  DotfileManager.symlink_dotfiles_and_print
 end
 
 

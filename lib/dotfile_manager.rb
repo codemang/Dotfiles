@@ -11,21 +11,21 @@ class DotfileManager
       replaced_symlinked_files: [],
     }
 
-    files_to_symlink.each do |sym_filepath|
-      dest_filepath =  Dir.home + "/." + File.basename(sym_filepath, '.sym')
+    files_to_symlink.each do |symlink_source|
+      pending_dotfile =  Dir.home + "/." + File.basename(symlink_source, '.sym')
 
-      if File.exists?(dest_filepath)
-        symlink_location = `readlink -n #{dest_filepath}`
-        if symlink_location == File.expand_path(sym_filepath)
-          file_changes[:properly_symlinked_files] << dest_filepath
+      if File.exists?(pending_dotfile)
+        current_symlink_source = `readlink -n #{pending_dotfile}`
+        if current_symlink_source == symlink_source
+          file_changes[:properly_symlinked_files] << pending_dotfile
         else
-          file_changes[:replaced_symlinked_files] << dest_filepath
-          `mv #{dest_filepath} #{dest_filepath}.replaced`
-          system "ln -s #{File.expand_path(sym_filepath)} #{dest_filepath}"
+          file_changes[:replaced_symlinked_files] << pending_dotfile
+          `mv #{pending_dotfile} #{pending_dotfile}.replaced`
+          system "ln -s #{File.expand_path(symlink_source)} #{pending_dotfile}"
         end
       else
-        file_changes[:newly_symlinked_files] << dest_filepath
-        system "ln -s #{File.expand_path(sym_filepath)} #{dest_filepath}"
+        file_changes[:newly_symlinked_files] << pending_dotfile
+        system "ln -s #{File.expand_path(symlink_source)} #{pending_dotfile}"
       end
     end
 
@@ -33,7 +33,11 @@ class DotfileManager
   end
 
   def self.files_to_symlink
-    @files_to_symlink ||= Dir.glob("../**/*").select{|file| file =~ /^.*\.sym$/}
+    @files_to_symlink ||= begin
+      dot_dir = File.expand_path('..', File.dirname(__FILE__))
+      file_pattern = File.join(dot_dir, '**', '*')
+      Dir.glob(file_pattern).select{|file| file =~ /^.*\.sym$/}
+    end
   end
 
   def self.print_file_changes(file_changes)
@@ -54,7 +58,7 @@ class DotfileManager
   def self.print_if_changes_present(files, message)
     if files.count > 0
       puts message
-      print_file_list(files
+      print_file_list(files)
       puts
     end
   end
@@ -65,5 +69,3 @@ class DotfileManager
     end
   end
 end
-
-DotfileManager.symlink_dotfiles_and_print
