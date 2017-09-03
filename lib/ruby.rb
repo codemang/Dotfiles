@@ -14,7 +14,7 @@ class Ruby
   end
 
   def self.install_ruby
-    if !(system("rbenv global") == RUBY_VERSION)
+    if !(`rbenv global`.strip == RUBY_VERSION)
       system("rbenv install #{RUBY_VERSION}")
     end
   end

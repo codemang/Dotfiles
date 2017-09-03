@@ -3,9 +3,12 @@ class RubyGems
     `gem list | sed 's/(.*)//'`.split("\n")
   end
 
-  def self.install_gems(gems)
+  def self.install_gems(gems, opts={})
+    existing_gems = opts[:ignore_existing] ? list_gems : []
     gems.each do |gem|
-      install_gem(gem)
+      if !existing_gems.include?(gem)
+        install_gem(gem)
+      end
     end
   end
 

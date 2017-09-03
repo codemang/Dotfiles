@@ -2,10 +2,10 @@ Dir['./lib/*.rb'].each {|file| require file }
 
 task :packages do
   Xcode.install
-  Homebrew.install_kegs(PackageList.kegs)
-  Homebrew.install_casks(PackageList.casks)
+  Homebrew.install_kegs(PackageList.kegs, {ignore_existing: true})
+  Homebrew.install_casks(PackageList.casks, {ignore_existing: true})
+  RubyGems.install_gems(PackageList.gems, {ignore_existing: true})
   Ruby.install
-  RubyGems.install_gems(PackageList.gems)
   Zsh.install
 end
 

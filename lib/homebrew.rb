@@ -16,9 +16,12 @@ class Homebrew
     `brew install #{keg}`
   end
 
-  def self.install_kegs(kegs)
+  def self.install_kegs(kegs, opts={})
+    existing_kegs = opts[:ignore_existing] ? list_kegs : []
     kegs.each do |keg|
-      install_keg(keg)
+      if !existing_kegs.include?(keg)
+        install_keg(keg)
+      end
     end
   end
 
@@ -26,9 +29,12 @@ class Homebrew
     system("brew cask install #{cask}")
   end
 
-  def self.install_casks(casks)
+  def self.install_casks(casks, opts={})
+    existing_casks = opts[:ignore_existing] ? list_casks : []
     casks.each do |cask|
-      install_cask(cask)
+      if !existing_casks.include?(cask)
+        install_cask(cask)
+      end
     end
   end
 
