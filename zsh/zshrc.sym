@@ -52,3 +52,5 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
 
 source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+alias serv="python -m SimpleHTTPServer 8000"
