@@ -3,7 +3,7 @@ Nate's Dotfiles
 
 A simple rake task which downloads all my dotfiles, installs any dependencies, and symlinks them approriately. This will in the future be integrated with a script which installs any apps and binaries I use, to completely provision a development machine.
 
-![Alt Text](https://github.com/codemang/Dotfiles/blob/master/recording3.gif)
+![Alt Text](https://github.com/codemang/Dotfiles/blob/master/recording.gif)
 
 Installation
 ------------
