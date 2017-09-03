@@ -13,7 +13,4 @@ task :dotfiles do
   DotfileManager.symlink_dotfiles_and_print
 end
 
-
-
-
 task :setup => ["dotfiles:setup"]
