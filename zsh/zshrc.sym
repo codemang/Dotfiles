@@ -12,7 +12,7 @@ export TERM=xterm-256color
 
 PATH=/usr/local/sbin:$PATH
 
-plugins=(bundler osx rake ruby rails gem brew zsh-completions)
+plugins=(bundler osx rake ruby rails gem brew zsh-completions z)
 autoload -U compinit && compinit
 
 # Create prompt
@@ -54,3 +54,5 @@ if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
 source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 alias serv="python -m SimpleHTTPServer 8000"
+
+/usr/local/etc/profile.d/z.sh
