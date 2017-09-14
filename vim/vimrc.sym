@@ -16,7 +16,7 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
 Plug 'easymotion/vim-easymotion' " Helpful navigation
-Plug 'rking/ag.vim' " Search project, needs Silver Surfer via Homebrew
+Plug 'mileszs/ack.vim' " Search project, needs Silver Surfer via Homebrew
 Plug 'Glench/Vim-Jinja2-Syntax' " Syntax highlighting for ansible
 Plug 'tpope/vim-fugitive' " Use git commands in vim
 
@@ -207,9 +207,12 @@ nmap <Leader>r :FZFMru <CR>
 let g:ansible_extra_syntaxes = "/usr/share/vim/vim73/syntax/sh.vim /usr/share/vim/vim73/syntax/ruby.vim"
 
 " ---- Ag Vim ----
-nmap <leader>ag :Ag '
-nmap <leader>as :Ag "<C-R><C-W>"<CR>
+nmap <leader>ag :Ack '
+nmap <leader>as :Ack "<C-R><C-W>"<CR>
 let g:ag_highlight=1
+if executable('ag')
+  let g:ackprg = 'ag --vimgrep'
+endif
 
 " ---- Vim Markdown ----
 let g:vim_markdown_folding_disabled=1

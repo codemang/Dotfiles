@@ -59,8 +59,8 @@ bind C-l send-keys 'C-l'
 
 setw -g mode-keys vi
 set -g status-keys vi
-bind-key -t vi-edit Up   history-up
-bind-key -t vi-edit Down history-down
+# bind-key -t vi-edit Up   history-up
+# bind-key -t vi-edit Down history-down
 
 # https://github.com/tmux/tmux/issues/543
 set -g default-shell $SHELL
