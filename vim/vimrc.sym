@@ -19,6 +19,7 @@ Plug 'easymotion/vim-easymotion' " Helpful navigation
 Plug 'mileszs/ack.vim' " Search project, needs Silver Surfer via Homebrew
 Plug 'Glench/Vim-Jinja2-Syntax' " Syntax highlighting for ansible
 Plug 'tpope/vim-fugitive' " Use git commands in vim
+Plug 'NLKNguyen/papercolor-theme'
 
 Plug 'plasticboy/vim-markdown' " Markdown in vim
 Plug 'christoomey/vim-tmux-navigator' " Navigate tmux/vim panes the same way
@@ -44,27 +45,15 @@ call plug#end()
 
 filetype plugin indent on
 syntax enable
-
-" Use 24-bit (true-color) mode in Vim/Neovim when outside tmux.
-" If you're using tmux version 2.2 or later, you can remove the outermost $TMUX check and use tmux's 24-bit color support
-" (see < http://sunaku.github.io/tmux-24bit-color.html#usage > for more information.)
-if (empty($TMUX))
-  if (has("nvim"))
-  "For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
-  let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-  endif
-  "For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
-  "Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
-  " < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
-  if (has("termguicolors"))
-    set termguicolors
-  endif
-endif
-
 set t_Co=256
-set background=dark
-colorscheme base16-oceanicnext
+
+set background=light
+colorscheme Papercolor
 let mapleader=","
+
+" Remap escape to fd
+inoremap kj <Esc>
+inoremap <esc> <nop>
 
 " Misc
 set mouse=a
@@ -128,10 +117,6 @@ nnoremap k gk
 
 " Auto format with new lines in visual mode
 vmap Q gq
-
-" Remap escape to fd
-inoremap kj <Esc>
-inoremap <esc> <nop>
 
 " Vimrc editing and sourcing
 nmap <Leader>vv :e ~/.vimrc<CR>
@@ -231,6 +216,7 @@ let g:airline#extensions#default#layout = [
       \ [ 'a', 'c'  ],
       \ []
       \ ]
+let g:airline_theme='papercolor'
 
 nmap <Space>l :bnext<CR> " Move to the next buffer tab
 nmap <Space>h :bprevious<CR> " Move to the previous buffer tab
@@ -345,3 +331,26 @@ let g:NERDCommentEmptyLines = 1
 let g:NERDTrimTrailingWhitespace = 1
 
 runtime macros/matchit.vim
+
+" https://szunyog.github.io/vim/vim-automatically-set-paste-mode
+function! WrapForTmux(s)
+  if !exists('$TMUX')
+    return a:s
+  endif
+
+  let tmux_start = "\<Esc>Ptmux;"
+  let tmux_end = "\<Esc>\\"
+
+  return tmux_start . substitute(a:s, "\<Esc>", "\<Esc>\<Esc>", 'g') . tmux_end
+endfunction
+
+let &t_SI .= WrapForTmux("\<Esc>[?2004h")
+let &t_EI .= WrapForTmux("\<Esc>[?2004l")
+
+function! XTermPasteBegin()
+  set pastetoggle=<Esc>[201~
+  set paste
+  return ""
+endfunction
+
+inoremap <special> <expr> <Esc>[200~ XTermPasteBegin()
