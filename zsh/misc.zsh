@@ -50,3 +50,5 @@ function fuck() {
 function load_ssh() {
   ssh-add ~/.ssh/id_rsa_codemang
 }
+
+alias serv="python -m SimpleHTTPServer 8000"

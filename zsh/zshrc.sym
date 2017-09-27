@@ -12,7 +12,7 @@ export TERM=xterm-256color
 
 PATH=/usr/local/sbin:$PATH
 
-plugins=(bundler osx rake ruby rails gem brew zsh-completions z)
+plugins=(bundler osx rake ruby rails gem brew zsh-completions)
 autoload -U compinit && compinit
 
 # Create prompt
@@ -26,6 +26,7 @@ source $DOTFILES/zsh/eslint.zsh
 source $DOTFILES/zsh/fzf.zsh
 source $DOTFILES/zsh/vim.zsh
 source $DOTFILES/zsh/misc.zsh
+source $DOTFILES/zsh/z.zsh
 
 # Bookbub specific helpers, not checked into public github
 [ -f ~/.bookbub.zsh ] && source ~/.bookbub.zsh
@@ -52,7 +53,3 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
 
 source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-alias serv="python -m SimpleHTTPServer 8000"
-
-/usr/local/etc/profile.d/z.sh
