@@ -1,8 +1,10 @@
 call plug#begin('~/.vim/plugged')
 
+Plug 'christoomey/vim-tmux-navigator' " Navigate tmux/vim panes the same way
+
 " Auto Complete/Suggestions, needs CMake via Homebrew
 Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
-"
+
 " Fuzzy finder
 " Needs FZF via Homebrew
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
@@ -19,13 +21,12 @@ Plug 'easymotion/vim-easymotion' " Helpful navigation
 Plug 'mileszs/ack.vim' " Search project, needs Silver Surfer via Homebrew
 Plug 'Glench/Vim-Jinja2-Syntax' " Syntax highlighting for ansible
 Plug 'tpope/vim-fugitive' " Use git commands in vim
+Plug 'ntpeters/vim-better-whitespace' " Highlight extra whitespace
 Plug 'NLKNguyen/papercolor-theme'
 
 Plug 'plasticboy/vim-markdown' " Markdown in vim
-Plug 'christoomey/vim-tmux-navigator' " Navigate tmux/vim panes the same way
 Plug 'vim-ruby/vim-ruby' " All purpose ruby plugin
 Plug 'junegunn/goyo.vim' " Zen Mode, credits to Ustasb
-Plug 'ntpeters/vim-better-whitespace' " Highlight extra whitespace
 Plug 'henrik/vim-indexed-search' " Show match number when searching
 Plug 'suan/vim-instant-markdown' " Pull up chrome tab when viewing markdown
 
@@ -47,13 +48,17 @@ filetype plugin indent on
 syntax enable
 set t_Co=256
 
-set background=light
-colorscheme Papercolor
+set termguicolors
+
 let mapleader=","
 
 " Remap escape to fd
 inoremap kj <Esc>
 inoremap <esc> <nop>
+
+let vim_markdown_preview_pandoc=1
+
+let vim_markdown_preview_browser='Google Chrome'
 
 " Misc
 set mouse=a
@@ -117,7 +122,7 @@ nnoremap k gk
 
 " Auto format with new lines in visual mode
 vmap Q gq
-
+"
 " Vimrc editing and sourcing
 nmap <Leader>vv :e ~/.vimrc<CR>
 nmap <Leader>s :source ~/.vimrc<CR>
@@ -127,7 +132,7 @@ nmap <Leader>w :w<CR>
 nmap <Leader>e :e
 nmap <Leader>q :q<CR>
 nmap <Leader>wq :wq<CR>
-
+"
 " Toggle buffers
 nmap <Leader>j :e #<CR>
 
@@ -137,12 +142,6 @@ nmap <Leader>h :noh<CR>
 " Add a line below/above and stay in normal mode
 nmap <Space>] Okj
 nmap <Space>[ okj
-
-" Switch panes without 'w'
-nnoremap <C-J> <C-W><C-J>
-nnoremap <C-K> <C-W><C-K>
-nnoremap <C-L> <C-W><C-L>
-nnoremap <C-H> <C-W><C-H>
 
 " Toggle spell check
 nmap <Leader>ss :setlocal spell! spelllang=en_us<CR> " Toggle spellcheck
@@ -167,7 +166,7 @@ function! SudoSaveFile()
   exec 'silent :w !sudo tee > /dev/null %'
 endfunction
 command! SudoSave call SudoSaveFile()
-
+"
 " ---- NERD Tree ----
 let g:NERDTreeWinSize = 40
 
@@ -216,7 +215,6 @@ let g:airline#extensions#default#layout = [
       \ [ 'a', 'c'  ],
       \ []
       \ ]
-let g:airline_theme='papercolor'
 
 nmap <Space>l :bnext<CR> " Move to the next buffer tab
 nmap <Space>h :bprevious<CR> " Move to the previous buffer tab
@@ -264,12 +262,12 @@ let g:closetag_filenames = "*.html,*.xhtml,*.phtml,*.jsx,*.es6"
 set clipboard=unnamed
 
 " Misc coloring
-highlight Visual ctermbg=238
+" highlight Visual ctermbg=238
+" highlight Pmenu ctermbg=238
+" highlight CursorLine ctermbg=238
 highlight VertSplit ctermbg=none
 highlight VertSplit ctermfg=none
 highlight Comment ctermbg=none ctermfg=243
-highlight Pmenu ctermbg=238
-highlight CursorLine ctermbg=238
 highlight SignColumn guibg=darkgrey ctermbg=none ctermfg=none
 
 " https://stackoverflow.com/questions/16902317/vim-slow-with-ruby-syntax-highlighting
@@ -354,3 +352,33 @@ function! XTermPasteBegin()
 endfunction
 
 inoremap <special> <expr> <Esc>[200~ XTermPasteBegin()
+
+if !exists('*ToggleColorschemeFunc')
+  function! ToggleColorschemeFunc()
+    silent! execute '! source ~/.zshrc && toggleColorscheme > /dev/null'
+    redraw!
+    source ~/.vimrc
+    :AirlineRefresh
+    :AirlineRefresh " Not sure why but this must be called twice
+  endfunction
+endif
+
+command! ToggleColorscheme call ToggleColorschemeFunc()
+nmap <Space>cs :ToggleColorscheme<CR>
+
+set shell=/bin/zsh
+
+
+let lightTheme = system("[[ $(head -n 1 ~/Dotfiles/env/colorscheme.zsh) == *light* ]] && echo 1")
+if lightTheme == 1
+  set background=light
+  silent! colorscheme Papercolor
+  let g:airline_theme='papercolor'
+else
+  set background=dark
+  silent! colorscheme base16-eighties
+  let g:airline_theme='base16_eighties'
+endif
+
+au BufNewFile,BufFilePre,BufRead *.md set filetype=markdown tw=80 fo+=t
+autocmd BufRead,BufNewFile *.md setlocal spell
