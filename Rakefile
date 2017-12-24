@@ -5,11 +5,27 @@ task :xcode do
 end
 
 task :kegs do
-  Homebrew.install_kegs(PackageList.kegs, {ignore_existing: true})
+  puts 'Starting brew keg installation'
+
+  existing_kegs = Homebrew.list_kegs
+  PackageList.kegs.each do |keg|
+    puts "* #{keg}"
+    Homebrew.install_keg(keg) unless existing_kegs.include?(keg)
+  end
+
+  puts "\nCompleted brew keg installation"
 end
 
 task :casks do
-  Homebrew.install_casks(PackageList.casks, {ignore_existing: true})
+  puts 'Starting brew cask installation'
+
+  existing_casks = Homebrew.list_casks
+  PackageList.casks.each do |cask|
+    puts "* #{cask}"
+    # Homebrew.install_cask(cask) unless existing_casks.include?(cask)
+  end
+
+  puts "\nCompleted brew cask installation"
 end
 
 task :gems do
