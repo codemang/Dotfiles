@@ -5,6 +5,10 @@ set-option -g default-shell /usr/local/bin/zsh
 # set -g default-terminal "tmux"
 set -g default-terminal "screen-256color"
 
+# UStasb recommendation
+# set -g default-terminal "xterm-256color"
+# set -ga terminal-overrides ",xterm-256color:Tc"
+
 # start window numbering at 1
 set -g base-index 1
 

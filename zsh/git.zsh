@@ -8,9 +8,14 @@ alias unstage="git reset HEAD"
 
 # Push/Pull
 alias push="git push"
+alias fpush="git push -f"
 alias pusho="git push origin"
 alias pull="git pull"
 alias pullo="git pull origin"
+
+function npush() {
+  git push -u origin $(git rev-parse --abbrev-ref HEAD)
+}
 
 # Commit
 alias cmt="git commit -am"
@@ -106,3 +111,19 @@ function confirm_cmd() {
 }
 
 alias g="git"
+
+function logo_string() {
+  # return "git log --pretty=format:'%Cred%h%Creset - %s %Cgreen(%cr) %C(blue)<%an>%Creset' --abbrev-commit"
+}
+
+function logo() {
+  git log --pretty=format:'%Cred%h%Creset - %s %Cgreen(%cr) %C(blue)<%an>%Creset' --abbrev-commit
+}
+
+function greplog() {
+  git log --grep="$*"
+}
+
+function greplogo() {
+  git log --pretty=format:'%Cred%h%Creset - %s %Cgreen(%cr) %C(blue)<%an>%Creset' --abbrev-commit --grep="$*"
+}

@@ -13,7 +13,7 @@ export TERM=xterm-256color
 PATH=/usr/local/sbin:$PATH
 
 plugins=(bundler osx rake ruby rails gem brew zsh-completions)
-autoload -U compinit && compinit
+autoload -U compinit -u && compinit -u
 
 # Create prompt
 source $HOME/Dotfiles/zsh/zshrc_prompt
@@ -27,7 +27,6 @@ source $DOTFILES/zsh/fzf.zsh
 source $DOTFILES/zsh/vim.zsh
 source $DOTFILES/zsh/misc.zsh
 source $DOTFILES/zsh/z.zsh
-source $DOTFILES/env/colorscheme.zsh
 
 # Bookbub specific helpers, not checked into public github
 [ -f ~/.bookbub.zsh ] && source ~/.bookbub.zsh
@@ -56,12 +55,21 @@ if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
 source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 function toggleColorscheme() {
-  file=$DOTFILES/env/colorscheme.zsh
-  if [[ $(head -n 1 $file) == *light* ]]; then
-    sed -i -e 's/=.*/=dark/g' $file
-    osascript -e 'tell application "System Events" to key code 126 using {command down, control down}'
-  else
-    sed -i -e 's/=.*/=light/g' $file
-    osascript -e 'tell application "System Events" to key code 125 using {command down, control down}'
-  fi
+  ruby ~/.toggle-colors.rb
+  # file=$DOTFILES/env/colorscheme.zsh
+  # if [[ $(head -n 1 $file) == *light* ]]; then
+  #   sed -i -e 's/=.*/=dark/g' $file
+  #   osascript -e 'tell application "System Events" to key code 126 using {command down, control down}'
+  # else
+  #   sed -i -e 's/=.*/=light/g' $file
+  #   osascript -e 'tell application "System Events" to key code 125 using {command down, control down}'
+  # fi
 }
+
+function blah() {
+  a=${RANDOM}
+  echo "\n$a\n" >> ~/.nvim-trackers
+  NVIM_LISTEN_ADDRESS=/tmp/nvim-${a} nvim $*
+}
+
+export PATH=~/anaconda3/bin:$PATH

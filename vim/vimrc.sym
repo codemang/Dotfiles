@@ -16,15 +16,15 @@ Plug 'scrooloose/nerdtree' " Navigate file system'
 Plug 'scrooloose/nerdcommenter' " Comment chunks of code
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-
 Plug 'easymotion/vim-easymotion' " Helpful navigation
 Plug 'mileszs/ack.vim' " Search project, needs Silver Surfer via Homebrew
 Plug 'Glench/Vim-Jinja2-Syntax' " Syntax highlighting for ansible
 Plug 'tpope/vim-fugitive' " Use git commands in vim
 Plug 'ntpeters/vim-better-whitespace' " Highlight extra whitespace
 Plug 'NLKNguyen/papercolor-theme'
+Plug 'junegunn/vim-easy-align'
 
-Plug 'plasticboy/vim-markdown' " Markdown in vim
+" Plug 'plasticboy/vim-markdown' " Markdown in vim
 Plug 'vim-ruby/vim-ruby' " All purpose ruby plugin
 Plug 'junegunn/goyo.vim' " Zen Mode, credits to Ustasb
 Plug 'henrik/vim-indexed-search' " Show match number when searching
@@ -32,7 +32,6 @@ Plug 'suan/vim-instant-markdown' " Pull up chrome tab when viewing markdown
 
 Plug 'tpope/vim-unimpaired' " Key mappings for navigating git commit history
 Plug 'chriskempson/base16-vim' " Nice colorthemes
-Plug 'scrooloose/syntastic' " Syntax checking
 Plug 'alvan/vim-closetag' " Close xhtml tags
 Plug 'junegunn/vim-slash' " Better searching
 Plug 'Valloric/MatchTagAlways' " Highlight enclosing html tags
@@ -82,303 +81,323 @@ set shiftround
 set smarttab
 
 " Scroll relative to cursor
-set scrolloff=3
-set sidescrolloff=15
-
-" No swp files
-set noswapfile
-set nobackup
-set nowb
-
-" Wild menu
-set wildmenu
-set wildmode=full
-hi StatusLine ctermbg=white ctermfg=black
-hi WildMenu ctermbg=black ctermfg=white
-
-" Make tildas invisible below code
-highlight NonText ctermfg=0
-
-" Search
-set hlsearch
-set incsearch
-set ignorecase
-set smartcase
-hi Search cterm=NONE ctermfg=white ctermbg=red
-
-" Set ruby path for more speed
-let g:ruby_path = system('/usr/bin/ruby')
-
-" Prevent highlighting when sourcing vimrc
-let @/=''
-
-" Reselect visual block after indent/outdent.
-vnoremap < <gv
-vnoremap > >gv
-
-" Move up and down through visual lines
-nnoremap j gj
-nnoremap k gk
-
-" Auto format with new lines in visual mode
-vmap Q gq
-"
-" Vimrc editing and sourcing
-nmap <Leader>vv :e ~/.vimrc<CR>
-nmap <Leader>s :source ~/.vimrc<CR>
-
-" Basic save/open/quit operations
-nmap <Leader>w :w<CR>
-nmap <Leader>e :e
-nmap <Leader>q :q<CR>
-nmap <Leader>wq :wq<CR>
-"
-" Toggle buffers
-nmap <Leader>j :e #<CR>
-
-" Remove highlighting
-nmap <Leader>h :noh<CR>
-
-" Add a line below/above and stay in normal mode
-nmap <Space>] Okj
-nmap <Space>[ okj
-
-" Toggle spell check
-nmap <Leader>ss :setlocal spell! spelllang=en_us<CR> " Toggle spellcheck
-
-" Strip trailing whitespace and end of file new lines
-function! StripWhitespace()
-  let save_cursor = getpos(".")
-  let old_query = getreg('/')
-  :%s/\s\+$//e
-  call setpos('.', save_cursor)
-  call setreg('/', old_query)
-
-  let save_cursor = getpos(".")
-  :silent!:%s#\($\n\s*\)\+\%$##
-  call setpos('.', save_cursor)
-endfunction
-nmap <Leader>sw :call StripWhitespace()<CR>
-autocmd BufWritePre * :call StripWhitespace()
-
- " Allow saving with sudo permission.
-function! SudoSaveFile()
-  exec 'silent :w !sudo tee > /dev/null %'
-endfunction
-command! SudoSave call SudoSaveFile()
-"
-" ---- NERD Tree ----
-let g:NERDTreeWinSize = 40
-
-nmap <Leader>nn :NERDTree <CR>
-nmap <Leader>n :NERDTree
-nmap <Leader>nb :NERDTreeFromBookmark
-nmap <Leader>nt :NERDTreeToggle <CR>
-nmap <Leader>nm :NERDTreeMirror <CR>
-nmap <Leader>nw :NERDTreeCWD <CR>
-nmap <Leader>nc :NERDTreeFind <CR>
-
-" ---- FZF ----
-nmap <Leader>t :FZF! <CR>
-command! FZFMru call fzf#run({
-\  'source':  v:oldfiles,
-\  'sink':    'e',
-\  'options': '-m -x +s',
-\  'down':    '40%'})
-nmap <Leader>r :FZFMru <CR>
-
-" ---- Ansible Vim ----
-let g:ansible_extra_syntaxes = "/usr/share/vim/vim73/syntax/sh.vim /usr/share/vim/vim73/syntax/ruby.vim"
-
-" ---- Ag Vim ----
-nmap <leader>ag :Ack '
-nmap <leader>as :Ack "<C-R><C-W>"<CR>
-let g:ag_highlight=1
-if executable('ag')
-  let g:ackprg = 'ag --vimgrep'
-endif
-
-" ---- Vim Markdown ----
-let g:vim_markdown_folding_disabled=1
-
-" ---- Airline Vim ----
-let g:airline_section_z=''
-
-set encoding=utf-8
-let g:airline_theme="angr"
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#fnamemod = ':t'
-
-let g:airline_powerline_fonts = 1
-set linespace=0
-let g:airline#extensions#default#layout = [
-      \ [ 'a', 'c'  ],
-      \ []
-      \ ]
-
-nmap <Space>l :bnext<CR> " Move to the next buffer tab
-nmap <Space>h :bprevious<CR> " Move to the previous buffer tab
-nmap <Space>q :bp <BAR> bd #<CR> " Close the current buffer tab
-
-" ---- Goyo Vim ----
-nmap <Leader>gy :Goyo<CR>
-
-" ---- Easy Motion
-hi EasyMotionTarget ctermbg=none ctermfg=red
-hi EasyMotionTarget2Second ctermbg=none ctermfg=red
-hi EasyMotionTarget2First ctermbg=none ctermfg=red
-
-" Python tabs
-au Filetype python setl et ts=2 sw=2
-
-" JBuilder syntax highlighting
-au BufNewFile,BufRead *.json.jbuilder set ft=ruby
-
-
-let g:syntastic_check_on_open = 0
-let g:syntastic_check_on_wq = 0
-let g:syntastic_auto_loc_list = 0
-let g:syntastic_always_populate_loc_list = 0
-let g:syntastic_loc_list_height = 5
-
-" Start in passive mode. Auto-linting is slow...
-let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
-nnoremap <Leader>l :SyntasticCheck<CR>
-
-" C++ 11 support
-let g:syntastic_cpp_checkers = ['gcc']
-let g:syntastic_cpp_compiler = 'g++-4.8'
-let g:syntastic_cpp_compiler_options = '-std=c++11'
-" JS support
-let g:syntastic_javascript_checkers = ['eslint']
-
-" Highlighting
-let g:syntastic_error_symbol = '❌'
-highlight link SyntasticErrorSign SignColumn
-
-let g:closetag_filenames = "*.html,*.xhtml,*.phtml,*.jsx,*.es6"
-
-" https://github.com/tmux/tmux/issues/543
-set clipboard=unnamed
-
-" Misc coloring
-" highlight Visual ctermbg=238
-" highlight Pmenu ctermbg=238
-" highlight CursorLine ctermbg=238
-highlight VertSplit ctermbg=none
-highlight VertSplit ctermfg=none
-highlight Comment ctermbg=none ctermfg=243
-highlight SignColumn guibg=darkgrey ctermbg=none ctermfg=none
-
-" https://stackoverflow.com/questions/16902317/vim-slow-with-ruby-syntax-highlighting
-set re=1
-
-" Blinking line after search
-function! s:flash()
-  set cursorline!
-  redraw
-  sleep 20m
-  set cursorline!
-  return ''
-endfunction
-noremap <expr> <plug>(slash-after) <sid>flash()
-
-let g:mta_filetypes = {
-    \ 'html' : 1,
-    \ 'xhtml' : 1,
-    \ 'xml' : 1,
-    \ 'jinja' : 1,
-    \ 'javascript.jsx': 1,
-    \}
-
-
-" Syntastic
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-let g:syntastic_quiet_messages = {'level': 'warnings'}
-
-let g:mta_set_default_matchtag_color = 0
-let g:mta_use_matchparen_group = 0
-highlight MatchTag ctermfg=white ctermbg=238
-
-nnoremap <leader>% :MtaJumpToOtherTag<cr>
-
-highlight LineNr ctermbg=none
-
-
-" Add spaces after comment delimiters by default
-let g:NERDSpaceDelims = 1
-
-" Use compact syntax for prettified multi-line comments
-let g:NERDCompactSexyComs = 1
-
-" Align line-wise comment delimiters flush left instead of following code
-" indentation
-let g:NERDDefaultAlign = 'left'
-
-" Allow commenting and inverting empty lines (useful when commenting a region)
-let g:NERDCommentEmptyLines = 1
-
-" Enable trimming of trailing whitespace when uncommenting
-let g:NERDTrimTrailingWhitespace = 1
-
-runtime macros/matchit.vim
-
-" https://szunyog.github.io/vim/vim-automatically-set-paste-mode
-function! WrapForTmux(s)
-  if !exists('$TMUX')
-    return a:s
-  endif
-
-  let tmux_start = "\<Esc>Ptmux;"
-  let tmux_end = "\<Esc>\\"
-
-  return tmux_start . substitute(a:s, "\<Esc>", "\<Esc>\<Esc>", 'g') . tmux_end
-endfunction
-
-let &t_SI .= WrapForTmux("\<Esc>[?2004h")
-let &t_EI .= WrapForTmux("\<Esc>[?2004l")
-
-function! XTermPasteBegin()
-  set pastetoggle=<Esc>[201~
-  set paste
-  return ""
-endfunction
-
-inoremap <special> <expr> <Esc>[200~ XTermPasteBegin()
-
-if !exists('*ToggleColorschemeFunc')
-  function! ToggleColorschemeFunc()
-    silent! execute '! source ~/.zshrc && toggleColorscheme > /dev/null'
-    redraw!
-    source ~/.vimrc
-    :AirlineRefresh
-    :AirlineRefresh " Not sure why but this must be called twice
-  endfunction
-endif
-
-command! ToggleColorscheme call ToggleColorschemeFunc()
-nmap <Space>cs :ToggleColorscheme<CR>
-
-set shell=/bin/zsh
-
-
-let lightTheme = system("[[ $(head -n 1 ~/Dotfiles/env/colorscheme.zsh) == *light* ]] && echo 1")
-if lightTheme == 1
-  set background=light
-  silent! colorscheme Papercolor
-  let g:airline_theme='papercolor'
-else
-  set background=dark
-  silent! colorscheme base16-eighties
-  let g:airline_theme='base16_eighties'
-endif
-
-au BufNewFile,BufFilePre,BufRead *.md set filetype=markdown tw=80 fo+=t
-autocmd BufRead,BufNewFile *.md setlocal spell
+ set scrolloff=3
+ set sidescrolloff=15
+
+ " No swp files
+ set noswapfile
+ set nobackup
+ set nowb
+
+ " Wild menu
+ set wildmenu
+ set wildmode=full
+ hi StatusLine ctermbg=white ctermfg=black
+ hi WildMenu ctermbg=black ctermfg=white
+
+ " Make tildas invisible below code
+ highlight NonText ctermfg=0
+
+ " Search
+ set hlsearch
+ set incsearch
+ set ignorecase
+ set smartcase
+ hi Search cterm=NONE ctermfg=white ctermbg=red
+
+ " Set ruby path for more speed
+ let g:ruby_path = system('/usr/bin/ruby')
+
+ " Prevent highlighting when sourcing vimrc
+ let @/=''
+
+ " Reselect visual block after indent/outdent.
+ vnoremap < <gv
+ vnoremap > >gv
+
+ " Move up and down through visual lines
+ nnoremap j gj
+ nnoremap k gk
+
+ " Auto format with new lines in visual mode
+ vmap Q gq
+ "
+ " Vimrc editing and sourcing
+ nmap <Leader>vv :e ~/.vimrc<CR>
+ nmap <Leader>s :source ~/.vimrc<CR>
+
+ " Basic save/open/quit operations
+ nmap <Leader>w :w<CR>
+ nmap <Leader>e :e
+ nmap <Leader>q :q<CR>
+ nmap <Leader>1q :q!<CR>
+ nmap <Leader>wq :wq<CR>
+ "
+ " Toggle buffers
+ nmap <Leader>j :e #<CR>
+
+ " Remove highlighting
+ nmap <Leader>h :noh<CR>
+
+ " Add a line below/above and stay in normal mode
+ nmap <Space>] Okj
+ nmap <Space>[ okj
+
+ " Toggle spell check
+ nmap <Leader>ss :setlocal spell! spelllang=en_us<CR> " Toggle spellcheck
+
+ " Strip trailing whitespace and end of file new lines
+ function! StripWhitespace()
+   let save_cursor = getpos(".")
+   let old_query = getreg('/')
+   :%s/\s\+$//e
+   call setpos('.', save_cursor)
+   call setreg('/', old_query)
+
+   let save_cursor = getpos(".")
+   :silent!:%s#\($\n\s*\)\+\%$##
+   call setpos('.', save_cursor)
+ endfunction
+ nmap <Leader>sw :call StripWhitespace()<CR>
+ autocmd BufWritePre * :call StripWhitespace()
+
+  " Allow saving with sudo permission.
+ function! SudoSaveFile()
+   exec 'silent :w !sudo tee > /dev/null %'
+ endfunction
+ command! SudoSave call SudoSaveFile()
+ "
+ " ---- NERD Tree ----
+ let g:NERDTreeWinSize = 40
+
+ nmap <Leader>nn :NERDTree <CR>
+ nmap <Leader>n :NERDTree
+ nmap <Leader>nb :NERDTreeFromBookmark
+ nmap <Leader>nt :NERDTreeToggle <CR>
+ nmap <Leader>nm :NERDTreeMirror <CR>
+ nmap <Leader>nw :NERDTreeCWD <CR>
+ nmap <Leader>nc :NERDTreeFind <CR>
+
+ " ---- FZF ----
+ nmap <Leader>t :FZF! <CR>
+ command! FZFMru call fzf#run({
+ \  'source':  v:oldfiles,
+ \  'sink':    'e',
+ \  'options': '-m -x +s',
+ \  'down':    '40%'})
+ nmap <Leader>r :FZFMru <CR>
+
+ " ---- Ansible Vim ----
+ let g:ansible_extra_syntaxes = "/usr/share/vim/vim73/syntax/sh.vim /usr/share/vim/vim73/syntax/ruby.vim"
+
+ " ---- Ag Vim ----
+ nmap <leader>ag :Ack! '
+ nmap <leader>as :Ack! "<C-R><C-W>"<CR>
+ let g:ag_highlight=1
+ if executable('ag')
+   let g:ackprg = 'ag --vimgrep'
+ endif
+
+ " ---- Vim Markdown ----
+ let g:vim_markdown_folding_disabled=1
+
+ " ---- Airline Vim ----
+ let g:airline_section_z=''
+
+ set encoding=utf-8
+ let g:airline_theme="angr"
+ let g:airline#extensions#tabline#enabled = 1
+ let g:airline#extensions#tabline#fnamemod = ':t'
+ let g:airline#extensions#tabline#buffer_min_count = 2
+
+ set hidden " Lets you switch tabs without saving
+
+ let g:airline_powerline_fonts = 1
+ set linespace=0
+ let g:airline#extensions#default#layout = [
+       \ [ 'a', 'c'  ],
+       \ []
+       \ ]
+
+ nmap <Space>l :bnext<CR> " Move to the next buffer tab
+ nmap <Space>h :bprevious<CR> " Move to the previous buffer tab
+ nmap <Space>q :bp <BAR> bd #<CR> " Close the current buffer tab
+
+ " ---- Goyo Vim ----
+ nmap <Leader>gy :Goyo<CR>
+
+ " ---- Easy Motion
+ hi EasyMotionTarget ctermbg=none ctermfg=red
+ hi EasyMotionTarget2Second ctermbg=none ctermfg=red
+ hi EasyMotionTarget2First ctermbg=none ctermfg=red
+
+ " Python tabs
+ au Filetype python setl et ts=2 sw=2
+
+ " JBuilder syntax highlighting
+ au BufNewFile,BufRead *.json.jbuilder set ft=ruby
+
+
+ let g:syntastic_check_on_open = 0
+ let g:syntastic_check_on_wq = 0
+ let g:syntastic_auto_loc_list = 0
+ let g:syntastic_always_populate_loc_list = 0
+ let g:syntastic_loc_list_height = 5
+
+ " Start in passive mode. Auto-linting is slow...
+ let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
+ nnoremap <Leader>l :SyntasticCheck<CR>
+
+ " C++ 11 support
+ let g:syntastic_cpp_checkers = ['gcc']
+ let g:syntastic_cpp_compiler = 'g++-4.8'
+ let g:syntastic_cpp_compiler_options = '-std=c++11'
+ " JS support
+ let g:syntastic_javascript_checkers = ['eslint']
+
+ " Highlighting
+ let g:syntastic_error_symbol = '❌'
+ highlight link SyntasticErrorSign SignColumn
+
+ let g:closetag_filenames = "*.html,*.xhtml,*.phtml,*.jsx,*.es6"
+
+ " https://github.com/tmux/tmux/issues/543
+ set clipboard=unnamed
+
+ " Misc coloring
+ " highlight Visual ctermbg=238
+ " hi PmenuSel ctermfg=15 ctermbg=0
+ " highlight CursorLine ctermbg=238
+ highlight VertSplit ctermbg=none
+ highlight VertSplit ctermfg=none
+ highlight Comment ctermbg=none ctermfg=243
+ highlight SignColumn guibg=darkgrey ctermbg=none ctermfg=none
+
+ " https://stackoverflow.com/questions/16902317/vim-slow-with-ruby-syntax-highlighting
+ set re=1
+
+ " Blinking line after search
+ function! s:flash()
+   set cursorline!
+   redraw
+   sleep 20m
+   set cursorline!
+   return ''
+ endfunction
+ noremap <expr> <plug>(slash-after) <sid>flash()
+
+ let g:mta_filetypes = {
+     \ 'html' : 1,
+     \ 'xhtml' : 1,
+     \ 'xml' : 1,
+     \ 'jinja' : 1,
+     \ 'javascript.jsx': 1,
+     \}
+
+
+ " Syntastic
+ set statusline+=%#warningmsg#
+ set statusline+=%{SyntasticStatuslineFlag()}
+ set statusline+=%*
+
+ let g:syntastic_always_populate_loc_list = 1
+ let g:syntastic_auto_loc_list = 1
+ let g:syntastic_check_on_open = 1
+ let g:syntastic_check_on_wq = 0
+ let g:syntastic_quiet_messages = {'level': 'warnings'}
+
+ let g:mta_set_default_matchtag_color = 0
+ let g:mta_use_matchparen_group = 0
+ highlight MatchTag ctermfg=white ctermbg=238
+
+ nnoremap <leader>% :MtaJumpToOtherTag<cr>
+
+ highlight LineNr ctermbg=none
+
+
+ " Add spaces after comment delimiters by default
+ let g:NERDSpaceDelims = 1
+
+ " Use compact syntax for prettified multi-line comments
+ let g:NERDCompactSexyComs = 1
+
+ " Align line-wise comment delimiters flush left instead of following code
+ " indentation
+ let g:NERDDefaultAlign = 'left'
+
+ " Allow commenting and inverting empty lines (useful when commenting a region)
+ let g:NERDCommentEmptyLines = 1
+
+ " Enable trimming of trailing whitespace when uncommenting
+ let g:NERDTrimTrailingWhitespace = 1
+
+ runtime macros/matchit.vim
+
+ " https://szunyog.github.io/vim/vim-automatically-set-paste-mode
+ function! WrapForTmux(s)
+   if !exists('$TMUX')
+     return a:s
+   endif
+
+   let tmux_start = "\<Esc>Ptmux;"
+   let tmux_end = "\<Esc>\\"
+
+   return tmux_start . substitute(a:s, "\<Esc>", "\<Esc>\<Esc>", 'g') . tmux_end
+ endfunction
+
+ let &t_SI .= WrapForTmux("\<Esc>[?2004h")
+ let &t_EI .= WrapForTmux("\<Esc>[?2004l")
+
+ function! XTermPasteBegin()
+   set pastetoggle=<Esc>[201~
+   set paste
+   return ""
+ endfunction
+
+ inoremap <special> <expr> <Esc>[200~ XTermPasteBegin()
+
+ if !exists('*ToggleColorschemeFunc')
+   function! ToggleColorschemeFunc()
+     silent! execute '! source ~/.zshrc && ruby ~/.toggle-colors.rb &'
+   endfunction
+ endif
+
+ command! ToggleColorscheme call ToggleColorschemeFunc()
+ nmap <Space>cs :ToggleColorscheme<CR>
+
+ if !exists('*ToggleColorschemeAsyncFunc')
+   function! ToggleColorschemeAsyncFunc()
+     redraw!
+     source ~/.vimrc
+     source ~/.vimrc
+     :AirlineRefresh
+     :AirlineRefresh " Not sure why but this must be called twice
+   endfunction
+ endif
+
+ command! ToggleColorschemeAsync call ToggleColorschemeAsyncFunc()
+
+ let lightTheme = system("[[ $(head -n 1 ~/Dotfiles/env/colorscheme.zsh) == *light* ]] && echo 1")
+ if lightTheme == 1
+   set background=light
+   silent! colorscheme Papercolor
+   let g:airline_theme='papercolor'
+ else
+   set background=dark
+   silent! colorscheme base16-eighties
+   let g:airline_theme='base16_eighties'
+ endif
+
+ au BufNewFile,BufFilePre,BufRead *.md set filetype=markdown tw=80 fo+=t
+ autocmd BufRead,BufNewFile *.md setlocal spell
+
+ " Start interactive EasyAlign in visual mode (e.g. vipga)
+ xmap ga <Plug>(EasyAlign)
+
+ " Start interactive EasyAlign for a motion/text object (e.g. gaip)
+ nmap ga <Plug>(EasyAlign)
+
+ xnoremap <Leader>av y:Ack <C-r>=fnameescape(@")<CR><CR>
+ let g:airline#extensions#ale#enabled = 1
+
+ set shell=/bin/zsh

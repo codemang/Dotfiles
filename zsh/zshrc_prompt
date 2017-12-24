@@ -18,12 +18,12 @@ function light_prompt() {
 }
 
 function dark_prompt() {
-  WORKING_DIRECTORY_COLOR=$fg[cyan]
-  GIT_BRANCH_COLOR=$fg[magenta]
+  WORKING_DIRECTORY_COLOR=$fg[magenta]
+  GIT_BRANCH_COLOR=$fg[blue]
   GOOD_EXIT_STATUS_COLOR=$fg[green]
   BAD_EXIT_STATUS_COLOR=$fg[red]
   ARROW_COLOR=$fg[yellow]
-  DIRTY_CHANGES=%F{196}
+  DIRTY_CHANGES=$fg[red]
 }
 
 # --------------------------------------------------------
@@ -46,9 +46,9 @@ function git_branch() {
 function exit_status(){
 if [ $? -eq 0 ]
   then
-     echo -e "${GOOD_EXIT_STATUS_COLOR}\xE2\x9C\x93%{$reset_color%}"
+     echo -e ''
   else
-    echo -e "${BAD_EXIT_STATUS_COLOR}${$?}${NONE}"
+    echo -e "${BAD_EXIT_STATUS_COLOR}[${$?}]${NONE}"
   fi
 }
 
@@ -128,7 +128,15 @@ dark_prompt
 
 setopt promptsubst
 
+function dir_with_optional_status() {
+  if [ $? -eq 0 ]; then
+    echo "$(working_directory)"
+  else
+    echo "$(exit_status) $(working_directory)"
+  fi
+}
+
 # Generate prompt
 PS1='
-$(exit_status) $(working_directory) $(git_prompt) $(parse_git_dirty)$(up_stream)$(down_stream)${vim_mode}
+$(dir_with_optional_status) $(git_prompt) $(parse_git_dirty)$(up_stream)$(down_stream)${vim_mode}$(is_sudo)
 $(arrow) '

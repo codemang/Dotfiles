@@ -1,1 +1,1 @@
-export COLORSCHEME=light
+light
