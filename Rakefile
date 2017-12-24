@@ -6,6 +6,7 @@ end
 
 task :kegs do
   puts 'Starting brew keg installation'
+  Homebrew.install_homebrew
 
   existing_kegs = Homebrew.list_kegs
   PackageList.kegs.each do |keg|
@@ -18,6 +19,7 @@ end
 
 task :casks do
   puts 'Starting brew cask installation'
+  Homebrew.install_homebrew_cask
 
   existing_casks = Homebrew.list_casks
   PackageList.casks.each do |cask|

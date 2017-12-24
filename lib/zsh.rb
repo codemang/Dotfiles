@@ -22,6 +22,7 @@ class Zsh
   end
 
   def self.set_default_shell
+    `sudo sh -c "echo $(which zsh) >> /etc/shells"`
     `chsh -s $(which zsh)` if `echo $SHELL` !~ /^.*zsh/
   end
 end
