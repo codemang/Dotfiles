@@ -1,9 +1,7 @@
-# alias vim="mvim -v"
-# alias v="vim"
 alias vim="nv"
 alias v="nv"
-alias vimrc="vim ~/.vimrc"
-alias zpref="vim ~/.zshrc"
+alias vimrc="nv ~/.vimrc"
+alias zpref="nv ~/.zshrc"
 
 # Toggle between vim and shell with ctrl-z
 fancy-ctrl-z () {
@@ -17,3 +15,13 @@ fancy-ctrl-z () {
 }
 zle -N fancy-ctrl-z
 bindkey '^Z' fancy-ctrl-z
+
+function toggleColorscheme() {
+  ruby ~/.toggle-colors.rb
+}
+
+function nv() {
+  random_pid=${RANDOM}
+  echo "\n$random_pid\n" >> ~/.nvim-trackers
+  NVIM_LISTEN_ADDRESS=/tmp/nvim-${random_pid} nvim $*
+}

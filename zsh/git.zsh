@@ -127,3 +127,23 @@ function greplog() {
 function greplogo() {
   git log --pretty=format:'%Cred%h%Creset - %s %Cgreen(%cr) %C(blue)<%an>%Creset' --abbrev-commit --grep="$*"
 }
+
+# Reset For Review
+# * Pull down latest master
+# * Collapse all commits
+# * Create new commit with template, if present
+function rfr() {
+  git checkout master && git pull origin master
+  git checkout -
+  master_head=$(git log --pretty=format:"%h" origin/master | head -1)
+  files_changed=$(git diff --name-only HEAD $master_head)
+  git reset --soft $master_head
+  echo $master_list | XARGS git add
+  git commit
+}
+
+# Copy contents of last commit to pull request
+export OCTOKIT_REPO_ACCESS_TOKEN_FILE="~/.personal_tokens/octokit_repo_access_token"
+function mc() {
+  ruby $DOTFILES/util/copy_commit_to_pr.rb
+}
