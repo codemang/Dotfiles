@@ -1,5 +1,7 @@
-alias vim="mvim -v"
-alias v="vim"
+# alias vim="mvim -v"
+# alias v="vim"
+alias vim="nv"
+alias v="nv"
 alias vimrc="vim ~/.vimrc"
 alias zpref="vim ~/.zshrc"
 

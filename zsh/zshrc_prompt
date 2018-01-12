@@ -138,5 +138,5 @@ function dir_with_optional_status() {
 
 # Generate prompt
 PS1='
-$(dir_with_optional_status) $(git_prompt) $(parse_git_dirty)$(up_stream)$(down_stream)${vim_mode}$(is_sudo)
+$(dir_with_optional_status) $(git_prompt) $(parse_git_dirty)$(up_stream)$(down_stream)${vim_mode}
 $(arrow) '

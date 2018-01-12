@@ -49,27 +49,18 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 # Initialize FZF
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-# Initialize rbenv
-if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
-
 source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 function toggleColorscheme() {
   ruby ~/.toggle-colors.rb
-  # file=$DOTFILES/env/colorscheme.zsh
-  # if [[ $(head -n 1 $file) == *light* ]]; then
-  #   sed -i -e 's/=.*/=dark/g' $file
-  #   osascript -e 'tell application "System Events" to key code 126 using {command down, control down}'
-  # else
-  #   sed -i -e 's/=.*/=light/g' $file
-  #   osascript -e 'tell application "System Events" to key code 125 using {command down, control down}'
-  # fi
 }
 
-function blah() {
-  a=${RANDOM}
-  echo "\n$a\n" >> ~/.nvim-trackers
-  NVIM_LISTEN_ADDRESS=/tmp/nvim-${a} nvim $*
+function nv() {
+  random_pid=${RANDOM}
+  echo "\n$random_pid\n" >> ~/.nvim-trackers
+  NVIM_LISTEN_ADDRESS=/tmp/nvim-${random_pid} nvim $*
 }
 
 export PATH=~/anaconda3/bin:$PATH
+
+source /usr/local/share/chruby/chruby.sh
