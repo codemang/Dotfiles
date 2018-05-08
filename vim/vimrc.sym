@@ -1,47 +1,50 @@
 call plug#begin('~/.vim/plugged')
 
+" TMUX
 Plug 'christoomey/vim-tmux-navigator' " Navigate tmux/vim panes the same way
-Plug 'Valloric/YouCompleteMe', { 'do': './install.py' } " Auto Complete/Suggestions, needs CMake via Homebrew
-Plug 'mhinz/vim-startify' " Nice start screen for vim
-Plug 'matze/vim-move'
-Plug 'majutsushi/tagbar' " Show tags in sidebar
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' } " Needs FZF via Homebrew
 
-Plug 'tpope/vim-endwise' " Adds endif in ruby
+" Colors
+Plug 'NLKNguyen/papercolor-theme'
+
+" Navigation
+Plug 'easymotion/vim-easymotion' " Helpful navigation
 Plug 'scrooloose/nerdtree' " Navigate file system'
 
-Plug 'scrooloose/nerdcommenter' " Comment chunks of code
+" Details Bar
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'easymotion/vim-easymotion' " Helpful navigation
+
+" Search
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' } " Needs FZF via Homebrew
 Plug 'mileszs/ack.vim' " Search project, needs Silver Surfer via Homebrew
+
+" Web
+Plug 'tpope/vim-rails'
+
+" Syntax and formatting
 Plug 'Glench/Vim-Jinja2-Syntax' " Syntax highlighting for ansible
 Plug 'chase/vim-ansible-yaml' " Better yaml indentation
-Plug 'tpope/vim-fugitive' " Use git commands in vim
-Plug 'ntpeters/vim-better-whitespace' " Highlight extra whitespace
-Plug 'NLKNguyen/papercolor-theme'
-Plug 'junegunn/vim-easy-align'
-
+Plug 'tpope/vim-endwise' " Adds endif in ruby
 Plug 'vim-ruby/vim-ruby' " All purpose ruby plugin
-Plug 'junegunn/goyo.vim' " Zen Mode, credits to Ustasb
-Plug 'henrik/vim-indexed-search' " Show match number when searching
-Plug 'suan/vim-instant-markdown' " Pull up chrome tab when viewing markdown
+Plug 'jiangmiao/auto-pairs' " Close braces, brackets, etc
 
+" Git
 Plug 'tpope/vim-unimpaired' " Key mappings for navigating git commit history
-Plug 'chriskempson/base16-vim' " Nice colorthemes
-Plug 'alvan/vim-closetag' " Close xhtml tags
-Plug 'junegunn/vim-slash' " Better searching
-Plug 'Valloric/MatchTagAlways' " Highlight enclosing html tags
+Plug 'tpope/vim-fugitive' " Use git commands in vim
 
-Plug 'tpope/vim-rails'
+" Javascript
 Plug 'isRuslan/vim-es6'
 Plug 'mxw/vim-jsx'
 Plug 'pangloss/vim-javascript'
-" Plug 'jelera/vim-javascript-syntax'
-" Plug 'vim-scripts/JavaScript-Indent'
-Plug 'jiangmiao/auto-pairs' " Close braces, brackets, etc
-Plug 'Townk/vim-autoclose'
-Plug 'int3/vim-extradite'
+
+" Misc
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py' } " Auto Complete/Suggestions, needs CMake via Homebrew
+Plug 'junegunn/goyo.vim' " Zen Mode, credits to Ustasb
+Plug 'ntpeters/vim-better-whitespace' " Highlight extra whitespace
+Plug 'matze/vim-move'
+Plug 'mhinz/vim-startify' " Nice start screen for vim
+Plug 'majutsushi/tagbar' " Show tags in sidebar
+Plug 'scrooloose/nerdcommenter' " Comment chunks of code
 
 call plug#end()
 
