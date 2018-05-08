@@ -10,7 +10,7 @@ export CIRCLE_ESLINT_SCRIPT_ENV="dev"
 export DOTFILES=$HOME/Dotfiles
 export TERM=xterm-256color
 
-PATH=/usr/local/sbin:$PATH
+export PATH=/usr/local/sbin:$PATH
 
 plugins=(bundler osx rake ruby rails gem brew zsh-completions)
 autoload -U compinit -u && compinit -u
@@ -54,3 +54,37 @@ source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 export PATH=~/anaconda3/bin:$PATH
 
 source /usr/local/share/chruby/chruby.sh
+
+function tnbb() {
+  tmux new -s $1 -d
+  tmux split-window -h -p 66
+  tmux split-window -h
+  tmux select-pane -t 1
+  tmux split-window -v
+
+  tmux select-pane -t 1
+
+  tmux send-keys -t 3 C-z 'vim' Enter
+  tmux send-keys -t 4 C-z 'vim' Enter
+  tmux send-keys -t 2 C-z 'src && console' Enter
+
+  tmux attach -t $1
+}
+
+function open_prs() {
+  ruby $DOTFILES/util/track_pull_request_reviews.rb open $*
+}
+
+function list_prs() {
+  ruby $DOTFILES/util/track_pull_request_reviews.rb list
+}
+
+function notify_prs() {
+  ruby $DOTFILES/util/track_pull_request_reviews.rb notify
+}
+
+function ecron() {
+  env EDITOR=nvim crontab -e
+}
+
+export PATH=$PATH:/Users/codemang/Downloads/chromedriver

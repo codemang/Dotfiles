@@ -66,11 +66,11 @@ module CopyCommitToPR
   # ---- Output Helpers ----
 
   def success_message(msg)
-    puts "\e[32m* #{msg}\e[0m"
+    puts "==> #{msg} \e[32m\xE2\x9C\x94\e[0m"
   end
 
   def error_message(msg)
-    puts "\e[31m* #{msg} Exiting!\e[0m"
+    puts "==> #{msg} \e[31m\xE2\x9C\x98 \e[0m"
     exit 1
   end
 

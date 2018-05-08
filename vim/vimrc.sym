@@ -1,16 +1,13 @@
 call plug#begin('~/.vim/plugged')
 
 Plug 'christoomey/vim-tmux-navigator' " Navigate tmux/vim panes the same way
-
-" Auto Complete/Suggestions, needs CMake via Homebrew
-Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
-
-" Fuzzy finder
-" Needs FZF via Homebrew
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py' } " Auto Complete/Suggestions, needs CMake via Homebrew
+Plug 'mhinz/vim-startify' " Nice start screen for vim
+Plug 'matze/vim-move'
+Plug 'majutsushi/tagbar' " Show tags in sidebar
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' } " Needs FZF via Homebrew
 
 Plug 'tpope/vim-endwise' " Adds endif in ruby
-Plug 'jiangmiao/auto-pairs' " Close braces, brackets, etc
 Plug 'scrooloose/nerdtree' " Navigate file system'
 
 Plug 'scrooloose/nerdcommenter' " Comment chunks of code
@@ -19,12 +16,12 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'easymotion/vim-easymotion' " Helpful navigation
 Plug 'mileszs/ack.vim' " Search project, needs Silver Surfer via Homebrew
 Plug 'Glench/Vim-Jinja2-Syntax' " Syntax highlighting for ansible
+Plug 'chase/vim-ansible-yaml' " Better yaml indentation
 Plug 'tpope/vim-fugitive' " Use git commands in vim
 Plug 'ntpeters/vim-better-whitespace' " Highlight extra whitespace
 Plug 'NLKNguyen/papercolor-theme'
 Plug 'junegunn/vim-easy-align'
 
-" Plug 'plasticboy/vim-markdown' " Markdown in vim
 Plug 'vim-ruby/vim-ruby' " All purpose ruby plugin
 Plug 'junegunn/goyo.vim' " Zen Mode, credits to Ustasb
 Plug 'henrik/vim-indexed-search' " Show match number when searching
@@ -40,6 +37,11 @@ Plug 'tpope/vim-rails'
 Plug 'isRuslan/vim-es6'
 Plug 'mxw/vim-jsx'
 Plug 'pangloss/vim-javascript'
+" Plug 'jelera/vim-javascript-syntax'
+" Plug 'vim-scripts/JavaScript-Indent'
+Plug 'jiangmiao/auto-pairs' " Close braces, brackets, etc
+Plug 'Townk/vim-autoclose'
+Plug 'int3/vim-extradite'
 
 call plug#end()
 
@@ -124,13 +126,14 @@ set smarttab
  "
  " Vimrc editing and sourcing
  nmap <Leader>vv :e ~/.vimrc<CR>
- nmap <Leader>s :source ~/.vimrc<CR>
+ nmap <Leader>s :source ~/.vimrc<CR>:AirlineRefresh<CR>
 
  " Basic save/open/quit operations
  nmap <Leader>w :w<CR>
  nmap <Leader>e :e
  nmap <Leader>q :q<CR>
- nmap <Leader>1q :q!<CR>
+ nmap <Leader>.q :q!<CR>
+ nmap <Leader>.e :e!<CR>
  nmap <Leader>wq :wq<CR>
  "
  " Toggle buffers
@@ -358,7 +361,7 @@ set smarttab
 
  if !exists('*ToggleColorschemeFunc')
    function! ToggleColorschemeFunc()
-     silent! execute '! source ~/.zshrc && ruby ~/.toggle-colors.rb &'
+     silent! execute '! source ~/.zshrc && ruby ~/Dotfiles/util/toggle-colors.rb &'
    endfunction
  endif
 
@@ -403,7 +406,6 @@ set smarttab
  endif
 
  au BufNewFile,BufFilePre,BufRead *.md set filetype=markdown tw=80 fo+=t
- autocmd BufRead,BufNewFile *.md setlocal spell
 
  " Start interactive EasyAlign in visual mode (e.g. vipga)
  xmap ga <Plug>(EasyAlign)
@@ -415,3 +417,18 @@ set smarttab
  let g:airline#extensions#ale#enabled = 1
 
  set shell=/bin/zsh
+
+ set nowrap
+
+ nnoremap <Leader>wr :set wrap!<CR>
+
+filetype on
+filetype plugin on
+filetype indent on
+
+nnoremap <Leader>mt :TagbarToggle<CR>
+
+vmap <c-j> <Plug>MoveBlockDown
+vmap <c-k> <Plug>MoveBlockUp
+nmap <c-j> <Plug>MoveLineDown
+nmap <c-k> <Plug>MoveLineDown

@@ -77,6 +77,10 @@ function gclean() {
   fi
 }
 
+function reu() {
+  git rebase -i HEAD~$1
+}
+
 # status
 alias cubr="git branch"
 alias stat="git status"
@@ -146,4 +150,15 @@ function rfr() {
 export OCTOKIT_REPO_ACCESS_TOKEN_FILE="~/.personal_tokens/octokit_repo_access_token"
 function mc() {
   ruby $DOTFILES/util/copy_commit_to_pr.rb
+}
+
+# TODO: Find way to get branch auto-complete
+function git_cold_storage() {
+  git update-ref refs/hidden/$1 $1
+  echo "Moved branch $1 to cold storage."
+  git branch -D $1
+}
+
+function git_warm_storage() {
+  git checkout -b $1 refs/hidden/$1
 }

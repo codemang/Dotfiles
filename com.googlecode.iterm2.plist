@@ -3588,11 +3588,11 @@
 	<key>NSWindow Frame Preferences</key>
 	<string>516 421 606 456 0 0 1440 877 </string>
 	<key>NSWindow Frame SUUpdateAlert</key>
-	<string>410 363 620 392 0 0 1440 877 </string>
+	<string>714 571 620 392 0 0 2048 1152 </string>
 	<key>NSWindow Frame SessionsPreferences</key>
-	<string>269 139 606 456 0 0 1440 877 </string>
+	<string>375 325 606 469 0 0 2048 1129 </string>
 	<key>NSWindow Frame SharedPreferences</key>
-	<string>-1649 427 796 473 -2048 -252 2048 1152 </string>
+	<string>421 427 1018 447 0 0 1440 877 </string>
 	<key>NSWindow Frame UKCrashReporter</key>
 	<string>230 833 592 584 0 0 2560 1417 </string>
 	<key>NSWindow Frame iTerm Window 0</key>
@@ -3600,11 +3600,11 @@
 	<key>NSWindow Frame iTerm Window 1</key>
 	<string>0 0 1440 900 0 0 1440 877 </string>
 	<key>NSWindow Frame iTerm Window 2</key>
-	<string>-2048 -252 2048 1152 -2048 -252 2048 1129 </string>
+	<string>0 0 1440 900 0 0 1440 877 </string>
 	<key>NSWindow Frame iTerm Window 3</key>
-	<string>0 4 910 873 0 0 1440 877 </string>
+	<string>0 0 2048 1152 0 0 2048 1129 </string>
 	<key>NSWindow Frame iTerm Window 4</key>
-	<string>0 4 910 873 0 0 1440 877 </string>
+	<string>-2048 -252 2048 1152 -2048 -252 2048 1129 </string>
 	<key>NSWindow Frame iTerm Window 5</key>
 	<string>1825 -470 925 872 1440 -472 2560 1417 </string>
 	<key>NSWindow Frame iTerm Window 6</key>
@@ -6852,12 +6852,14 @@
 	<key>SUHasLaunchedBefore</key>
 	<true/>
 	<key>SULastCheckTime</key>
-	<date>2018-01-04T15:53:04Z</date>
+	<date>2018-04-26T13:29:59Z</date>
 	<key>SUSendProfileInfo</key>
 	<false/>
 	<key>SavePasteHistory</key>
 	<false/>
 	<key>ShowBookmarkName</key>
+	<false/>
+	<key>ShowMetalFPSmeter</key>
 	<false/>
 	<key>ShowPaneTitles</key>
 	<true/>
@@ -6887,6 +6889,8 @@
 	<true/>
 	<key>UseLionStyleFullscreen</key>
 	<false/>
+	<key>UseMetal</key>
+	<false/>
 	<key>WebKitDefaultFontSize</key>
 	<integer>11</integer>
 	<key>WebKitStandardFont</key>
@@ -6904,7 +6908,7 @@
 	<key>findRegex_iTerm</key>
 	<false/>
 	<key>iTerm Version</key>
-	<string>3.1.5.beta.2</string>
+	<string>3.1.6beta5</string>
 	<key>kCPKSelectionViewPreferredModeKey</key>
 	<integer>0</integer>
 	<key>kCPKSelectionViewShowHSBTextFieldsKey</key>

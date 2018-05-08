@@ -17,7 +17,7 @@ zle -N fancy-ctrl-z
 bindkey '^Z' fancy-ctrl-z
 
 function toggleColorscheme() {
-  ruby ~/.toggle-colors.rb
+  ruby ~/Dotfiles/util/toggle_colors.rb
 }
 
 function nv() {
