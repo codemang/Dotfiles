@@ -12,6 +12,7 @@ alias fpush="git push -f"
 alias pusho="git push origin"
 alias pull="git pull"
 alias pullo="git pull origin"
+alias gfo="git fetch origin"
 
 function npush() {
   git push -u origin $(git rev-parse --abbrev-ref HEAD)

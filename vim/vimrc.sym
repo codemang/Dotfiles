@@ -4,9 +4,6 @@
   " TMUX
   Plug 'christoomey/vim-tmux-navigator' " Navigate tmux/vim panes the same way
 
-  " Colors
-  Plug 'NLKNguyen/papercolor-theme'
-
   " Navigation
   Plug 'easymotion/vim-easymotion' " Helpful navigation
   Plug 'scrooloose/nerdtree' " Navigate file system'
@@ -28,7 +25,9 @@
   Plug 'chase/vim-ansible-yaml' " Better yaml indentation
   Plug 'tpope/vim-endwise' " Adds endif in ruby
   Plug 'vim-ruby/vim-ruby' " All purpose ruby plugin
-  Plug 'rstacruz/vim-closer'
+  Plug 'rstacruz/vim-closer' " Close braces and brackets
+  Plug 'suan/vim-instant-markdown' " Show markdown in browser
+  Plug 'alvan/vim-closetag' " Close HTML tags
 
   " Git
   Plug 'tpope/vim-unimpaired' " Key mappings for navigating git commit history
@@ -40,17 +39,19 @@
   Plug 'pangloss/vim-javascript'
 
   " Misc
-  Plug 'Valloric/YouCompleteMe', { 'do': './install.py' } " Auto Complete/Suggestions, needs CMake via Homebrew
   Plug 'junegunn/goyo.vim' " Zen Mode, credits to Ustasb
   Plug 'ntpeters/vim-better-whitespace' " Highlight extra whitespace
-  Plug 'matze/vim-move'
+  Plug 'matze/vim-move' " Move chunk of code in visual mode
   Plug 'mhinz/vim-startify' " Nice start screen for vim
-  Plug 'majutsushi/tagbar' " Show tags in sidebar
   Plug 'scrooloose/nerdcommenter' " Comment chunks of code
+  Plug 'lifepillar/vim-mucomplete' " Auto-complete
+
+  Plug '/Users/codemang/Personal/vim-colorscheme-switcher' " Switch colorschemes without breaking
+  Plug 'xolox/vim-misc' " Needed by vim-colorscheme-switcher
 
   call plug#end()
 " }}}
-"
+
 
 " <<<< Misc >>>> {{{
   filetype plugin indent on
@@ -151,6 +152,10 @@
     exec 'silent :w !sudo tee > /dev/null %'
   endfunction
   command! SudoSave call SudoSaveFile()
+
+  " Search for text in visual block
+  vnoremap * y/<C-R>"<CR>N
+
 " }}}
 
 
@@ -238,6 +243,9 @@
   set foldmethod=marker
   set foldmarker={{{,}}}
 
+  nnoremap zO zR<CR>
+  nnoremap zC zM<CR>
+
   set nowrap
 
   hi StatusLine ctermbg=white ctermfg=black
@@ -300,7 +308,7 @@
 "  }}}
 "
 
-" --- Details Bar ---  {{{
+" <<<< Details Bar >>>> {{{
 
   " - Airline -
   let g:airline_section_z=''
@@ -353,26 +361,34 @@
 
 
 " <<<< Colors >>>> {{{
-  if !exists('*ToggleColorschemeFunc')
-    function! ToggleColorschemeFunc()
-      silent! execute '! source ~/.zshrc && ruby ~/Dotfiles/util/toggle-colors.rb &'
+
+  " Shell out to toggle global colorscheme
+  if !exists('*ToggleGlobalColorschemeFunc')
+    function! ToggleGlobalColorschemeFunc()
+      silent! execute '! source ~/.zshrc && ruby ~/Dotfiles/util/toggle_colors.rb &'
     endfunction
   endif
+  command! ToggleGlobalColorscheme call ToggleGlobalColorschemeFunc()
+  nmap <Space>cs :ToggleGlobalColorscheme<CR>
 
-  command! ToggleColorscheme call ToggleColorschemeFunc()
-  nmap <Space>cs :ToggleColorscheme<CR>
-
-  if !exists('*ToggleColorschemeAsyncFunc')
-    function! ToggleColorschemeAsyncFunc()
-      redraw!
-      source ~/.vimrc
-      source ~/.vimrc
-      :AirlineRefresh
-      :AirlineRefresh " Not sure why but this must be called twice
+  " Receive message to reload current vim processes colorscheme
+  if !exists('*LoadColorschemeFunc')
+    function! LoadColorschemeFunc()
+      let lightTheme = system("[[ $(head -n 1 ~/Dotfiles/env/colorscheme.zsh) == *light* ]] && echo 1")
+      if lightTheme == 1
+        :ChooseColorScheme papercolor
+        set background=light
+        let g:airline_theme='papercolor'
+        :AirlineRefresh
+      else
+        " :ChooseColorScheme onedark
+        :ChooseColorScheme gruvbox
+        set background=dark
+        :AirlineRefresh
+      endif
     endfunction
   endif
-
-  command! ToggleColorschemeAsync call ToggleColorschemeAsyncFunc()
+  command! LoadColorscheme call LoadColorschemeFunc()
 
   "Use 24-bit (true-color) mode in Vim/Neovim when outside tmux.
   "If you're using tmux version 2.2 or later, you can remove the outermost $TMUX check and use tmux's 24-bit color support
@@ -388,14 +404,18 @@
     set termguicolors
   endif
 
- let lightTheme = system("[[ $(head -n 1 ~/Dotfiles/env/colorscheme.zsh) == *light* ]] && echo 1")
- if lightTheme == 1
-   set background=light
-   silent! colorscheme Papercolor
-   let g:airline_theme='papercolor'
- else
-   syntax on
-   set background=dark
-   silent! colorscheme onedark
- endif
- " }}}
+  " Only use user installed colors
+  let g:colorscheme_switcher_exclude_builtins = 1
+
+  autocmd VimEnter * LoadColorscheme
+
+" }}}
+"
+let g:closetag_filenames = '*.html,*.xhtml,*.phtml, *.jsx'
+
+set completeopt+=menuone
+set completeopt+=noselect
+set completeopt+=noinsert
+set shortmess+=c   " Shut off completion messages
+set belloff+=ctrlg " If Vim beeps during completion
+let g:mucomplete#enable_auto_at_startup = 1
