@@ -24,7 +24,7 @@ task :casks do
   existing_casks = Homebrew.list_casks
   PackageList.casks.each do |cask|
     puts "* #{cask}"
-    # Homebrew.install_cask(cask) unless existing_casks.include?(cask)
+    Homebrew.install_cask(cask) unless existing_casks.include?(cask)
   end
 
   puts "\nCompleted brew cask installation"
@@ -35,6 +35,10 @@ task :gems do
 end
 
 task :packages => [:kegs, :casks, :gems] {}
+
+task :export_packages do
+  PackageList.save_package_list
+end
 
 task :languages do
   Ruby.install

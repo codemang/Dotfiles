@@ -39,7 +39,7 @@ class Homebrew
   end
 
   def self.list_kegs
-    `brew list`.split("\n")
+    `brew leaves`.split("\n")
   end
 
   def self.list_casks

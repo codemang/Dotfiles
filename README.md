@@ -24,6 +24,10 @@ $ git fetch; git reset --hard origin/master
 $ rake setup
 ```
 
+## Updating package list
+
+```
+```
 
 Requirements/Dependencies
 -----------
