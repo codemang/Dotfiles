@@ -1,1 +1,0 @@
-/Users/netanel/SideProjects/Dotfiles/vim/vim.sym

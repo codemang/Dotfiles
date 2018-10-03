@@ -1,4 +1,4 @@
-Dir['./bootstrap/*.rb'].each {|file| require file }
+Dir['./bootstrap/**/*.rb'].each {|file| require file }
 
 task :xcode do
   Xcode.install

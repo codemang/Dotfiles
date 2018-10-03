@@ -1,5 +1,6 @@
 " <<<< Plug >>>> {{{
-  call plug#begin('~/.vim/plugged')
+  call plug#begin('~/.local/share/nvim/plugged')
+
 
   " TMUX
   Plug 'christoomey/vim-tmux-navigator' " Navigate tmux/vim panes the same way

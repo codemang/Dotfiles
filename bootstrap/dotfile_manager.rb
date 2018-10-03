@@ -1,43 +1,49 @@
 class DotfileManager
+  # Support macvim and neovim
+  SYMLINK_TARGETS = {
+    'vim/vimrc.sym' => ['~/.config/nvim/init.vim', '~/.vimrc'],
+    'vim/colors' => ['~/.local/share/nvim/site/colors', '~/.vim/colors']
+  }
+
   def self.symlink_dotfiles_and_print
     file_changes = symlink_files
     print_file_changes(file_changes)
   end
 
   def self.symlink_files
+    # required for neovim
+    `mkdir -p ~/.local/share/nvim/site`
+    `mkdir -p ~/.config/nvim`
+
     file_changes = {
       properly_symlinked_files: [],
       newly_symlinked_files: [],
       replaced_symlinked_files: [],
     }
 
-    files_to_symlink.each do |symlink_source|
-      pending_dotfile =  Dir.home + "/." + File.basename(symlink_source, '.sym')
+    SYMLINK_TARGETS.each do |source, targets|
+      targets.each do |target|
+        full_source = File.join(Dir.pwd, source)
+        full_target = File.expand_path(target)
 
-      if File.exists?(pending_dotfile)
-        current_symlink_source = `readlink -n #{pending_dotfile}`
-        if current_symlink_source == symlink_source
-          file_changes[:properly_symlinked_files] << pending_dotfile
+        symlink_exists = `readlink -n #{full_target}`.length > 0
+        if File.exists?(full_target) || symlink_exists
+          current_symlink_source = `readlink -n #{full_target}`
+          if current_symlink_source == full_source
+            file_changes[:properly_symlinked_files] << full_target
+          else
+            file_changes[:replaced_symlinked_files] << full_target
+            `mv #{full_target} #{full_target}.replaced`
+            system "ln -s #{full_source} #{full_target}"
+          end
         else
-          file_changes[:replaced_symlinked_files] << pending_dotfile
-          `mv #{pending_dotfile} #{pending_dotfile}.replaced`
-          system "ln -s #{File.expand_path(symlink_source)} #{pending_dotfile}"
+          file_changes[:newly_symlinked_files] << full_target
+          system "ln -s #{full_source} #{full_target}"
         end
-      else
-        file_changes[:newly_symlinked_files] << pending_dotfile
-        system "ln -s #{File.expand_path(symlink_source)} #{pending_dotfile}"
       end
     end
 
     file_changes
-  end
-
-  def self.files_to_symlink
-    @files_to_symlink ||= begin
-      dot_dir = File.expand_path('..', File.dirname(__FILE__))
-      file_pattern = File.join(dot_dir, '**', '*')
-      Dir.glob(file_pattern).select{|file| file =~ /^.*\.sym$/}
-    end
   end
 
   def self.print_file_changes(file_changes)

@@ -1,5 +1,7 @@
 # Assumes neovim is installed
 class Vim
+  # Support macvim and neovim
+
   def self.install
     install_plugin_manager
     install_vim_plugins
