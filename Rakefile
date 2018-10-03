@@ -34,7 +34,7 @@ task :gems do
   RubyGems.install_gems(PackageList.gems, {ignore_existing: true})
 end
 
-task :packages => [:kegs, :casks, :gems] {}
+#task :packages => [:kegs, :casks, :gems] {}
 
 task :export_packages do
   PackageList.save_package_list
@@ -62,4 +62,4 @@ task :all => [
   :zsh,
   :dotfiles,
   :vim,
-] {}
+]
