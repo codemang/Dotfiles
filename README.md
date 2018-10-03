@@ -9,7 +9,6 @@ Installation
 ------------
 
 For a first time installation
-
 ```
 $ git clone https://github.com/codemang/Dotfiles.git
 $ rake setup
@@ -23,6 +22,14 @@ From then on any changes to the repo will be applied by pulling the latest versi
 $ git fetch; git reset --hard origin/master
 $ rake setup
 ```
+
+## Manual Steps
+
+1) Create new Github SSH keys
+
+https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/
+
+2) Change the keyboard key repeat and key repeat delay speeds
 
 ## Updating package list
 
