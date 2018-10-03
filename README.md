@@ -35,6 +35,8 @@ https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-s
 
 https://stackoverflow.com/questions/127591/using-caps-lock-as-esc-in-mac-os-x/40254864#40254864
 
+4) Open spectacle manually and give it the permissions it needs.
+
 
 ## Updating package list
 
