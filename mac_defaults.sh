@@ -22,6 +22,9 @@ defaults write com.apple.menuextra.battery ShowPercent YES
 defaults write NSGlobalDomain KeyRepeat -int 2
 defaults write NSGlobalDomain InitialKeyRepeat -int 15
 
+# Set Spectacle to start on login: REQUIRES REBOOT
+osascript -e 'tell application "System Events" to make login item at end with properties {path:"/Applications/Spectacle.app", hidden:false}'
+
 # Restart anything that used the changed settings
 killall Dock
 killall Finder
