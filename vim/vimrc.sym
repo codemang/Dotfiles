@@ -46,7 +46,7 @@
   Plug 'scrooloose/nerdcommenter' " Comment chunks of code
   Plug 'lifepillar/vim-mucomplete' " Auto-complete
 
-  Plug '/Users/codemang/Personal/vim-colorscheme-switcher' " Switch colorschemes without breaking
+  Plug 'codemang/vim-colorscheme-switcher' " Switch colorschemes without breaking
   Plug 'xolox/vim-misc' " Needed by vim-colorscheme-switcher
 
   call plug#end()
