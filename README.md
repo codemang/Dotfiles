@@ -31,6 +31,11 @@ https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-s
 
 2) Change the keyboard key repeat and key repeat delay speeds
 
+3) Remap caps lock to control
+
+https://stackoverflow.com/questions/127591/using-caps-lock-as-esc-in-mac-os-x/40254864#40254864
+
+
 ## Updating package list
 
 ```
