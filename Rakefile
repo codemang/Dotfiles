@@ -1,4 +1,4 @@
-Dir['./lib/*.rb'].each {|file| require file }
+Dir['./bootstrap/*.rb'].each {|file| require file }
 
 task :xcode do
   Xcode.install
@@ -34,7 +34,7 @@ task :gems do
   RubyGems.install_gems(PackageList.gems, {ignore_existing: true})
 end
 
-#task :packages => [:kegs, :casks, :gems] {}
+task :packages => [:kegs, :casks, :gems]
 
 task :export_packages do
   PackageList.save_package_list

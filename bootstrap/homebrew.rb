@@ -4,7 +4,7 @@ class Homebrew
   end
 
   def self.install_homebrew
-    system("/usr/bin/ruby -e \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)\"")
+    system("/usr/bin/ruby -e \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)\" </dev/null")
   end
 
   def self.install_homebrew_cask
