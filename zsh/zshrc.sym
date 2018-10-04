@@ -88,3 +88,6 @@ function ecron() {
 }
 
 export PATH=$PATH:/Users/codemang/Downloads/chromedriver
+
+# Default to Bookbub directory if present
+[ -d "/Users/codemang/Bookbub" ] && cd ~/Bookbub

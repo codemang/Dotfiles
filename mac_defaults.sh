@@ -25,6 +25,9 @@ defaults write NSGlobalDomain InitialKeyRepeat -int 15
 # Set Spectacle to start on login: REQUIRES REBOOT
 osascript -e 'tell application "System Events" to make login item at end with properties {path:"/Applications/Spectacle.app", hidden:false}'
 
+# Hide all icons on Desktop
+defaults write com.apple.finder CreateDesktop false
+
 # Restart anything that used the changed settings
 killall Dock
 killall Finder

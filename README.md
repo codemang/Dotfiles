@@ -39,6 +39,11 @@ https://stackoverflow.com/questions/127591/using-caps-lock-as-esc-in-mac-os-x/40
 
 5) Change background image folder to the `desktop-images` folder
 
+6) Configure Finder to include these favorites
+* Home Directory
+* Screenshots
+* Personal directory
+
 ## Updating package list
 
 ```
