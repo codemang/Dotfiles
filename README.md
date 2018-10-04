@@ -44,6 +44,8 @@ https://stackoverflow.com/questions/127591/using-caps-lock-as-esc-in-mac-os-x/40
 * Screenshots
 * Personal directory
 
+7) Set iterm to load its preferences from the Dotfiles repo
+
 ## Updating package list
 
 ```

@@ -52,14 +52,32 @@ task :vim do
   Vim.install
 end
 
+task :mac_defaults do
+  MacDefaults.execute
+end
+
 task :dotfiles do
   DotfileManager.symlink_dotfiles_and_print
 end
 
-task :all => [
+def green_output(msg)
+  puts "\e[#{32}m#{msg}\e[0m"
+end
+
+task :complete_msg do
+  puts
+  green_output("====================== BOOTSTRAPPING COMPLETE ====================")
+  green_output("Final Steps:")
+  green_output("1) Restart your computer so that some configurations can take effect")
+  green_output("2) Follow the manual steps in the README")
+end
+
+task :setup => [
   :packages,
   :languages,
   :zsh,
   :dotfiles,
   :vim,
+  :mac_defaults,
+  :complete_msg
 ]
