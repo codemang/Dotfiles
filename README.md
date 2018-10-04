@@ -37,6 +37,7 @@ https://stackoverflow.com/questions/127591/using-caps-lock-as-esc-in-mac-os-x/40
 
 4) Open spectacle manually and give it the permissions it needs.
 
+5) Change background image folder to the `desktop-images` folder
 
 ## Updating package list
 
