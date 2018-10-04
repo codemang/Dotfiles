@@ -21,6 +21,9 @@ class Homebrew
     kegs.each do |keg|
       if !existing_kegs.include?(keg)
         install_keg(keg)
+        puts "* #{keg} - newly installed" if opts[:log_output]
+      else
+        puts "* #{keg} - already installed" if opts[:log_output]
       end
     end
   end
@@ -34,6 +37,9 @@ class Homebrew
     casks.each do |cask|
       if !existing_casks.include?(cask)
         install_cask(cask)
+        puts "* #{cask} - newly installed" if opts[:log_output]
+      else
+        puts "* #{cask} - already installed" if opts[:log_output]
       end
     end
   end

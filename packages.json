@@ -28,8 +28,17 @@
     "macvim",
     "miniupnpc",
     "neovim",
+<<<<<<< HEAD
     "nmap",
     "rbenv",
+||||||| parent of 4417086... WIP
+    "opam",
+    "postgresql",
+=======
+    "opam",
+    "postgresql",
+    "python@2",
+>>>>>>> 4417086... WIP
     "reattach-to-user-namespace",
     "ruby",
     "ruby-install",
@@ -64,34 +73,127 @@
   ],
   "gems": [
     "bigdecimal ",
+<<<<<<< HEAD
     "bundler ",
     "cmath ",
     "csv ",
     "date ",
     "dbm ",
+||||||| parent of 4417086... WIP
+    "bundler ",
+    "byebug ",
+    "childprocess ",
+    "chunky_png ",
+    "coffee-script ",
+    "coffee-script-source ",
+    "colorize ",
+    "compass ",
+    "concurrent-ruby ",
+    "cool.io ",
+    "declarative ",
+    "declarative-option ",
+=======
+>>>>>>> 4417086... WIP
     "did_you_mean ",
+<<<<<<< HEAD
     "etc ",
     "fcntl ",
     "fiddle ",
     "fileutils ",
+||||||| parent of 4417086... WIP
+    "diff-lcs ",
+    "dory ",
+    "dotenv ",
+    "execjs ",
+    "faraday ",
+    "ffi ",
+    "fssm ",
+    "git ",
+    "google-api-client ",
+    "google-id-token ",
+    "googleauth ",
+    "haml ",
+    "httpclient ",
+    "i18n ",
+=======
+>>>>>>> 4417086... WIP
     "io-console ",
     "ipaddr ",
     "json ",
     "minitest ",
+<<<<<<< HEAD
     "msgpack ",
+||||||| parent of 4417086... WIP
+    "msgpack ",
+    "msgpack-rpc ",
+    "multi_json ",
+    "multipart-post ",
+    "mustermann ",
+    "neovim ",
+=======
+>>>>>>> 4417086... WIP
     "net-telnet ",
     "openssl ",
     "power_assert ",
     "psych ",
     "rake ",
     "rdoc ",
+<<<<<<< HEAD
     "scanf ",
     "sdbm ",
     "stringio ",
     "strscan ",
+||||||| parent of 4417086... WIP
+    "redis ",
+    "representable ",
+    "require_all ",
+    "retriable ",
+    "robotex ",
+    "rspec ",
+    "rspec-core ",
+    "rspec-expectations ",
+    "rspec-mocks ",
+    "rspec-support ",
+    "rspec_junit_formatter ",
+    "rubyzip ",
+    "sass ",
+    "sass-listen ",
+    "sawyer ",
+    "selenium-webdriver ",
+    "shotgun ",
+    "signet ",
+    "sinatra ",
+    "sinatra-asset-pipeline ",
+    "sprockets ",
+    "sprockets-helpers ",
+    "state_machines ",
+    "state_machines-activemodel ",
+    "state_machines-activerecord ",
+    "temple ",
+=======
+>>>>>>> 4417086... WIP
     "test-unit ",
+<<<<<<< HEAD
     "webrick ",
     "xmlrpc ",
     "zlib "
+||||||| parent of 4417086... WIP
+    "thor ",
+    "thread_safe ",
+    "tilt ",
+    "tzinfo ",
+    "uber ",
+    "watir ",
+    "xmlrpc "
+=======
+    "xmlrpc "
+  ],
+  "npm_packages": [
+    "create-react-app",
+    "electron",
+    "instant-markdown-d",
+    "npm",
+    "vtop"
+>>>>>>> 4417086... WIP
   ]
 }

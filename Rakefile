@@ -7,34 +7,29 @@ end
 task :kegs do
   puts 'Starting brew keg installation'
   Homebrew.install_homebrew
-
-  existing_kegs = Homebrew.list_kegs
-  PackageList.kegs.each do |keg|
-    puts "* #{keg}"
-    Homebrew.install_keg(keg) unless existing_kegs.include?(keg)
-  end
-
-  puts "\nCompleted brew keg installation"
+  puts 'Installing individual kegs'
+  Homebrew.install_kegs(PackageList.kegs, ignore_existing: true, log_output: true)
 end
 
 task :casks do
   puts 'Starting brew cask installation'
   Homebrew.install_homebrew_cask
+  puts 'Installing individual casks'
+  Homebrew.install_casks(PackageList.casks, ignore_existing: true, log_output: true)
+end
 
-  existing_casks = Homebrew.list_casks
-  PackageList.casks.each do |cask|
-    puts "* #{cask}"
-    Homebrew.install_cask(cask) unless existing_casks.include?(cask)
-  end
-
-  puts "\nCompleted brew cask installation"
+task :npm_packages do
+  puts 'Installing individual NPM packages'
+  NPM.install_packages(PackageList.npm_packages, ignore_existing: true, log_output: true)
 end
 
 task :gems do
-  RubyGems.install_gems(PackageList.gems, {ignore_existing: true})
+  puts 'Installing individual gems'
+  RubyGems.install_gems(PackageList.gems, {ignore_existing: true, log_output: true})
 end
 
-task :packages => [:kegs, :casks, :gems]
+task :system_packages => [:kegs, :casks]
+task :language_packages => [:gems, :npm_packages]
 
 task :export_packages do
   PackageList.save_package_list
@@ -73,8 +68,9 @@ task :complete_msg do
 end
 
 task :setup => [
-  :packages,
+  :system_packages,
   :languages,
+  :language_packages,
   :zsh,
   :dotfiles,
   :vim,

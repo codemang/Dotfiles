@@ -27,6 +27,7 @@ class PackageList
       kegs: Homebrew.list_kegs,
       casks: Homebrew.list_casks,
       gems: RubyGems.list_gems,
+      npm_packages: NPM.list_packages,
     }
   end
 

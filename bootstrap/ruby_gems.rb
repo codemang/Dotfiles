@@ -8,6 +8,9 @@ class RubyGems
     gems.each do |gem|
       if !existing_gems.include?(gem)
         install_gem(gem)
+        puts "* #{gem} - newly installed" if opts[:log_output]
+      else
+        puts "* #{gem} - already installed" if opts[:log_output]
       end
     end
   end
