@@ -29,6 +29,9 @@ module MacDefaults
     # Set Spectacle to start on login: REQUIRES REBOOT
     `osascript -e 'tell application "System Events" to make login item at end with properties {path:"/Applications/Spectacle.app", hidden:false}'`
 
+    # Set items in top bar
+    `defaults write com.apple.systemuiserver menuExtras -array "/System/Library/CoreServices/Menu Extras/Clock.menu” "/System/Library/CoreServices/Menu Extras/Bluetooth.menu" "/System/Library/CoreServices/Menu Extras/Displays.menu”`
+
     # Hide all icons on Desktop
     `defaults write com.apple.finder CreateDesktop false`
   end

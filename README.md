@@ -5,16 +5,21 @@ A simple rake task which downloads all my dotfiles, installs any dependencies, a
 
 ![Alt Text](https://github.com/codemang/Dotfiles/blob/master/recording.gif)
 
-Installation
-------------
+## Installation
+
 
 For a first time installation
 ```
+$ xcode-select --install
 $ git clone https://github.com/codemang/Dotfiles.git
 $ rake setup
-$ source ~/.zshrc
-$ rake update
 ```
+
+This requires your password at a few steps. Once this completes, you must
+restart your computer for certain configurations to take effect. Once you
+restart your computer, complete the manual steps.
+
+## Updates
 
 From then on any changes to the repo will be applied by pulling the latest version and running update.
 
