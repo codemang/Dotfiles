@@ -1,27 +1,14 @@
 class Ruby
-  RUBY_VERSION = '2.4.1'
-
+  # Depends on chruby and ruby-install being installed
   def self.install
-    rbenv_init
-    install_ruby
-    create_global_ruby_version
-  end
+    system('ruby-install ruby')
 
-  private
+    latest_ruby = `ls ~/.rubies`
+      .split("\n")
+      .map(&:strip)
+      .sort_by{ |ruby_version| ruby_version }
+      .last
 
-  def self.rbenv_init
-    system("rbenv init")
-  end
-
-  def self.install_ruby
-    if !(`rbenv global`.strip == RUBY_VERSION)
-      system("rbenv install #{RUBY_VERSION}")
-    end
-  end
-
-  def self.create_global_ruby_version
-    version_file = File.open(File.expand_path('~/.rbenv/version'), 'w')
-    version_file.truncate(0)
-    version_file.write(RUBY_VERSION)
+    `echo #{latest_ruby} > ~/.ruby-version`
   end
 end

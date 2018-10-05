@@ -54,6 +54,7 @@ source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 export PATH=~/anaconda3/bin:$PATH
 
 source /usr/local/share/chruby/chruby.sh
+source /usr/local/share/chruby/auto.sh
 
 function tnbb() {
   tmux new -s $1 -d
@@ -88,6 +89,3 @@ function ecron() {
 }
 
 export PATH=$PATH:/Users/codemang/Downloads/chromedriver
-
-# Default to Bookbub directory if present
-[ -d "/Users/codemang/Bookbub" ] && cd ~/Bookbub

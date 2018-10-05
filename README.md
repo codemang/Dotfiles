@@ -12,6 +12,7 @@ For a first time installation
 ```
 $ xcode-select --install
 $ git clone https://github.com/codemang/Dotfiles.git
+$ cd Dotfiles
 $ rake setup
 ```
 
