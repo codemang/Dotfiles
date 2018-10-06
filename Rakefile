@@ -1,9 +1,5 @@
 Dir['./bootstrap/**/*.rb'].each {|file| require file }
 
-task :xcode do
-  Xcode.install
-end
-
 task :brew do
   puts_section_header('brew')
   puts 'Starting Homebrew installation'
@@ -20,11 +16,13 @@ task :cask do
 end
 
 task :npm_packages do
+  puts_section_header('npm packages')
   puts 'Installing individual NPM packages'
   NPM.install_packages(PackageList.npm_packages, log_output: true)
 end
 
 task :gems do
+  puts_section_header('gems')
   puts 'Installing individual gems'
   RubyGems.install_packages(PackageList.gems, log_output: true)
 end
@@ -37,22 +35,27 @@ task :export_packages do
 end
 
 task :languages do
+  puts_section_header('languages')
   Ruby.install
 end
 
 task :zsh do
+  puts_section_header('zsh')
   Zsh.install
 end
 
 task :vim do
+  puts_section_header('vim')
   Vim.install
 end
 
 task :mac_defaults do
+  puts_section_header('mac defaults')
   MacDefaults.execute
 end
 
 task :dotfiles do
+  puts_section_header('dotfiles')
   DotfileManager.symlink_dotfiles_and_print
 end
 

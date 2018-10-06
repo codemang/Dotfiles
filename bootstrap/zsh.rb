@@ -1,16 +1,9 @@
-require_relative './homebrew'
+require_relative './brew'
 
 class Zsh
   def self.install
-    install_zsh
     install_oh_my_zsh
     set_default_shell
-  end
-
-  def self.install_zsh
-    if Homebrew.keg_installed?('zsh')
-      Homebrew.install_keg('zsh')
-    end
   end
 
   def self.install_oh_my_zsh
