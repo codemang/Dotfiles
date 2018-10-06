@@ -47,6 +47,7 @@ end
 task :vim do
   puts_section_header('vim')
   Vim.install
+  Powerfonts.install
 end
 
 task :mac_defaults do
