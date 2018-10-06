@@ -31,9 +31,20 @@ $ rake setup
 
 ## Manual Steps
 
-1) Create new Github SSH keys
+1) Create new Github SSH keys and add it to your ssh configk
 
+**Keys**
 https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/
+
+**Config**
+https://www.keybits.net/post/automatically-use-correct-ssh-key-for-remote-git-repo/
+
+2) In order to push dotfiles in the future you need to switch the remote to the
+SSH version
+
+```
+$ git remote set-url origin git@github.com:codemang/Dotfiles.git
+```
 
 2) Change the keyboard key repeat and key repeat delay speeds
 
@@ -51,11 +62,6 @@ https://stackoverflow.com/questions/127591/using-caps-lock-as-esc-in-mac-os-x/40
 * Personal directory
 
 7) Set iterm to load its preferences from the Dotfiles repo
-
-## Updating package list
-
-```
-```
 
 Requirements/Dependencies
 -----------
