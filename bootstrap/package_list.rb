@@ -1,6 +1,8 @@
 require 'json'
-require_relative './homebrew'
+require_relative './brew'
+require_relative './brew_cask'
 require_relative './ruby_gems'
+require_relative './npm'
 
 class PackageList
   def self.method_missing(m, *args, &block)
@@ -24,9 +26,9 @@ class PackageList
 
   def self.build_package_list
     {
-      kegs: Homebrew.list_kegs,
-      casks: Homebrew.list_casks,
-      gems: RubyGems.list_gems,
+      kegs: Brew.list_packages,
+      casks: BrewCask.list_packages,
+      gems: RubyGems.list_packages,
       npm_packages: NPM.list_packages,
     }
   end

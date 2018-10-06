@@ -420,8 +420,3 @@ set completeopt+=noinsert
 set shortmess+=c   " Shut off completion messages
 set belloff+=ctrlg " If Vim beeps during completion
 let g:mucomplete#enable_auto_at_startup = 1
-
-" Fixes Mu-complete and endwise.vim conflict. Use :help
-" mucomplete-compatibility command for more info
-imap <Plug>MyCR <Plug>(MUcompleteCR)
-imap <cr> <Plug>MyCR

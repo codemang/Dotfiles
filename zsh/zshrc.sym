@@ -51,8 +51,6 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 
 source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-export PATH=~/anaconda3/bin:$PATH
-
 source /usr/local/share/chruby/chruby.sh
 source /usr/local/share/chruby/auto.sh
 
@@ -87,5 +85,3 @@ function notify_prs() {
 function ecron() {
   env EDITOR=nvim crontab -e
 }
-
-export PATH=$PATH:/Users/codemang/Downloads/chromedriver

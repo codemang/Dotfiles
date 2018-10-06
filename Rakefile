@@ -4,31 +4,32 @@ task :xcode do
   Xcode.install
 end
 
-task :kegs do
-  puts 'Starting brew keg installation'
-  Homebrew.install_homebrew
+task :brew do
+  puts_section_header('brew')
+  puts 'Starting Homebrew installation'
+  Brew.install_package_manager
   puts 'Installing individual kegs'
-  Homebrew.install_kegs(PackageList.kegs, ignore_existing: true, log_output: true)
+  Brew.install_packages(PackageList.kegs, log_output: true)
 end
 
-task :casks do
-  puts 'Starting brew cask installation'
-  Homebrew.install_homebrew_cask
+
+task :cask do
+  puts_section_header('brew cask')
   puts 'Installing individual casks'
-  Homebrew.install_casks(PackageList.casks, ignore_existing: true, log_output: true)
+  BrewCask.install_packages(PackageList.casks, log_output: true)
 end
 
 task :npm_packages do
   puts 'Installing individual NPM packages'
-  NPM.install_packages(PackageList.npm_packages, ignore_existing: true, log_output: true)
+  NPM.install_packages(PackageList.npm_packages, log_output: true)
 end
 
 task :gems do
   puts 'Installing individual gems'
-  RubyGems.install_gems(PackageList.gems, {ignore_existing: true, log_output: true})
+  RubyGems.install_packages(PackageList.gems, log_output: true)
 end
 
-task :system_packages => [:kegs, :casks]
+task :system_packages => [:brew, :cask]
 task :language_packages => [:gems, :npm_packages]
 
 task :export_packages do
@@ -57,6 +58,17 @@ end
 
 def green_output(msg)
   puts "\e[#{32}m#{msg}\e[0m"
+end
+
+def puts_section_header(header)
+  puts
+  header_container = '=============================================================='
+  first_half_space_length  = header_container.length/2 - (header.length/2 + 2)
+  second_half_space_length = header_container.length - (4 + first_half_space_length + header.length)
+  green_output(header_container)
+  green_output("= "+' '*first_half_space_length + header.upcase + " "*second_half_space_length+" =")
+  green_output(header_container)
+  puts
 end
 
 task :complete_msg do
