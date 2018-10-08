@@ -11,6 +11,6 @@ class NPM
   private
 
   def self.install_package(package)
-    `npm install -g #{pacakge}`
+    `npm install -g #{package}`
   end
 end

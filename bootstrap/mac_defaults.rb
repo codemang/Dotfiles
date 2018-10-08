@@ -9,8 +9,8 @@ module MacDefaults
     # Remove delay when hovering over the dock
     `defaults write com.apple.Dock autohide-delay -float 0`
 
-    # Hide all icons on dock
-    `defaults write com.apple.finder CreateDesktop -bool false && killall Finder`
+    # Hide all icons on Desktop
+    `defaults write com.apple.finder CreateDesktop -bool false`
 
     # Make a new directory for screenshots
     `mkdir -p ~/Screenshots`
@@ -32,7 +32,7 @@ module MacDefaults
     # Set items in top bar
     `defaults write com.apple.systemuiserver menuExtras -array "/System/Library/CoreServices/Menu Extras/Clock.menu” "/System/Library/CoreServices/Menu Extras/Bluetooth.menu" "/System/Library/CoreServices/Menu Extras/Displays.menu”`
 
-    # Hide all icons on Desktop
-    `defaults write com.apple.finder CreateDesktop false`
+    # Only show running apps in Dock
+    `defaults write com.apple.dock static-only -bool true`
   end
 end
