@@ -2,7 +2,6 @@
 
 require 'msgpack/rpc'
 require 'msgpack/rpc/transport/unix'
-require 'byebug'
 
 module ToggleColorScheme
   extend self

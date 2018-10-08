@@ -379,8 +379,7 @@
         let g:airline_theme='papercolor'
         :AirlineRefresh
       else
-        " :ChooseColorScheme onedark
-        :ChooseColorScheme gruvbox
+        :ChooseColorScheme onedark
         set background=dark
         :AirlineRefresh
       endif
