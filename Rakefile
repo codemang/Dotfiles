@@ -60,6 +60,10 @@ task :dotfiles do
   DotfileManager.symlink_dotfiles_and_print
 end
 
+task :misc do
+  Misc.install
+end
+
 def green_output(msg)
   puts "\e[#{32}m#{msg}\e[0m"
 end

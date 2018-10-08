@@ -31,7 +31,9 @@ $ rake setup
 
 ## Manual Steps
 
-1) Create new Github SSH keys and add it to your ssh configk
+1) Sign in to 1Password from your phone
+
+1) Create new Github SSH keys and add it to your ssh config
 
 **Keys**
 https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/
@@ -39,29 +41,31 @@ https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-s
 **Config**
 https://www.keybits.net/post/automatically-use-correct-ssh-key-for-remote-git-repo/
 
-2) In order to push dotfiles in the future you need to switch the remote to the
+1) In order to push dotfiles in the future you need to switch the remote to the
 SSH version
 
 ```
 $ git remote set-url origin git@github.com:codemang/Dotfiles.git
 ```
 
-2) Change the keyboard key repeat and key repeat delay speeds
+1) Change the keyboard key repeat and key repeat delay speeds
 
-3) Remap caps lock to control
+1) Remap caps lock to control
 
 https://stackoverflow.com/questions/127591/using-caps-lock-as-esc-in-mac-os-x/40254864#40254864
 
-4) Open spectacle manually and give it the permissions it needs.
+1) Open spectacle manually and give it the permissions it needs.
 
-5) Change background image folder to the `desktop-images` folder
+1) Go to System Preferences => Keyboard => Shortcuts => Spotlight, and disable
 
-6) Configure Finder to include these favorites
+1) Open alfred and change hotkey to cmd + space
+
+1) Configure Finder to include these favorites
 * Home Directory
 * Screenshots
 * Personal directory
 
-7) Set iterm to load its preferences from the Dotfiles repo
+1) Set iterm to load its preferences from the Dotfiles repo
 
 Requirements/Dependencies
 -----------

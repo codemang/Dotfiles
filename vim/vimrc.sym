@@ -27,7 +27,8 @@
   Plug 'tpope/vim-endwise' " Adds endif in ruby
   Plug 'vim-ruby/vim-ruby' " All purpose ruby plugin
   Plug 'rstacruz/vim-closer' " Close braces and brackets
-  Plug 'suan/vim-instant-markdown' " Show markdown in browser
+  " Plug 'JamshedVesuna/vim-markdown-preview'
+  Plug 'suan/vim-instant-markdown'
   Plug 'alvan/vim-closetag' " Close HTML tags
 
   " Git
@@ -73,10 +74,6 @@
   " Remap escape to fd
   inoremap kj <Esc>
   inoremap <esc> <nop>
-
-  let vim_markdown_preview_pandoc=1
-
-  let vim_markdown_preview_browser='Google Chrome'
 
   " Misc
   set mouse=a
