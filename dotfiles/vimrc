@@ -381,6 +381,7 @@
       else
         :ChooseColorScheme onedark
         set background=dark
+        let g:airline_theme='onedark'
         :AirlineRefresh
       endif
     endfunction
