@@ -20,6 +20,14 @@ function toggleColorscheme() {
   ruby ~/Dotfiles/util/toggle_colors.rb
 }
 
+function isLightTheme() {
+  if [ ! -f ~/.color-scheme-env ]; then
+    echo "light"
+  else
+    head -n 1 ~/.color-scheme-env
+  fi
+}
+
 function nv() {
   random_pid=${RANDOM}
   echo "\n$random_pid\n" >> ~/.nvim-trackers

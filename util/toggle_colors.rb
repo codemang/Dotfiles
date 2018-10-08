@@ -13,7 +13,7 @@ module ToggleColorScheme
   DOWN_KEY = 125
 
   RUNNING_VIM_TRACKER_FILE = File.expand_path('~/.nvim-trackers')
-  COLOR_SCHEME_FILE        = File.join(ENV['DOTFILES'], '.env', 'colorscheme.zsh')
+  COLOR_SCHEME_FILE        = File.expand_path('~/.color-scheme-env')
 
 
   def execute
@@ -65,7 +65,7 @@ module ToggleColorScheme
 
 
   def is_light_theme?
-    File.read(COLOR_SCHEME_FILE) == 'light'
+    !File.exists?(COLOR_SCHEME_FILE) || File.read(COLOR_SCHEME_FILE) == 'light'
   end
 end
 
