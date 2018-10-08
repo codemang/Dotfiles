@@ -49,6 +49,9 @@ hotkeys for spotlight
 
 1) Set iterm to load its preferences from the Dotfiles repo
 
+1) Change the [next/previous tab shortcut
+keys](https://superuser.com/questions/497526/how-to-customize-google-chrome-keyboard-shortcuts) for chrome
+
 ### Updates
 
 From then on any changes to the repo will be applied by pulling the latest version and running update.
