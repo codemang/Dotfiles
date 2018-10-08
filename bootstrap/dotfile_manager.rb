@@ -1,11 +1,11 @@
 class DotfileManager
   # Support macvim and neovim
   SYMLINK_TARGETS = {
-    'vim/vimrc.sym' => ['~/.config/nvim/init.vim', '~/.vimrc'],
-    'vim/colors' => ['~/.local/share/nvim/site/colors', '~/.vim/colors'],
-    'zsh/zshrc.sym' => ['~/.zshrc'],
-    'tmux/tmux.conf.sym' => ['~/.tmux.conf'],
-    'git/gitconfig.sym' => ['~/.gitconfig'],
+    'dotfiles/vimrc' => ['~/.config/nvim/init.vim', '~/.vimrc'],
+    'dotfiles/colors' => ['~/.local/share/nvim/site/colors', '~/.vim/colors'],
+    'dotfiles/zshrc' => ['~/.zshrc'],
+    'dotfiles/tmux.conf' => ['~/.tmux.conf'],
+    'dotfiles/gitconfig' => ['~/.gitconfig'],
   }
 
   def self.symlink_dotfiles_and_print
