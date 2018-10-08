@@ -8,7 +8,8 @@ export HOST_ENV="development"
 export HISTCONTROL=ignoreboth:erasedupsG
 export CIRCLE_ESLINT_SCRIPT_ENV="dev"
 export DOTFILES=$HOME/Dotfiles
-export TERM=xterm-256color
+
+export TERM=xterm-256color-italic
 
 export PATH=/usr/local/sbin:$PATH
 

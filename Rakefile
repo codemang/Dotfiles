@@ -94,6 +94,7 @@ task :setup => [
   :zsh,
   :dotfiles,
   :vim,
+  :misc,
   :mac_defaults,
   :complete_msg
 ]

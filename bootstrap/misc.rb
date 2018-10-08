@@ -1,6 +1,9 @@
 class Misc
   def self.install
-    `mkdir -p ~/Personal`
+
+    # Add terminfos so that italics is enabled in vim
+    `tic -x #{File.join(Dir.pwd, 'iterm/xterm-256color-italic.terminfo')}`
+    `tic -x #{File.join(Dir.pwd, 'iterm/tmux.terminfo')}`
 
     # Set Desktop background images to personal images
     system("sudo rm /Library/Desktop\\ Pictures/* > /dev/null 2>&1")
@@ -17,5 +20,8 @@ class Misc
       end tell
     eos
     system 'osascript', *script.split(/\n/).map { |line| ['-e', line] }.flatten
+
+    # Other
+    `mkdir -p ~/Personal`
   end
 end

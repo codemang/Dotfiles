@@ -227,7 +227,7 @@
 
   highlight VertSplit ctermbg=none
   highlight VertSplit ctermfg=none
-  highlight Comment ctermbg=none ctermfg=243
+  " highlight Comment ctermbg=none ctermfg=243
   highlight SignColumn guibg=darkgrey ctermbg=none ctermfg=none
   highlight LineNr ctermbg=none
 
@@ -373,11 +373,19 @@
   if !exists('*LoadColorschemeFunc')
     function! LoadColorschemeFunc()
       if system("source ~/.zshrc && isLightTheme") =~ "light"
+        let g:PaperColor_Theme_Options = {
+          \   'theme': {
+          \     'default': {
+          \       'allow_italic': 1
+          \     }
+          \   }
+          \ }
         :ChooseColorScheme papercolor
         set background=light
         let g:airline_theme='papercolor'
         :AirlineRefresh
       else
+        let g:onedark_terminal_italics = 1
         :ChooseColorScheme onedark
         set background=dark
         let g:airline_theme='onedark'
