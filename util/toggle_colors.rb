@@ -13,7 +13,7 @@ module ToggleColorScheme
   DOWN_KEY = 125
 
   RUNNING_VIM_TRACKER_FILE = File.expand_path('~/.nvim-trackers')
-  COLOR_SCHEME_FILE        = File.join(ENV['DOTFILES'], 'env', 'colorscheme.zsh')
+  COLOR_SCHEME_FILE        = File.join(ENV['DOTFILES'], '.env', 'colorscheme.zsh')
 
 
   def execute
@@ -31,6 +31,7 @@ module ToggleColorScheme
     File.open(COLOR_SCHEME_FILE, 'w') do |f|
       f.write(new_color_scheme)
     end
+
   end
 
   def toggle_iterm_color_scheme(color_scheme)

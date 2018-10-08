@@ -372,7 +372,7 @@
   " Receive message to reload current vim processes colorscheme
   if !exists('*LoadColorschemeFunc')
     function! LoadColorschemeFunc()
-      let lightTheme = system("[[ $(head -n 1 ~/Dotfiles/env/colorscheme.zsh) == *light* ]] && echo 1")
+      let lightTheme = system("[[ $(head -n 1 ~/Dotfiles/.env/colorscheme.zsh) == *light* ]] && echo 1")
       if lightTheme == 1
         :ChooseColorScheme papercolor
         set background=light
