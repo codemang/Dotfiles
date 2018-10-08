@@ -4,7 +4,7 @@ class Misc
 
     # Set Desktop background images to personal images
     system("sudo rm /Library/Desktop\\ Pictures/* > /dev/null 2>&1")
-    system("sudo cp ~/Dotfiles/desktop-images/* /Library/Desktop\\ Pictures")
+    system("sudo cp ~/Dotfiles/assets/desktop-images/* /Library/Desktop\\ Pictures")
 
     # Configure Desktop background
     script = <<-eos
