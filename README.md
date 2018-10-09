@@ -52,6 +52,8 @@ hotkeys for spotlight
 1) Change the [next/previous tab shortcut
 keys](https://superuser.com/questions/497526/how-to-customize-google-chrome-keyboard-shortcuts) for chrome
 
+1) Signin to the Chrome browser so that extensions are synced
+
 ### Updates
 
 From then on any changes to the repo will be applied by pulling the latest version and running update.
