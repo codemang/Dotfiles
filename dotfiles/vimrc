@@ -1,6 +1,7 @@
 " <<<< Plug >>>> {{{
   call plug#begin('~/.local/share/nvim/plugged')
-
+"
+  Plug 'jacoborus/tender.vim'
 
   " TMUX
   Plug 'christoomey/vim-tmux-navigator' " Navigate tmux/vim panes the same way
@@ -385,10 +386,9 @@
         let g:airline_theme='papercolor'
         :AirlineRefresh
       else
-        let g:onedark_terminal_italics = 1
-        :ChooseColorScheme onedark
+        :ChooseColorScheme tender
+        let g:airline_theme = 'tender'
         set background=dark
-        let g:airline_theme='onedark'
         :AirlineRefresh
       endif
     endfunction

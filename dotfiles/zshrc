@@ -39,7 +39,7 @@ unsetopt share_history
 # Colors when listing
 export LD_BIND_NOW=1
 export CLICOLOR=1
-export LSCOLORS=gxBxhxDxfxhxhxhxhxcxcx
+export LSCOLORS=GxBxhxDxfxhxhxhxhxcxcx
 
 # Colors when using tab-completion in the command line
 zstyle ':completion:*' list-colors "${(@s.:.)LS_COLORS}"
