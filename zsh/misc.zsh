@@ -52,3 +52,5 @@ function load_ssh() {
 }
 
 alias serv="python -m SimpleHTTPServer 8000"
+
+alias ssh="TERM=xterm-256color ssh "
