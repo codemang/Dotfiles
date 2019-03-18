@@ -5,6 +5,7 @@ class DotfileManager
     'dotfiles/zshrc' => ['~/.zshrc'],
     'dotfiles/tmux.conf' => ['~/.tmux.conf'],
     'dotfiles/gitconfig' => ['~/.gitconfig'],
+    'dotfiles/gitmessage' => ['~/.gitmessage'],
     'dotfiles/colors' => ['~/.local/share/nvim/site/colors', '~/.vim/colors'],
     'dotfiles/autoload' => ['~/.local/share/nvim/site/autoload', '~/.vim/autoload'],
   }
