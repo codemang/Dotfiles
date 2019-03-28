@@ -28,7 +28,7 @@ module ToggleColorScheme
 
   def save_new_color_scheme(new_color_scheme)
     File.open(COLOR_SCHEME_FILE, 'w') do |f|
-      f.puts(new_color_scheme)
+      f.write(new_color_scheme)
     end
   end
 
