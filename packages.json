@@ -30,6 +30,7 @@
     "miniupnpc",
     "neovim",
     "nmap",
+    "octokit",
     "reattach-to-user-namespace",
     "ruby",
     "ruby-build",
