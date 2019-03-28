@@ -388,16 +388,23 @@
         :ChooseColorScheme papercolor
         set background=light
         let g:airline_theme='papercolor'
-        :AirlineRefresh
       else
         :ChooseColorScheme tender
         let g:airline_theme = 'tender'
         set background=dark
-        :AirlineRefresh
+        " Enable italics
+        highlight Comment cterm=italic
+        highlight Comment gui=italic
+        highlight Todo cterm=italic
+        highlight Todo gui=italic
       endif
+
+      :AirlineRefresh
     endfunction
   endif
   command! LoadColorscheme call LoadColorschemeFunc()
+
+  highlight Comment cterm=italic
 
   "Use 24-bit (true-color) mode in Vim/Neovim when outside tmux.
   "If you're using tmux version 2.2 or later, you can remove the outermost $TMUX check and use tmux's 24-bit color support
