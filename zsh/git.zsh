@@ -148,8 +148,6 @@ function rfr() {
   git commit
 }
 
-# Copy contents of last commit to pull request
-export OCTOKIT_REPO_ACCESS_TOKEN_FILE="~/.personal_tokens/octokit_repo_access_token"
 function mc() {
   ruby $DOTFILES/util/copy_commit_to_pr.rb
 }

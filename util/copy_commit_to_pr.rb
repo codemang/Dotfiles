@@ -102,7 +102,7 @@ module CopyCommitToPR
   end
 
   def read_access_token
-    File.read(File.expand_path(ENV[ACCESS_TOKEN_PATH_ENV]))
+    `token_manager read github_copy_commit_to_pr`
   end
 end
 
