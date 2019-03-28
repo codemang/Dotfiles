@@ -19,7 +19,8 @@ function npush() {
 }
 
 # Commit
-alias cmt="git commit -am"
+alias cmt="git commit -m"
+alias cmta="git commit -am"
 alias amend="git commit -a --amend"
 alias amendn="git commit -a --amend --no-edit"
 alias wip="git commit -am 'WIP'"
