@@ -54,6 +54,14 @@ keys](https://superuser.com/questions/497526/how-to-customize-google-chrome-keyb
 
 1) Signin to the Chrome browser so that extensions are synced
 
+1) Install [token_manager](https://github.com/codemang/token_manager)
+
+1) Create [github
+token](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line)
+to be used by the [Copy Commit To PR](https://github.com/codemang/Dotfiles/blob/master/util/copy_commit_to_pr.rb) script
+
+1)  Run `$ token_manager add github_copy_commit_to_pr [GITHUB TOKEN]`
+
 ### Updates
 
 From then on any changes to the repo will be applied by pulling the latest version and running update.
