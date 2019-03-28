@@ -3,12 +3,8 @@ require 'octokit'
 module CopyCommitToPR
   extend self
 
-  ACCESS_TOKEN_PATH_ENV = 'OCTOKIT_REPO_ACCESS_TOKEN_FILE'
-
   def execute
     begin
-      check_requirements!
-
       # Assumes the name of the directory matches the Github repo name exactly
       remote_repo = find_remote_repo_for_local_dir
       success_message("Found remote repo '#{remote_repo[:name]}'.")
@@ -75,22 +71,6 @@ module CopyCommitToPR
   end
 
   # ---- Misc Helpers ----
-
-  def check_requirements!
-    access_token_path = ENV[ACCESS_TOKEN_PATH_ENV]
-    if access_token_path.nil?
-      error_message("You did not set the '#{ACCESS_TOKEN_PATH_ENV}' environment variable.")
-    end
-
-    begin
-      access_token = read_access_token
-      if access_token.nil? || access_token.empty?
-        error_message("Your access token stored in '#{access_token_path}' looks empty.")
-      end
-    rescue Errno::ENOENT => e
-      error_message("Your access token file '#{access_token_path}' does not exist.")
-    end
-  end
 
   def client
     @client ||= begin
