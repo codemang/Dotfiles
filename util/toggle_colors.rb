@@ -15,7 +15,6 @@ module ToggleColorScheme
   RUNNING_VIM_TRACKER_FILE = File.expand_path('~/.nvim-trackers')
   COLOR_SCHEME_FILE        = File.expand_path('~/.color-scheme-env')
 
-
   def execute
     new_color_scheme = is_light_theme? ? DARK_THEME : LIGHT_THEME
 
@@ -29,9 +28,8 @@ module ToggleColorScheme
 
   def save_new_color_scheme(new_color_scheme)
     File.open(COLOR_SCHEME_FILE, 'w') do |f|
-      f.write(new_color_scheme)
+      f.puts(new_color_scheme)
     end
-
   end
 
   def toggle_iterm_color_scheme(color_scheme)
@@ -40,29 +38,27 @@ module ToggleColorScheme
   end
 
   def toggle_running_vim_sessions_color_schemes(color_scheme)
-    potential_vim_pids = File.read(RUNNING_VIM_TRACKER_FILE).split("\n").select do |line|
+    recorded_vim_pids = File.read(RUNNING_VIM_TRACKER_FILE).split("\n").select do |line|
       !line.nil? && !line.empty?
     end
 
-    running_vim_pids = potential_vim_pids.map do |line|
+    running_vim_pids = recorded_vim_pids.map do |recorded_vim_pid|
       Thread.new do
         begin
-          proc_num = line.strip
-          file_listener =  "/tmp/nvim-#{proc_num}"
-          nvim = MessagePack::RPC::Client.new(MessagePack::RPC::UNIXTransport.new, file_listener)
-          result = nvim.call(:nvim_command, 'LoadColorscheme')
-          Thread.current[:output] = proc_num
+          file_listener =  "/tmp/nvim-#{recorded_vim_pid}"
+          nvim_process = MessagePack::RPC::Client.new(MessagePack::RPC::UNIXTransport.new, file_listener)
+          nvim_process.call(:nvim_command, 'LoadColorscheme')
+          Thread.current[:running_vim_pid] = recorded_vim_pid
         rescue StandardError => e
-          Thread.current[:output] = nil
+          Thread.current[:running_vim_pid] = nil
         end
       end
-    end.map(&:join).map{|thr| thr[:output]}.compact
+    end.map(&:join).map{|thr| thr[:running_vim_pid]}.compact
 
     File.open(RUNNING_VIM_TRACKER_FILE, 'w') do |f|
-      f.write( running_vim_pids.join("\n") )
+      f.puts(running_vim_pids)
     end
   end
-
 
   def is_light_theme?
     !File.exists?(COLOR_SCHEME_FILE) || File.read(COLOR_SCHEME_FILE) == 'light'
