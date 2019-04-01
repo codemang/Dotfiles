@@ -144,7 +144,7 @@ function rfr() {
   master_head=$(git log --pretty=format:"%h" origin/master | head -1)
   files_changed=$(git diff --name-only HEAD $master_head)
   git reset --soft $master_head
-  echo $master_list | XARGS git add
+  echo $files_changed | XARGS git add
   git commit
 }
 
