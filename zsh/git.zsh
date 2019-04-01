@@ -177,3 +177,7 @@ function git_mv_warm_storage() {
 function git_list_cold_storage() {
   git show-ref | grep hidden | awk '{ print $2 }' | awk 'BEGIN { FS="refs/hidden/" } ; { print $2 }'
 }
+
+function git_rm_cold_storage() {
+  git update-ref -d refs/hidden/$1
+}
