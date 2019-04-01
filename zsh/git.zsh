@@ -164,12 +164,16 @@ function mc() {
 }
 
 # TODO: Find way to get branch auto-complete
-function git_cold_storage() {
+function git_mv_cold_storage() {
   git update-ref refs/hidden/$1 $1
   echo "Moved branch $1 to cold storage."
   git branch -D $1
 }
 
-function git_warm_storage() {
+function git_mv_warm_storage() {
   git checkout -b $1 refs/hidden/$1
+}
+
+function git_list_cold_storage() {
+  git show-ref | grep hidden | awk '{ print $2 }' | awk 'BEGIN { FS="refs/hidden/" } ; { print $2 }'
 }
