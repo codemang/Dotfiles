@@ -19,7 +19,7 @@ alias su="sudo -s"
 alias sub="/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl"
 alias src="source ~/.zshrc"
 alias serv="python -m SimpleHTTPServer 8000"
-alias editcron="env EDITOR=vim crontab -e"
+alias ecron="env EDITOR=nvim crontab -e"
 alias mem="top -l 1 | ag Phys"
 alias notifyDone='reattach-to-user-namespace terminal-notifier -title "Hey Nate" -message "Done with task!"'
 alias zprompt="vim ~/Dotfiles/zsh/zshrc_prompt"
@@ -53,4 +53,18 @@ function load_ssh() {
 
 alias serv="python -m SimpleHTTPServer 8000"
 
+# SSH without italics
 alias ssh="TERM=xterm-256color ssh "
+
+# Helper functions for pull request utility script
+function open_prs() {
+  ruby $DOTFILES/util/track_pull_request_reviews.rb open $*
+}
+
+function list_prs() {
+  ruby $DOTFILES/util/track_pull_request_reviews.rb list
+}
+
+function notify_prs() {
+  ruby $DOTFILES/util/track_pull_request_reviews.rb notify
+}
