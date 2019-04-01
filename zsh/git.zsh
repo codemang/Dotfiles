@@ -139,9 +139,20 @@ function greplogo() {
 # * Collapse all commits
 # * Create new commit with template, if present
 function rfr() {
-  git checkout master && git pull origin master
+  if ! git checkout master && git pull origin master; then
+    echo "Couldn't pull latest of master"
+    return 1
+  fi
+
   git checkout -
-  master_head=$(git log --pretty=format:"%h" origin/master | head -1)
+  master_head=$(git log --pretty=format:"%H" origin/master | head -1)
+  common_ancestor=$(git merge-base HEAD master)
+
+  if [[ $master_head != $common_ancestor ]]; then
+    echo "You have to rebase off of the master branch before resetting for refresh"
+    return 1
+  fi
+
   files_changed=$(git diff --name-only HEAD $master_head)
   git reset --soft $master_head
   echo $files_changed | XARGS git add
