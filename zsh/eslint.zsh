@@ -16,7 +16,3 @@ function eslint_changes() {
     fi
   fi
 }
-
-function eslint_compare() {
-  ruby ~/.eslint_compare.rb
-}
