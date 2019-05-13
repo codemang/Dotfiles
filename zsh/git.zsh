@@ -118,14 +118,6 @@ function confirm_cmd() {
 
 alias g="git"
 
-function logo_string() {
-  # return "git log --pretty=format:'%Cred%h%Creset - %s %Cgreen(%cr) %C(blue)<%an>%Creset' --abbrev-commit"
-}
-
-function logo() {
-  git log --pretty=format:'%Cred%h%Creset - %s %Cgreen(%cr) %C(blue)<%an>%Creset' --abbrev-commit
-}
-
 function greplog() {
   git log --grep="$*"
 }
