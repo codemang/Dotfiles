@@ -68,3 +68,7 @@ function list_prs() {
 function notify_prs() {
   ruby $DOTFILES/util/track_pull_request_reviews.rb notify
 }
+
+function orats_console() {
+  docker-compose exec  website /bin/sh
+}
