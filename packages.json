@@ -31,6 +31,7 @@
     "neovim",
     "nmap",
     "octokit",
+    "readline",
     "reattach-to-user-namespace",
     "ruby",
     "ruby-build",
