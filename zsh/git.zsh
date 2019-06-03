@@ -173,3 +173,7 @@ function git_list_cold_storage() {
 function git_rm_cold_storage() {
   git update-ref -d refs/hidden/$1
 }
+
+function changed_files() {
+  git diff --name-only $(git_branch) $(git merge-base master $(git_branch))
+}
