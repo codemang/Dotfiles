@@ -4,6 +4,7 @@ alias cob="git checkout -b" # Create new branch
 alias cod="git branch -d" # Delete branch if merged
 alias codd="git branch -D" # Force delete branch
 alias col="git checkout -" # Switch to last branch
+alias com="git checkout master"
 alias unstage="git reset HEAD"
 
 # Push/Pull
@@ -25,6 +26,7 @@ alias amend="git commit -a --amend"
 alias amendn="git commit -a --amend --no-edit"
 alias wip="git commit -am 'WIP'"
 
+alias gdiff="git diff"
 
 function pushn() {
   git push origin $(git_branch)
