@@ -26,6 +26,7 @@ source $DOTFILES/zsh/fzf.zsh
 source $DOTFILES/zsh/vim.zsh
 source $DOTFILES/zsh/misc.zsh
 source $DOTFILES/zsh/z.zsh
+source $DOTFILES/zsh/docker.zsh
 
 # Bookbub specific helpers, not checked into public github
 [ -f ~/.bookbub.zsh ] && source ~/.bookbub.zsh
