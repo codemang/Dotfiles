@@ -24,6 +24,7 @@ alias mem="top -l 1 | ag Phys"
 alias notifyDone='reattach-to-user-namespace terminal-notifier -title "Hey Nate" -message "Done with task!"'
 alias zprompt="vim ~/Dotfiles/zsh/zshrc_prompt"
 alias findp="ps aux | grep"
+alias pbc="pbcopy"
 
 alias dl="cd ~/Downloads"
 
@@ -71,4 +72,9 @@ function notify_prs() {
 
 function orats_console() {
   docker-compose exec  website /bin/sh
+}
+
+function site() {
+  port=
+  /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome $(docker-machine ip default):${1:-3000}
 }
