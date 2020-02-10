@@ -78,3 +78,17 @@ function site() {
   port=
   /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome $(docker-machine ip default):${1:-3000}
 }
+
+export PYTHONDONTWRITEBYTECODE=true
+
+alias notes="vim ~/Personal/notes.md"
+
+function pcd_con() {
+  python -c "import open3d; open3d.write_point_cloud(\"$1.$2\", open3d.read_point_cloud(\"$1\"))"
+}
+
+# Open Screen Shot: Open the last rspec screenshot
+# alias osc="open $(ls -d tmp/capybara/* | tail -n 1)"
+
+# Clear Screen Shot: Clears all rspec screenshots
+# alias csc="open $(ls -d tmp/capybara/* | tail -n 1)"

@@ -9,11 +9,11 @@ module CircleOutput
 
   def find_output_for_branch
     @start_time = Time.now
-    puts_formatted "Project: #{project}"
-    puts_formatted "Git Branch: #{git_branch}"
+    # puts_formatted "Project: #{project}"
+    # puts_formatted "Git Branch: #{git_branch}"
     puts_formatted "Build num: #{build_num}"
-
-    had_to_wait = track_status
+    #
+    # had_to_wait = track_status
     completed_build = json_get("#{project}/#{build_num}")
 
     if completed_build['status'] == 'success' || completed_build['status'] == 'fixed'
@@ -22,9 +22,9 @@ module CircleOutput
       return
     end
 
-    send_osx_notification
+    # send_osx_notification
     show_failed_specs(completed_build)
-    send_osx_notification if had_to_wait
+    # send_osx_notification if had_to_wait
   end
 
   def send_osx_notification
@@ -35,7 +35,7 @@ module CircleOutput
     build_summary = json_get("#{project}/#{build_num}")
 
     output_urls = build_summary['steps'].select do |step|
-      step['name'] =~ /bundle exec rspec/
+      step['name'] =~ /run tests/
     end.map do |step|
       step['actions']
     end.first.select do |action|
@@ -67,6 +67,7 @@ module CircleOutput
   def build_num
     @build_num ||= begin
       projects = json_get(project)
+      byebug
       my_project = projects.find do |project|
         project['branch'] == git_branch
       end
@@ -93,9 +94,9 @@ module CircleOutput
     had_to_sleep
   end
 
-  def json_get(path)
+  def json_get(path, page = 1)
     circle_token = `token_manager read circle-token`
-    JSON.parse(`curl -s -u #{circle_token}: https://circle.bubtools.net/api/v1.1/project/github/BookBub/#{path}`)
+    JSON.parse(`curl -s -u #{circle_token}: https://circle2.bubtools.net/api/v1.1/project/github/BookBub/#{path}`)
   end
 
   def puts_formatted(msg)

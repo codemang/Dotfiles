@@ -1,58 +1,61 @@
 " <<<< Plug >>>> {{{
-  call plug#begin('~/.local/share/nvim/plugged')
+call plug#begin('~/.local/share/nvim/plugged')
+
+Plug 'tyru/open-browser.vim'
 "
-  Plug 'jacoborus/tender.vim'
+Plug 'jacoborus/tender.vim'
 
-  " TMUX
-  Plug 'christoomey/vim-tmux-navigator' " Navigate tmux/vim panes the same way
+" TMUX
+Plug 'christoomey/vim-tmux-navigator' " Navigate tmux/vim panes the same way
 
-  " Navigation
-  Plug 'easymotion/vim-easymotion' " Helpful navigation
-  Plug 'scrooloose/nerdtree' " Navigate file system'
+" Navigation
+Plug 'easymotion/vim-easymotion' " Helpful navigation
+Plug 'scrooloose/nerdtree' " Navigate file system'
 
-  " Details Bar
-  Plug 'vim-airline/vim-airline'
-  Plug 'vim-airline/vim-airline-themes'
+" Details Bar
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 
-  " Search
-  Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' } " Needs FZF via Homebrew
-  Plug 'mileszs/ack.vim' " Search project, needs Silver Surfer via Homebrew
+" Search
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' } " Needs FZF via Homebrew
+Plug 'jremmen/vim-ripgrep'
 
-  " Web
-  Plug 'tpope/vim-rails'
-  Plug 'rstacruz/vim-hyperstyle' " experimental
+" Web
+Plug 'tpope/vim-rails'
+" Plug 'rstacruz/vim-hyperstyle' " experimental
 
-  " Syntax and formatting
-  Plug 'Glench/Vim-Jinja2-Syntax' " Syntax highlighting for ansible
-  Plug 'chase/vim-ansible-yaml' " Better yaml indentation
-  Plug 'tpope/vim-endwise' " Adds endif in ruby
-  Plug 'vim-ruby/vim-ruby' " All purpose ruby plugin
-  Plug 'rstacruz/vim-closer' " Close braces and brackets
-  " Plug 'JamshedVesuna/vim-markdown-preview'
-  Plug 'suan/vim-instant-markdown'
-  Plug 'alvan/vim-closetag' " Close HTML tags
+" Syntax and formatting
+Plug 'Glench/Vim-Jinja2-Syntax' " Syntax highlighting for ansible
+Plug 'chase/vim-ansible-yaml' " Better yaml indentation
+Plug 'tpope/vim-endwise' " Adds endif in ruby
+Plug 'vim-ruby/vim-ruby' " All purpose ruby plugin
+Plug 'JamshedVesuna/vim-markdown-preview'
+Plug 'Chiel92/vim-autoformat'
+Plug 'dense-analysis/ale'
 
-  " Git
-  Plug 'tpope/vim-unimpaired' " Key mappings for navigating git commit history
-  Plug 'tpope/vim-fugitive' " Use git commands in vim
+" Git
+Plug 'tpope/vim-unimpaired' " Key mappings for navigating git commit history
+Plug 'tpope/vim-fugitive' " Use git commands in vim
 
-  " Javascript
-  Plug 'isRuslan/vim-es6'
-  Plug 'mxw/vim-jsx'
-  Plug 'pangloss/vim-javascript'
+" Javascript
+Plug 'isRuslan/vim-es6'
+" Plug 'mxw/vim-jsx'
+" Plug 'pangloss/vim-javascript'
+" Plug 'MaxMEllon/vim-jsx-pretty'
 
-  " Misc
-  Plug 'junegunn/goyo.vim' " Zen Mode, credits to Ustasb
-  Plug 'ntpeters/vim-better-whitespace' " Highlight extra whitespace
-  Plug 'matze/vim-move' " Move chunk of code in visual mode
-  Plug 'mhinz/vim-startify' " Nice start screen for vim
-  Plug 'scrooloose/nerdcommenter' " Comment chunks of code
-  Plug 'lifepillar/vim-mucomplete' " Auto-complete
+" Misc
+Plug 'junegunn/goyo.vim' " Zen Mode, credits to Ustasb
+Plug 'ntpeters/vim-better-whitespace' " Highlight extra whitespace
+Plug 'matze/vim-move' " Move chunk of code in visual mode
+Plug 'mhinz/vim-startify' " Nice start screen for vim
+Plug 'scrooloose/nerdcommenter' " Comment chunks of code
+Plug 'neoclide/coc.nvim', {'branch': 'release'} " Auto complete
+Plug 'codemang/vim-colorscheme-switcher' " Switch colorschemes without breaking
+Plug 'xolox/vim-misc' " Needed by vim-colorscheme-switcher
+Plug 'chrisbra/Colorizer'
 
-  Plug 'codemang/vim-colorscheme-switcher' " Switch colorschemes without breaking
-  Plug 'xolox/vim-misc' " Needed by vim-colorscheme-switcher
 
-  call plug#end()
+call plug#end()
 " }}}
 
 
@@ -217,16 +220,23 @@
     \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
 
   " - Ag -
-  nmap <leader>ag :Ack! '
-  nmap <leader>as :Ack! "<C-R><C-W>"<CR>
-  let g:ag_highlight=1
-  if executable('ag')
-    let g:ackprg = 'ag --vimgrep'
-  endif
+  " nmap <leader>ag :Ack! '
+  " nmap <leader>as :Ack! "<C-R><C-W>"<CR>
+  " let g:ag_highlight=1
+  " if executable('ag')
+  "   let g:ackprg = 'ag --vimgrep'
+  " endif
+  "
+  " xnoremap <Leader>av y:Ack <C-r>=fnameescape(@")<CR><CR>
 
-  xnoremap <Leader>av y:Ack <C-r>=fnameescape(@")<CR><CR>
+
+  nmap <leader>ag :Rg '
+  nmap <leader>as :Rg "<C-R><C-W>"<CR>
+  let g:rg_highlight=1
+
 
 " }}}
+xnoremap <Leader>av y:Rg <C-r>=fnameescape(@")<CR><CR>
 
 
 " <<<< Colors >>>> {{{
@@ -389,7 +399,7 @@
         set background=light
         let g:airline_theme='papercolor'
       else
-        :ChooseColorScheme tender
+        :ChooseColorScheme anderson
         let g:airline_theme = 'tender'
         set background=dark
         " Enable italics
@@ -427,11 +437,127 @@
 
 " }}}
 "
-let g:closetag_filenames = '*.html,*.xhtml,*.phtml, *.jsx'
+let g:closetag_filenames = '*.html,*.xhtml,*.phtml, *.jsx *.js'
 
-set completeopt+=menuone
-set completeopt+=noselect
-set completeopt+=noinsert
-set shortmess+=c   " Shut off completion messages
-set belloff+=ctrlg " If Vim beeps during completion
-let g:mucomplete#enable_auto_at_startup = 1
+let g:netrw_nogx = 1 " disable netrw's gx mapping.
+nmap gx <Plug>(openbrowser-smart-search)
+vmap gx <Plug>(openbrowser-smart-search)
+
+" Use tab for trigger completion with characters ahead and navigate.
+" Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" Sometimes when I paste it inserts the text "<paste>" and my escape binding
+" no longer works. Suggested fix here.
+" https://vi.stackexchange.com/questions/18883/paste-mode-sometimes-inserting-paste
+au InsertLeave * set nopaste
+
+function! DateFunc()
+  put =strftime(\"## %a %d %b %Y \")
+endfunction
+command! Date call DateFunc()
+
+let g:coc_node_path="/usr/local/Cellar/node@10/10.17.0/bin/node"
+" let g:coc_node_path="/usr/local/Cellar/node/13.1.0/bin/node"
+
+let vim_markdown_preview_browser='Google Chrome'
+let vim_markdown_preview_github=1
+let vim_markdown_preview_use_xdg_open=1
+
+" Automatically highlight colors
+let g:colorizer_auto_color = 1
+
+" Ale
+  " ALE (Used for the :Fix command and linting what coc.nvim can't.) {{{
+  let g:ale_enabled = 1
+  let g:ale_history_enabled = 0
+  let g:ale_history_log_output = 0
+  let g:ale_completion_enabled = 0
+
+  let g:ale_sign_error = 'E'
+  let g:ale_sign_warning = 'W'
+  let g:ale_sign_info = 'I'
+
+  let g:ale_linters_explicit = 1
+  let g:ale_linters = {
+    \  'css': ['stylelint'],
+    \  'scss': ['stylelint'],
+    \ }
+
+  let g:ale_fix_on_save = 0
+  let g:ale_fixers = {
+    \  '*': ['remove_trailing_lines'],
+    \  'ruby': ['rubocop'],
+    \  'javascript': ['eslint'],
+    \  'javascriptreact': ['eslint'],
+    \  'css': ['stylelint'],
+    \  'scss': ['stylelint'],
+    \ }
+
+  command! -nargs=0 Fix :ALEFix
+  " }}}
+
+" COC
+"  " coc.nvim (Conquer of Completion) {{{
+" . : current buffer
+" w : buffers from other windows
+" b : buffers from buffer list
+" set complete=.,w,b
+" set completeopt=menu,menuone,noselect
+
+let g:coc_status_error_sign = 'E:'
+let g:coc_status_warning_sign = 'W:'
+let g:coc_status_info_sign = 'I:'
+let g:coc_start_at_startup = 1
+let g:coc_enable_locationlist = 1  " needed for <Plug>(coc-references)
+let g:coc_global_extensions = [
+  \ 'coc-css',
+  \ 'coc-json',
+  \ 'coc-yaml',
+  \ 'coc-html',
+  \ 'coc-dictionary',
+  \ 'coc-solargraph',
+  \ 'coc-eslint',
+  \ ]
+
+" Use <Tab> and <S-Tab> for triggering and navigating the completion list.
+" credit: https://github.com/neoclide/coc.nvim/wiki/Completion-with-sources#use-tab-or-custom-key-for-trigger-completion
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+inoremap <silent><expr> <TAB> pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+" Jump to definition of current symbol.
+nmap <silent> gd <Plug>(coc-definition)
+" Jump to references of current symbol.
+nmap <silent> gr <Plug>(coc-references)
+command! -nargs=0 Rename :call CocAction('rename')
+
+" Use [c and ]c for navigating diagnostics.
+nmap <silent> [c <Plug>(coc-diagnostic-prev)
+nmap <silent> ]c <Plug>(coc-diagnostic-next)
+
+" https://vimrcfu.com/snippet/143
+command! Ctabs call s:Ctabs()
+function! s:Ctabs()
+  let files = {}
+  for entry in getqflist()
+    let filename = bufname(entry.bufnr)
+    let files[filename] = 1
+  endfor
+
+  for file in keys(files)
+    silent exe "tabedit ".file
+  endfor
+endfunction
