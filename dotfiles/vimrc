@@ -466,9 +466,6 @@ function! DateFunc()
 endfunction
 command! Date call DateFunc()
 
-let g:coc_node_path="/usr/local/Cellar/node@10/10.17.0/bin/node"
-" let g:coc_node_path="/usr/local/Cellar/node/13.1.0/bin/node"
-
 let vim_markdown_preview_browser='Google Chrome'
 let vim_markdown_preview_github=1
 let vim_markdown_preview_use_xdg_open=1
