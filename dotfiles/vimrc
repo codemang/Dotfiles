@@ -54,6 +54,8 @@ Plug 'codemang/vim-colorscheme-switcher' " Switch colorschemes without breaking
 Plug 'xolox/vim-misc' " Needed by vim-colorscheme-switcher
 Plug 'chrisbra/Colorizer'
 
+Plug 'zhaozg/vim-diagram'
+Plug 'xavierchow/vim-sequence-diagram'
 
 call plug#end()
 " }}}
@@ -558,3 +560,6 @@ function! s:Ctabs()
     silent exe "tabedit ".file
   endfor
 endfunction
+
+nmap <unique> <leader>g <Plug>GenerateDiagram
+let g:generate_diagram_theme_hand = 0

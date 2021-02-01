@@ -61,3 +61,50 @@ source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # Run chruby scripts so that we use the correct ruby version
 source /usr/local/share/chruby/chruby.sh
 chruby ruby-2.7.0
+
+# . /Users/nate/.nix-profile/etc/profile.d/nix.sh
+
+# open note
+alias on='vim $(find /Users/nate/Notes | grep md | fzf)'
+
+# new note
+function nn() {
+  dir=$(ls -d ~/Notes/**/*/ | fzf)
+  date=$(date +%m-%d-%Y)
+  printf 'Enter Note Title: '
+  read -r note_title
+  note_filename=${note_title// /_} # Replace spaces with dashes
+  note_filename=$(echo $note_filename | tr '[:upper:]' '[:lower:]') # Convert to lower case
+  note_filepath="$dir$date-$note_filename.md"
+  touch $note_filepath
+  echo $note_title >> $note_filepath
+  echo "=" >> $note_filepath
+  echo "Created note: $note_filepath"
+  vim $note_filepath
+}
+
+# export PATH="/usr/local/anaconda3/bin:$PATH"  # commented out by conda initialize
+
+h3() {
+  (cd /Users/nate/Hub3/scripts/h3_cli && bundle exec ruby main.rb $*)
+}
+
+# https://github.com/nvm-sh/nvm#installing-and-updating
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/usr/local/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/usr/local/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/usr/local/anaconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/usr/local/anaconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+

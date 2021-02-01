@@ -62,6 +62,9 @@ to be used by the [Copy Commit To PR](https://github.com/codemang/Dotfiles/blob/
 
 1)  Run `$ token_manager add github_copy_commit_to_pr [GITHUB TOKEN]`
 
+1) Give iTerm access to send key strokes via an osascript for the [color toggle
+script](util/toggle_colors.rb)
+
 ### Updates
 
 From then on any changes to the repo will be applied by pulling the latest version and running update.

@@ -1,5 +1,9 @@
 #!/usr/bin/env ruby
 
+# Must give iTerm access to send key strokes via osascript (this is used to
+# switch iTerm backgrounds)
+# https://apple.stackexchange.com/questions/291574/osascript-is-not-allowed-assistive-access-1728
+
 require 'msgpack/rpc'
 require 'msgpack/rpc/transport/unix'
 
