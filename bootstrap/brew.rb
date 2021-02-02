@@ -8,7 +8,7 @@ class Brew
   end
 
   def self.install_package_manager
-    system("/usr/bin/ruby -e \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)\" </dev/null")
+    system('/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"')
   end
 
   private
