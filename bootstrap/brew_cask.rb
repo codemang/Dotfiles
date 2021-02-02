@@ -4,7 +4,7 @@ class BrewCask
   include BasePackageManager
 
   def self.list_packages
-    `brew cask list`.split("\n")
+    `brew list --cask`.split("\n")
   end
 
   private
