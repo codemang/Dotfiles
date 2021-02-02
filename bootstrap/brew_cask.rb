@@ -10,6 +10,6 @@ class BrewCask
   private
 
   def self.install_package(package)
-    `brew cask install #{package}`
+    `brew install --cask #{package}`
   end
 end
