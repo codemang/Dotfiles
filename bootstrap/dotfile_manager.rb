@@ -6,6 +6,9 @@ class DotfileManager
     'dotfiles/tmux.conf' => ['~/.tmux.conf'],
     'dotfiles/gitconfig' => ['~/.gitconfig'],
     'dotfiles/gitmessage' => ['~/.gitmessage'],
+    # Silence the 'Last login...' message in the terminal.
+    # https://osxdaily.com/2010/06/22/remove-the-last-login-message-from-the-terminal/
+    'dotfiles/hushlogin' => ['~/.hushlogin'],
     'dotfiles/colors' => ['~/.local/share/nvim/site/colors', '~/.vim/colors'],
     'dotfiles/autoload' => ['~/.local/share/nvim/site/autoload', '~/.vim/autoload'],
   }
