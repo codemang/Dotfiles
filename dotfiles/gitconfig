@@ -19,6 +19,8 @@
 	required = true
 [push]
 	default = current
+[pull]
+  ff = true # Reject pulls unless it can be fast-forwarded.
 [commit]
     template = ~/.gitmessage
 [filter "lfs"]
@@ -26,3 +28,5 @@
 	required = true
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
+[init]
+  defaultBranch = master
