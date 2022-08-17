@@ -4,6 +4,7 @@ call plug#begin('~/.local/share/nvim/plugged')
 Plug 'tyru/open-browser.vim'
 "
 Plug 'jacoborus/tender.vim'
+Plug 'sonph/onehalf', { 'rtp': 'vim' } " Dark color scheme
 
 " TMUX
 Plug 'christoomey/vim-tmux-navigator' " Navigate tmux/vim panes the same way
@@ -32,6 +33,8 @@ Plug 'vim-ruby/vim-ruby' " All purpose ruby plugin
 Plug 'JamshedVesuna/vim-markdown-preview'
 Plug 'Chiel92/vim-autoformat'
 Plug 'dense-analysis/ale'
+Plug 'leafgarland/typescript-vim' " Typescript syntax highlighting.
+Plug 'amadeus/vim-mjml' " Add syntax highlighting for MJML
 
 " Git
 Plug 'tpope/vim-unimpaired' " Key mappings for navigating git commit history
@@ -401,8 +404,8 @@ xnoremap <Leader>av y:Rg <C-r>=fnameescape(@")<CR><CR>
         set background=light
         let g:airline_theme='papercolor'
       else
-        :ChooseColorScheme anderson
-        let g:airline_theme = 'tender'
+        :ChooseColorScheme onehalfdark
+        let g:airline_theme='onehalfdark'
         set background=dark
         " Enable italics
         highlight Comment cterm=italic
