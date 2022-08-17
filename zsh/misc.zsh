@@ -48,47 +48,50 @@ function fuck() {
   eval "sudo $last_cmd"
 }
 
-function load_ssh() {
-  ssh-add ~/.ssh/id_rsa_codemang
-}
-
 alias serv="python -m SimpleHTTPServer 8000"
 
 # SSH without italics
 alias ssh="TERM=xterm-256color ssh "
 
-# Helper functions for pull request utility script
-function open_prs() {
-  ruby $DOTFILES/util/track_pull_request_reviews.rb open $*
+NOTES_ROOT_FOLDER=/Users/nate/Notes
+
+# open note
+alias on='vim $(find $NOTES_ROOT_FOLDER | grep md | fzf)'
+
+# new note
+function nn() {
+  dir=$(ls -d $NOTES_ROOT_FOLDER/**/*/ | fzf)
+  date=$(date +%m-%d-%Y)
+
+  printf 'Enter Note Title: '
+  read -r note_title
+
+  note_filename=${note_title// /_} # Replace spaces with dashes
+  note_filename=$(echo $note_filename | tr '[:upper:]' '[:lower:]') # Convert to lower case
+  note_filepath="$dir$note_filename.md"
+
+  touch $note_filepath
+
+  echo $note_title >> $note_filepath
+  echo "=" >> $note_filepath
+
+  echo "Created note: $note_filepath"
+
+  vim $note_filepath
 }
 
-function list_prs() {
-  ruby $DOTFILES/util/track_pull_request_reviews.rb list
+# E.g getRequest localhost:3006/api/v1/listings/search
+function getRequest() {
+  curl -i -H "Accept: application/json" $1
 }
 
-function notify_prs() {
-  ruby $DOTFILES/util/track_pull_request_reviews.rb notify
+# E.g postRequest localhost:3006/webhooks/twilio-incoming-sms-message '{"messageBody": "Hi"}'
+function postRequest() {
+  curl \
+    -i \
+    -v \
+    -H "Accept: application/json" \
+    -H "Content-type: application/json" \
+    -X POST \
+    $1
 }
-
-function orats_console() {
-  docker-compose exec  website /bin/sh
-}
-
-function site() {
-  port=
-  /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome $(docker-machine ip default):${1:-3000}
-}
-
-export PYTHONDONTWRITEBYTECODE=true
-
-alias notes="vim ~/Personal/notes.md"
-
-function pcd_con() {
-  python -c "import open3d; open3d.write_point_cloud(\"$1.$2\", open3d.read_point_cloud(\"$1\"))"
-}
-
-# Open Screen Shot: Open the last rspec screenshot
-# alias osc="open $(ls -d tmp/capybara/* | tail -n 1)"
-
-# Clear Screen Shot: Clears all rspec screenshots
-# alias csc="open $(ls -d tmp/capybara/* | tail -n 1)"
