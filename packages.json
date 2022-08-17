@@ -9,7 +9,7 @@
     "git-lfs",
     "unison",
     "eugenmayer/dockersync/unox",
-    "heroku",
+    { "package_name": "heroku", "package_source": "heroku/brew" },
     "htop",
     "neovim",
     "nmap",

@@ -11,9 +11,17 @@ class Brew
     system('/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"')
   end
 
+  def self.install_packages(packages = [], opts = {})
+    super(packages, opts)
+  end
+
   private
 
   def self.install_package(package)
-    `brew install #{package}`
+    if package["package_source"]
+      `brew tap #{package['package_source']} && brew install #{package['package_name']}`
+    else
+      `brew install #{package}`
+    end
   end
 end
