@@ -12,15 +12,15 @@ function nn() {
   read -r note_title
 
   note_filename=${note_title// /_} # Replace spaces with dashes
-  note_filename=$(echo $note_filename | tr '[:upper:]' '[:lower:]') # Convert to lower case
+  note_filename=$(echo $note_filename | tr '[:upper:]' '[:lower:]') # Convert to lower case.
   note_filepath="$dir$note_filename.md"
 
-  touch $note_filepath
+  touch $note_filepath # Create empty note file.
 
-  echo $note_title >> $note_filepath
-  echo "=" >> $note_filepath
+  echo $note_title >> $note_filepath # Add the name of the note as the first line of the note.
+  echo "=" >> $note_filepath # Add an "=" beneath the first line to make it a Markdown title.
 
   echo "Created note: $note_filepath"
 
-  vim $note_filepath
+  vim $note_filepath # Open the note in Vim.
 }
