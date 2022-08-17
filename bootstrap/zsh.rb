@@ -10,7 +10,7 @@ class Zsh
     if File.exist? File.expand_path("~/.oh-my-zsh")
       system 'upgrade_oh_my_zsh'
     else
-      system "git clone git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh"
+      system 'sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"'
     end
   end
 
