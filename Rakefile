@@ -16,14 +16,12 @@ task :cask do
 end
 
 task :npm_packages do
-  puts_section_header('npm packages')
-  puts 'Installing individual NPM packages'
+  puts_section_header('NPM Packages')
   NPM.install_packages(PackageList.npm_packages, log_output: true)
 end
 
 task :gems do
-  puts_section_header('gems')
-  puts 'Installing individual gems'
+  puts_section_header('Ruby Gems')
   RubyGems.install_packages(PackageList.gems, log_output: true)
 end
 
@@ -37,6 +35,7 @@ end
 task :languages do
   puts_section_header('languages')
   Ruby.install
+  Nvm.install
 end
 
 task :zsh do
