@@ -1,4 +1,4 @@
-NOTES_ROOT_FOLDER=/Users/nate/Notes
+NOTES_ROOT_FOLDER=/Users/nate/Dropbox/Notes
 
 # open note
 alias on='vim $(find $NOTES_ROOT_FOLDER | grep md | fzf)'
