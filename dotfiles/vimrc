@@ -9,9 +9,12 @@
 
   " Load all Vim plugins.
   call plug#begin('~/.local/share/nvim/plugged')
-    " Navigation
+    " ---- Navigation ----
     Plug 'scrooloose/nerdtree' " Tree-styled file navigator
     Plug 'christoomey/vim-tmux-navigator' " Navigate between Tmux and Vim panes with keystrokes.
+
+    " FZF for fuzzy finding. Requires FZF to be installed via Homebrew.
+    Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' } 
   call plug#end()
 " }}}
 
@@ -104,6 +107,10 @@
 
   " Open NerdTree.
   nmap <Leader>nc :NERDTreeFind <CR> 
+
+  " ---- FZF Plugin ----
+  " Open a new buffer via FZF
+  nmap <Leader>t :FZF! <CR> 
 " }}}
 
 " <<<< Color Scheme >>>> {{{
