@@ -29,6 +29,8 @@
     Plug 'fedepujol/move.nvim' " Move chunk of code in visual mode
     Plug 'tpope/vim-endwise' " Auto-complete if/else statements in various languages.
 
+    " ---- Git ----
+    Plug 'tpope/vim-fugitive' " Use Git commands in vim
 
     " ---- Code Viewing ----
     Plug 'junegunn/goyo.vim' " Zen Mode, credits to Ustasb
@@ -250,12 +252,21 @@
 
 " }}}
 
-" <<<< Code Editing >>>> {{{
+" <<<< Code Viewing >>>> {{{
 
   " ---- Goyo Plugin ----
 
   " Toggle zen mode.
   nnoremap <Leader>z :Goyo<Cr>
+
+" }}}
+
+" <<<< Git >>>> {{{
+
+  " ---- Vim Fugitive Plugin ----
+
+  " Open Git Blame in the sidebar.
+  nnoremap <Leader>gb :Git blame<Cr>
 
 " }}}
 
