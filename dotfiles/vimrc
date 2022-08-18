@@ -22,6 +22,9 @@
 
     " ---- Search ----
     Plug 'jremmen/vim-ripgrep' " Search via RipGrep
+
+    " ---- Code Editing ----
+    Plug 'scrooloose/nerdcommenter' " Comment chunks of code
   call plug#end()
 " }}}
 
@@ -165,6 +168,26 @@
   " Highlight matches.
   let g:rg_highlight=1
 
+" }}}
+
+" <<<< Code Editing >>>> {{{
+
+  " ---- NerdCommenter Plugin ----
+  let g:NERDSpaceDelims = 1 " Add a space after the comment delimiter.
+  let g:NERDCompactSexyComs = 1 " Use compact syntax for prettified multi-line comments.
+  let g:NERDDefaultAlign = 'left' " Align line-wise comment delimiters flush left instead of following code indentation
+  let g:NERDCommentEmptyLines = 1 " Allow commenting and inverting empty lines (useful when commenting a region)
+  let g:NERDTrimTrailingWhitespace = 1 " Enable trimming of trailing whitespace when uncommenting
+  let g:NERDToggleCheckAllLines = 1
+
+  " Comment and yank single line/visual block.
+  nnoremap <Leader>cy <plug>NERDCommenterYank
+
+  " Toggle the commenting of a single line/visual block.
+  nnoremap <Leader>c<Space> <plug>NERDCommenterToggle
+
+  " Toggle the commenting of a single line/visual block.
+  nnoremap <Leader>ca <plug>NERDCommenterAppend
 " }}}
 
 " <<<< Color Scheme >>>> {{{
