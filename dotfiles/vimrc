@@ -14,7 +14,7 @@
     Plug 'christoomey/vim-tmux-navigator' " Navigate between Tmux and Vim panes with keystrokes.
 
     " FZF for fuzzy finding. Requires FZF to be installed via Homebrew.
-    Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' } 
+    Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
 
     " ---- Display ----
     Plug 'vim-airline/vim-airline'
@@ -30,7 +30,7 @@
   syntax on " Enable syntax highlighting
 
   " Set the new Leader key to ","
-  let mapleader="," 
+  let mapleader=","
 
   " Use kj to go back to Normal mode.
   inoremap kj <C-[>
@@ -39,7 +39,7 @@
   inoremap <Esc> <Nop>
 
   " Reload the NeoVim config.
-  nmap <Leader>s :source ~/.config/nvim/init.vim<CR> 
+  nmap <Leader>s :source ~/.config/nvim/init.vim<CR>
 
   " Open the Vimrc in the current Vim pane.
   nmap <Leader>vv :e ~/.config/nvim/init.vim<CR>
@@ -102,6 +102,9 @@
   set scrolloff=3 " Always show at least 3 lines above/below the cursor
   set sidescrolloff=15 " Always show at least 3 characters to the right/left of the cursor
 
+  " Remove trailing whitespaces on save.
+  " https://howchoo.com/vim/vim-how-to-remove-trailing-whitespace-on-save
+  autocmd BufWritePre * :%s/\s\+$//e
 " }}}
 
 " <<<< Navigation >>>> {{{
@@ -110,11 +113,11 @@
   let g:NERDTreeWinSize = 40 " NerdTree window size.
 
   " Open NerdTree.
-  nmap <Leader>nc :NERDTreeFind <CR> 
+  nmap <Leader>nc :NERDTreeFind <CR>
 
   " ---- FZF Plugin ----
   " Open a new buffer via FZF
-  nmap <Leader>t :FZF! <CR> 
+  nmap <Leader>t :FZF! <CR>
 " }}}
 
 " <<<< Display >>>> {{{
@@ -124,13 +127,13 @@
   let g:airline#extensions#tabline#buffer_min_count = 2 " Don't show the tab bar if there is only one open buffer.
 
   " Move to the next buffer tab
-  nmap <Space>l :bnext<CR> 
+  nmap <Space>l :bnext<CR>
 
   " Move to the previous buffer tab
-  nmap <Space>h :bprevious<CR> 
+  nmap <Space>h :bprevious<CR>
 
   " Close the current buffer tab
-  nmap <Space>q :bp <BAR> bd #<CR> 
+  nmap <Space>q :bp <BAR> bd #<CR>
 
   " Remove unnecessary information from the bottom bar.
   let g:airline#extensions#default#layout = [
