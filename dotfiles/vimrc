@@ -22,16 +22,17 @@
 
     " ---- Search ----
     Plug 'jremmen/vim-ripgrep' " Search via RipGrep
+    Plug 'qxxxb/vim-searchhi' " Enable better highlighting of search matches.
 
     " ---- Code Editing ----
     Plug 'scrooloose/nerdcommenter' " Comment chunks of code
     Plug 'fedepujol/move.nvim' " Move chunk of code in visual mode
     Plug 'tpope/vim-endwise' " Auto-complete if/else statements in various languages.
 
+
     " ---- Code Viewing ----
     Plug 'junegunn/goyo.vim' " Zen Mode, credits to Ustasb
     Plug 'ntpeters/vim-better-whitespace' " Highlight extra whitespace
-
   call plug#end()
 " }}}
 
@@ -121,6 +122,12 @@
 
   " Run PlugInstall
   nnoremap <Leader>pi :PlugInstall<Cr>
+  nnoremap <Leader>pc :PlugClean<Cr>
+
+  " Searching
+  set hlsearch " Highlight all words that match the search term.
+  set incsearch " Search for keywords as you type them.
+  set smartcase " Search will be case sensitive if it contains an uppercase letter.
 
 " }}}
 
@@ -233,5 +240,15 @@
 
 colorscheme papercolor
 set background=light
+
+" }}}
+
+" <<<< Color Scheme Modifications >>>> {{{
+
+  " Update colors of the current search match.
+  highlight CurrentSearch gui=reverse,bold guifg=#ff70f5 guibg=#FFFFFF
+
+  " Update colors of the non-current search matches.
+  hi Search guibg=#00becf guifg=#000000
 
 " }}}
