@@ -11,6 +11,7 @@
   call plug#begin('~/.local/share/nvim/plugged')
     " Navigation
     Plug 'scrooloose/nerdtree' " Tree-styled file navigator
+    Plug 'christoomey/vim-tmux-navigator' " Navigate between Tmux and Vim panes with keystrokes.
   call plug#end()
 " }}}
 
