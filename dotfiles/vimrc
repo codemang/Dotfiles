@@ -129,6 +129,11 @@
   " Searching
   set hlsearch " Highlight all words that match the search term.
   set incsearch " Search for keywords as you type them.
+
+  " Needed for smartcase to work.
+  " https://github.com/vrapper/vrapper/issues/620
+  set ignorecase
+
   set smartcase " Search will be case sensitive if it contains an uppercase letter.
 
   " Folding
