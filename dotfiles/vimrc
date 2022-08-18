@@ -19,6 +19,9 @@
     " ---- Display ----
     Plug 'vim-airline/vim-airline'
     Plug 'vim-airline/vim-airline-themes'
+
+    " ---- Search ----
+    Plug 'jremmen/vim-ripgrep' " Search via RipGrep
   call plug#end()
 " }}}
 
@@ -145,10 +148,28 @@
   let g:airline#extensions#tabline#fnamemod = ':t'
 " }}}
 
+" <<<< Search >>>> {{{
+
+  " ---- RipGrep Plugin ----
+
+  " Start the RipGrep command where you manually enter what you want to search
+  " for.
+  nmap <leader>ag :Rg '
+
+  " Search for the current word under the cursor.
+  nmap <leader>as :Rg "<C-R><C-W>"<CR>
+
+  " Search for the current visual selection.
+  xnoremap <Leader>av y:Rg <C-r>=fnameescape(@")<CR><CR>
+
+  " Highlight matches.
+  let g:rg_highlight=1
+
+" }}}
+
 " <<<< Color Scheme >>>> {{{
 
 colorscheme papercolor
 set background=light
 
 " }}}
-
