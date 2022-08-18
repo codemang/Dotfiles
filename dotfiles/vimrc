@@ -25,6 +25,7 @@
 
     " ---- Code Editing ----
     Plug 'scrooloose/nerdcommenter' " Comment chunks of code
+    Plug 'fedepujol/move.nvim' " Move chunk of code in visual mode
 
     " ---- Code Viewing ----
     Plug 'junegunn/goyo.vim' " Zen Mode, credits to Ustasb
@@ -116,6 +117,10 @@
   " Remove trailing whitespaces on save.
   " https://howchoo.com/vim/vim-how-to-remove-trailing-whitespace-on-save
   autocmd BufWritePre * :%s/\s\+$//e
+
+  " Run PlugInstall
+  nnoremap <Leader>pi :PlugInstall<Cr>
+
 " }}}
 
 " <<<< Navigation >>>> {{{
@@ -193,6 +198,24 @@
 
   " Toggle the commenting of a single line/visual block.
   nnoremap <Leader>ca <plug>NERDCommenterAppend
+
+  " ---- Move Plugin ----
+
+  " Move line under cursor down 1 line.
+  nnoremap <silent> <Space>j :MoveLine(1)<CR>
+
+  " Move line under cursor up 1 line.
+  nnoremap <silent> <Space>k :MoveLine(-1)<CR>
+
+  " Move visually selected block down 1 line. The moved block didn't always
+  " have the right indentation, so adding '=' to format the block and 'gv' to
+  " reselect the visual block.
+  vnoremap <silent> <Space>k :MoveBlock(-1)<CR>=gv
+
+  " Move visually selected block up 1 line. The moved block didn't always
+  " have the right indentation, so adding '=' to format the block and 'gv' to
+  " reselect the visual block.
+  vnoremap <silent> <Space>j :MoveBlock(1)<CR>=gv
 
 " }}}
 
