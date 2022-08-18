@@ -28,6 +28,7 @@
 
     " ---- Code Viewing ----
     Plug 'junegunn/goyo.vim' " Zen Mode, credits to Ustasb
+    Plug 'ntpeters/vim-better-whitespace' " Highlight extra whitespace
 
   call plug#end()
 " }}}
