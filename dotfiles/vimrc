@@ -26,6 +26,7 @@
     " ---- Code Editing ----
     Plug 'scrooloose/nerdcommenter' " Comment chunks of code
     Plug 'fedepujol/move.nvim' " Move chunk of code in visual mode
+    Plug 'tpope/vim-endwise' " Auto-complete if/else statements in various languages.
 
     " ---- Code Viewing ----
     Plug 'junegunn/goyo.vim' " Zen Mode, credits to Ustasb
