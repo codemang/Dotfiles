@@ -131,6 +131,22 @@
   set incsearch " Search for keywords as you type them.
   set smartcase " Search will be case sensitive if it contains an uppercase letter.
 
+  " Folding
+  set foldenable " Enable folding.
+  set foldlevel=0 " Close all folds by default when you open the file.
+  set foldmethod=marker " Folds are detected using a special marker.
+  set foldmarker={{{,}}} " This is the marker used to determine fold start/end points.
+
+  " Open all folds.
+  nnoremap zO zR<CR>
+
+  " Close all folds.
+  nnoremap zC zM<CR>
+
+  " Toggle the current fold. We add 'k' to the end of the statement because
+  " for some reason the cursor was moving down one line.
+  nnoremap zt za<CR>k
+
 " }}}
 
 " <<<< Navigation >>>> {{{
