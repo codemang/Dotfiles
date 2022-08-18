@@ -1,6 +1,6 @@
 alias vim="nv"
 alias v="nv"
-alias vimrc="nv ~/.vimrc"
+alias vimrc="nv ~/.config/nvim/init.vim"
 alias zpref="nv ~/.zshrc"
 
 # Toggle between vim and shell with ctrl-z
