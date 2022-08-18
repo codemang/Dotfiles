@@ -12,6 +12,7 @@
     " ---- Navigation ----
     Plug 'scrooloose/nerdtree' " Tree-styled file navigator
     Plug 'christoomey/vim-tmux-navigator' " Navigate between Tmux and Vim panes with keystrokes.
+    Plug 'phaazon/hop.nvim' " Quickly jump around a buffer using shortcuts.
 
     " FZF for fuzzy finding. Requires FZF to be installed via Homebrew.
     Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
@@ -165,6 +166,17 @@
   " ---- FZF Plugin ----
   " Open a new buffer via FZF
   nmap <Leader>t :FZF! <CR>
+
+  " ---- Hop Plugin ----
+
+" Initialize Hop. Cannot be parsed when indented.
+lua << EOF
+  require'hop'.setup()
+EOF
+
+  nnoremap <Leader>hw :HopWord<Cr>
+  nnoremap <Leader>hl :HopLine<Cr>
+
 " }}}
 
 " <<<< Display >>>> {{{
