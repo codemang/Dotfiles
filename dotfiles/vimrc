@@ -15,6 +15,10 @@
 
     " FZF for fuzzy finding. Requires FZF to be installed via Homebrew.
     Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' } 
+
+    " ---- Display ----
+    Plug 'vim-airline/vim-airline'
+    Plug 'vim-airline/vim-airline-themes'
   call plug#end()
 " }}}
 
@@ -111,6 +115,31 @@
   " ---- FZF Plugin ----
   " Open a new buffer via FZF
   nmap <Leader>t :FZF! <CR> 
+" }}}
+
+" <<<< Display >>>> {{{
+
+  " ---- Airline Plugin ----
+  let g:airline#extensions#tabline#enabled = 1 " Enable the tab line.
+  let g:airline#extensions#tabline#buffer_min_count = 2 " Don't show the tab bar if there is only one open buffer.
+
+  " Move to the next buffer tab
+  nmap <Space>l :bnext<CR> 
+
+  " Move to the previous buffer tab
+  nmap <Space>h :bprevious<CR> 
+
+  " Close the current buffer tab
+  nmap <Space>q :bp <BAR> bd #<CR> 
+
+  " Remove unnecessary information from the bottom bar.
+  let g:airline#extensions#default#layout = [
+        \ [ 'a', 'c'  ],
+        \ []
+        \ ]
+
+  " Only show the filename in the buffer bar, not the full filepath.
+  let g:airline#extensions#tabline#fnamemod = ':t'
 " }}}
 
 " <<<< Color Scheme >>>> {{{
