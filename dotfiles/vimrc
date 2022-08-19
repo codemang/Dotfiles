@@ -326,8 +326,10 @@ EOF
 
   " ^^^^ END COPY FROM README ^^^^
 
-  " Add Ruby language support to COC.
-  let g:coc_global_extensions = ['coc-solargraph']
+  let g:coc_global_extensions = [
+        \ 'coc-solargraph', " Ruby language support.
+        \ 'coc-pairs', " Pairs completion for JS and other languages (e.g () {} completion)
+        \ ]
 
   " Go to definition of the symbol under the cursor.
   nmap <silent> gd <Plug>(coc-definition)
