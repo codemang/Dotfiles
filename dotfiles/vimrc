@@ -20,6 +20,7 @@
     " ---- Display ----
     Plug 'vim-airline/vim-airline'
     Plug 'vim-airline/vim-airline-themes'
+    Plug 'sonph/onehalf', { 'rtp': 'vim' }
 
     " ---- Search ----
     Plug 'jremmen/vim-ripgrep' " Search via RipGrep
@@ -42,9 +43,9 @@
 " <<<< Misc >>>> {{{
   set termguicolors
 
-  set mouse+=a " Allow the mouse to interact with Vim e.g clicking the close icon in the tab bar.
-
   syntax on " Enable syntax highlighting
+
+  set mouse+=a " Allow the mouse to interact with Vim e.g clicking the close icon in the tab bar.
 
   " Set the new Leader key to ","
   let mapleader=","
@@ -305,8 +306,11 @@ EOF
 
 " <<<< Color Scheme >>>> {{{
 
-colorscheme papercolor
-set background=light
+  set background=light
+  colorscheme onehalflight
+
+  " Update the text color of the Pop up menu so that it stands out better.
+  hi Pmenu guifg=#9ca3af
 
 " }}}
 

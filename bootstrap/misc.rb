@@ -1,9 +1,9 @@
 class Misc
   def self.install
-
-    # Add terminfos so that italics is enabled in vim
+    # Install terminfos that are used to enable true colors + italics system-wide.
+    # https://medium.com/@dubistkomisch/how-to-actually-get-italics-and-true-colour-to-work-in-iterm-tmux-vim-9ebe55ebc2be#:~:text=Configure%20iTerm,to%20xterm%2D256color%2Ditalic%20.
     `tic -x #{File.join(Dir.pwd, 'iterm/xterm-256color-italic.terminfo')}`
-    `tic -x #{File.join(Dir.pwd, 'iterm/tmux.terminfo')}`
+    `tic -x #{File.join(Dir.pwd, 'iterm/tmux-256color.terminfo')}`
 
     # Set Desktop background images to personal images
     system("sudo rm /Library/Desktop\\ Pictures/* > /dev/null 2>&1")

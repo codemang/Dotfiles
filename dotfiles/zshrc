@@ -7,8 +7,6 @@ export HOST_ENV="development"
 export HISTCONTROL=ignoreboth:erasedupsG
 export DOTFILES=$HOME/Dotfiles
 
-export TERM=xterm-256color-italic
-
 export PATH=/usr/local/sbin:$HOME/.chromedriver:$PATH
 
 # Needed for jekyll
