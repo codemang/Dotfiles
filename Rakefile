@@ -5,32 +5,28 @@ task :brew do
   puts 'Starting Homebrew installation'
   Brew.install_package_manager
   puts 'Installing individual kegs'
-  Brew.install_packages(PackageList.kegs, log_output: true)
+  Brew.install_packages(Packages.kegs, log_output: true)
 end
 
 
 task :cask do
   puts_section_header('brew cask')
   puts 'Installing individual casks'
-  BrewCask.install_packages(PackageList.casks, log_output: true)
+  BrewCask.install_packages(Packages.casks, log_output: true)
 end
 
 task :npm_packages do
   puts_section_header('NPM Packages')
-  NPM.install_packages(PackageList.npm_packages, log_output: true)
+  NPM.install_packages(Packages.npm_packages, log_output: true)
 end
 
 task :gems do
   puts_section_header('Ruby Gems')
-  RubyGems.install_packages(PackageList.gems, log_output: true)
+  RubyGems.install_packages(Packages.gems, log_output: true)
 end
 
 task :system_packages => [:brew, :cask]
 task :language_packages => [:gems, :npm_packages]
-
-task :export_packages do
-  PackageList.save_package_list
-end
 
 task :languages do
   puts_section_header('languages')
