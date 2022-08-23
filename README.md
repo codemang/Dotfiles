@@ -65,6 +65,8 @@ to be used by the [Copy Commit To PR](https://github.com/codemang/Dotfiles/blob/
 1) Give iTerm access to send key strokes via an osascript for the [color toggle
 script](util/toggle_colors.rb)
 
+1) Install all dependencies for the `coq_nvim` plugin for `nvim`. Simply open up a vim buffer and run the command `:COQdeps`.
+
 ### Updates
 
 From then on any changes to the repo will be applied by pulling the latest version and running update.

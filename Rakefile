@@ -25,8 +25,13 @@ task :gems do
   RubyGems.install_packages(Packages.gems, log_output: true)
 end
 
+task :python_packages do
+  puts_section_header('Python Packages')
+  PythonPackages.install_packages(Packages.python_packages, log_output: true)
+end
+
 task :system_packages => [:brew, :cask]
-task :language_packages => [:gems, :npm_packages]
+task :language_packages => [:gems, :npm_packages, :python_packages]
 
 task :languages do
   puts_section_header('languages')

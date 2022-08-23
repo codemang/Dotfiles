@@ -29,8 +29,29 @@
     " ---- Code Editing ----
     Plug 'scrooloose/nerdcommenter' " Comment chunks of code
     Plug 'fedepujol/move.nvim' " Move chunk of code in visual mode
-    Plug 'tpope/vim-endwise' " Auto-complete if/else statements in various languages.
-    Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+    " Auto-complete engine
+    Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
+
+    " 9000+ snippets for auto-complete engine.
+    Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
+
+    " Enhance language parser, which adds better syntax highlighting and also
+    " provides a framework for installing language-specific language helpers
+    " for auto-completion.
+    Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+
+    " Support start/end tag completion for JSX/TSX files.
+    Plug 'windwp/nvim-ts-autotag'
+
+    " Improve auto-indendation for JSX files.
+    Plug 'neoclide/vim-jsx-improve'
+
+    " Auto-complete most basic pairs, e.g (), {}, etc.
+    Plug 'windwp/nvim-autopairs'
+
+    " Auto-complete if/else and def in Ruby.
+    Plug 'RRethy/nvim-treesitter-endwise'
 
     " ---- Git ----
     Plug 'tpope/vim-fugitive' " Use Git commands in vim
@@ -154,6 +175,9 @@
   " Toggle the current fold. We add 'k' to the end of the statement because
   " for some reason the cursor was moving down one line.
   nnoremap zt za<CR>k
+
+  " Auto format with new lines in visual mode
+  vmap Q gq
 
 " }}}
 
@@ -284,62 +308,6 @@ EOF
   " have the right indentation, so adding '=' to format the block and 'gv' to
   " reselect the visual block.
   vnoremap <silent> <Space>j :MoveBlock(1)<CR>=gv
-
-  " ---- COC Plugin ----
-
-  " vvvv COPIED FROM README vvvv
-
-  " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
-  " delays and poor user experience.
-  set updatetime=300
-
-  " Always show the signcolumn, otherwise it would shift the text each time
-  " diagnostics appear/become resolved.
-  set signcolumn=yes
-
-  " Use tab for trigger completion with characters ahead and navigate.
-  " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
-  " other plugin before putting this into your config.
-  inoremap <silent><expr> <TAB>
-        \ coc#pum#visible() ? coc#pum#next(1):
-        \ CheckBackspace() ? "\<Tab>" :
-        \ coc#refresh()
-  inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
-
-  " Make <CR> to accept selected completion item or notify coc.nvim to format
-  " <C-g>u breaks current undo, please make your own choice.
-  inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
-                                \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
-
-  function! CheckBackspace() abort
-    let col = col('.') - 1
-    return !col || getline('.')[col - 1]  =~# '\s'
-  endfunction
-
-  function! ShowDocumentation()
-    if CocAction('hasProvider', 'hover')
-      call CocActionAsync('doHover')
-    else
-      call feedkeys('K', 'in')
-    endif
-  endfunction
-
-  " ^^^^ END COPY FROM README ^^^^
-
-  let g:coc_global_extensions = [
-        \ 'coc-solargraph', " Ruby language support.
-        \ 'coc-pairs', " Pairs completion for JS and other languages (e.g () {} completion)
-        \ ]
-
-  " Go to definition of the symbol under the cursor.
-  nmap <silent> gd <Plug>(coc-definition)
-
-  " Show any documentation about the symbol under the cursor.
-  nnoremap <silent> gh :call ShowDocumentation()<CR>
-
-  " Rename the symbol underneath the cursor
-  nmap <leader>rn <Plug>(coc-rename)
-
 " }}}
 
 " <<<< Code Viewing >>>> {{{
@@ -377,5 +345,10 @@ EOF
 
   " Update colors of the non-current search matches.
   hi Search guibg=#00becf guifg=#000000
-
 " }}}
+
+lua require('plugins/coq_nvim')
+lua require('plugins/nvim-treesitter')
+lua require('plugins/nvim-autopairs')
+lua require('plugins/nvim-treesitter-endwise')
+lua require('plugins/nvim-ts-autotag')

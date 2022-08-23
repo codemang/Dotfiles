@@ -11,12 +11,8 @@ class DotfileManager
     'dotfiles/hushlogin' => ['~/.hushlogin'],
     'dotfiles/colors' => ['~/.local/share/nvim/site/colors'],
     'dotfiles/autoload' => ['~/.local/share/nvim/site/autoload'],
+    'dotfiles/lua' => ['~/.config/nvim/lua']
   }
-
-  def self.symlink_dotfiles_and_print
-    file_changes = symlink_files
-    print_file_changes(file_changes)
-  end
 
   def self.symlink_files
     # required for neovim and macvim

@@ -1,4 +1,10 @@
 class Packages
+  def self.python_packages
+    [
+      "pynvim", # Needed for the 'coq_nvim' NeoVim plugin.
+    ]
+  end
+
   def self.kegs
     [
       "chruby",
