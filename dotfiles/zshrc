@@ -13,6 +13,10 @@ export PATH=/usr/local/sbin:$HOME/.chromedriver:$PATH
 # https://jekyllrb.com/docs/installation/macos/
 export PATH=$HOME/.gem/ruby/2.5.0/bin:$PATH
 
+# Needed for Vint
+# https://github.com/Vimjas/vint
+export PATH=$PATH:/Users/nate/Library/Python/3.10/bin/
+
 plugins=(bundler osx rake ruby rails gem brew zsh-completions)
 autoload -U compinit -u && compinit -u
 

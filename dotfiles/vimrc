@@ -53,6 +53,12 @@
     " Auto-complete if/else and def in Ruby.
     Plug 'RRethy/nvim-treesitter-endwise'
 
+    " Add support for code diagnostics and auto-formating.
+    Plug 'jose-elias-alvarez/null-ls.nvim'
+
+    " Required by null-ls.nvim
+    Plug 'nvim-lua/plenary.nvim'
+
     " ---- Git ----
     Plug 'tpope/vim-fugitive' " Use Git commands in vim
 
@@ -308,6 +314,17 @@ EOF
   " have the right indentation, so adding '=' to format the block and 'gv' to
   " reselect the visual block.
   vnoremap <silent> <Space>j :MoveBlock(1)<CR>=gv
+
+  lua require('plugins/coq_nvim')
+  lua require('plugins/nvim-treesitter')
+  lua require('plugins/nvim-autopairs')
+  lua require('plugins/nvim-treesitter-endwise')
+  lua require('plugins/nvim-ts-autotag')
+  lua require('plugins/lsp')
+
+  # Ensure Ruby diagnostic warnings are red.
+  hi DiagnosticInfo  guifg=Red
+
 " }}}
 
 " <<<< Code Viewing >>>> {{{
@@ -347,8 +364,3 @@ EOF
   hi Search guibg=#00becf guifg=#000000
 " }}}
 
-lua require('plugins/coq_nvim')
-lua require('plugins/nvim-treesitter')
-lua require('plugins/nvim-autopairs')
-lua require('plugins/nvim-treesitter-endwise')
-lua require('plugins/nvim-ts-autotag')

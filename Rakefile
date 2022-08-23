@@ -1,4 +1,4 @@
-Dir['./bootstrap/**/*.rb'].each {|file| require file }
+Dir['./bootstrap/**/*.rb'].each { |file| require file }
 
 task :brew do
   puts_section_header('brew')
@@ -7,7 +7,6 @@ task :brew do
   puts 'Installing individual kegs'
   Brew.install_packages(Packages.kegs, log_output: true)
 end
-
 
 task :cask do
   puts_section_header('brew cask')
@@ -30,8 +29,8 @@ task :python_packages do
   PythonPackages.install_packages(Packages.python_packages, log_output: true)
 end
 
-task :system_packages => [:brew, :cask]
-task :language_packages => [:gems, :npm_packages, :python_packages]
+task system_packages: %i[brew cask]
+task language_packages: %i[gems npm_packages python_packages]
 
 task :languages do
   puts_section_header('languages')
@@ -65,36 +64,36 @@ task :misc do
 end
 
 def green_output(msg)
-  puts "\e[#{32}m#{msg}\e[0m"
+  puts "\e[32m#{msg}\e[0m"
 end
 
 def puts_section_header(header)
   puts
   header_container = '=============================================================='
-  first_half_space_length  = header_container.length/2 - (header.length/2 + 2)
+  first_half_space_length  = header_container.length / 2 - (header.length / 2 + 2)
   second_half_space_length = header_container.length - (4 + first_half_space_length + header.length)
   green_output(header_container)
-  green_output("= "+' '*first_half_space_length + header.upcase + " "*second_half_space_length+" =")
+  green_output('= ' + ' ' * first_half_space_length + header.upcase + ' ' * second_half_space_length + ' =')
   green_output(header_container)
   puts
 end
 
 task :complete_msg do
   puts
-  green_output("====================== BOOTSTRAPPING COMPLETE ====================")
-  green_output("Final Steps:")
-  green_output("1) Restart your computer so that some configurations can take effect")
-  green_output("2) Follow the manual steps in the README")
+  green_output('====================== BOOTSTRAPPING COMPLETE ====================')
+  green_output('Final Steps:')
+  green_output('1) Restart your computer so that some configurations can take effect')
+  green_output('2) Follow the manual steps in the README')
 end
 
-task :setup => [
-  :system_packages,
-  :languages,
-  :language_packages,
-  :zsh,
-  :dotfiles,
-  :vim,
-  :misc,
-  :mac_defaults,
-  :complete_msg
+task setup: %i[
+  system_packages
+  languages
+  language_packages
+  zsh
+  dotfiles
+  vim
+  misc
+  mac_defaults
+  complete_msg
 ]
