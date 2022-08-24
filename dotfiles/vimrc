@@ -322,9 +322,6 @@ EOF
   lua require('plugins/nvim-ts-autotag')
   lua require('plugins/lsp')
 
-  # Ensure Ruby diagnostic warnings are red.
-  hi DiagnosticInfo  guifg=Red
-
 " }}}
 
 " <<<< Code Viewing >>>> {{{
@@ -362,5 +359,9 @@ EOF
 
   " Update colors of the non-current search matches.
   hi Search guibg=#00becf guifg=#000000
+
+  " Ensure Ruby diagnostic warnings are red.
+  hi DiagnosticInfo  guifg=Red
+
 " }}}
 
