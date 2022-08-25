@@ -76,8 +76,7 @@ function M.setup()
       end,
     }
 
-		use { 
-			"aserowy/tmux.nvim",
+		use { "aserowy/tmux.nvim",
       config = function()
         require("config.tmux").setup()
       end,
@@ -93,6 +92,15 @@ function M.setup()
 				"nvim-lua/plenary.nvim",
 			}
 		}
+
+    use {
+      'romgrk/barbar.nvim',
+      requires = {'kyazdani42/nvim-web-devicons'},
+			config = function()
+				require("config.barbar").setup()
+			end,
+    }
+
 
     if packer_bootstrap then
       print "Restart Neovim required after installation!"
