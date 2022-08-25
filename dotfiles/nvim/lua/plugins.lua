@@ -124,6 +124,17 @@ function M.setup()
       },
     }
 
+    use {
+      'kyazdani42/nvim-tree.lua',
+      requires = {
+        'kyazdani42/nvim-web-devicons', -- optional, for file icons
+      },
+      config = function()
+        require("config.nvim-tree").setup()
+      end,
+      tag = 'nightly' -- optional, updated every week. (see issue #1193)
+    }
+
     if packer_bootstrap then
       print "Restart Neovim required after installation!"
       require("packer").sync()
