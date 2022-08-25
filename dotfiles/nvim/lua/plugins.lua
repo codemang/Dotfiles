@@ -1,3 +1,5 @@
+-- Source https://alpha2phi.medium.com/neovim-for-beginners-init-lua-45ff91f741cb
+
 local M = {}
 
 function M.setup()
@@ -35,7 +37,7 @@ function M.setup()
       vim.cmd [[packadd packer.nvim]]
     end
 
-		-- Run PackerCompile if there are changes in this file
+		-- Run PackerCompile if there are changes saved to this file.
     vim.cmd "autocmd BufWritePost plugins.lua source <afile> | PackerCompile"
   end
 
@@ -48,6 +50,7 @@ function M.setup()
       "sainnhe/everforest",
       config = function()
         vim.cmd "colorscheme everforest"
+        vim.cmd "set background=light"
       end,
     }
 
@@ -69,26 +72,10 @@ function M.setup()
     }
 
 		use { 
-			"aserowy/tmux.nvim", 
-			config = function()
-				require("tmux").setup({
-					-- overwrite default configuration
-					-- here, e.g. to enable default bindings
-					copy_sync = {
-						-- enables copy sync and overwrites all register actions to
-						-- sync registers *, +, unnamed, and 0 till 9 from tmux in advance
-						enable = true,
-					},
-					navigation = {
-						-- enables default keybindings (C-hjkl) for normal mode
-						enable_default_keybindings = true,
-					},
-					resize = {
-						-- enables default keybindings (A-hjkl) for normal mode
-						enable_default_keybindings = true,
-					}
-				})
-			end
+			"aserowy/tmux.nvim",
+      config = function()
+        require("config.tmux").setup()
+      end,
 		}
 
     if packer_bootstrap then
