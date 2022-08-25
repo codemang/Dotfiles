@@ -38,7 +38,12 @@ function M.setup()
     end
 
 		-- Run PackerCompile if there are changes saved to this file.
-    vim.cmd "autocmd BufWritePost plugins.lua source <afile> | PackerCompile"
+		vim.cmd([[
+			augroup packer_user_config
+				autocmd!
+				autocmd BufWritePost plugins.lua source <afile> | PackerCompile
+			augroup end
+		]])
   end
 
   -- Plugins
@@ -76,6 +81,17 @@ function M.setup()
       config = function()
         require("config.tmux").setup()
       end,
+		}
+
+		use {
+			'nvim-telescope/telescope.nvim', 
+			config = function()
+				require("config.telescope").setup()
+			end,
+			requires = {
+				"nvim-lua/popup.nvim",
+				"nvim-lua/plenary.nvim",
+			}
 		}
 
     if packer_bootstrap then

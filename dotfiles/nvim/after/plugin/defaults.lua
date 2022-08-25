@@ -27,3 +27,11 @@ opt.clipboard = "unnamedplus" -- Access system clipboard
 opt.tabstop = 2
 opt.softtabstop = 2
 opt.shiftwidth = 2
+
+api.nvim_set_keymap('n', '<Leader>w', ':w<Cr>', {})
+api.nvim_set_keymap('n', '<Leader>wq', ':wq<Cr>', {})
+api.nvim_set_keymap('n', '<Leader>e', ':e<Cr>', {})
+api.nvim_set_keymap('n', '<Leader>e!', ':e!<Cr>', {})
+api.nvim_set_keymap('n', '<Leader>q', ':q<Cr>', {})
+api.nvim_set_keymap('n', '<Leader>q!', ':q!<Cr>', {})
+
