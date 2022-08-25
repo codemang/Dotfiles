@@ -8,6 +8,9 @@ function M.setup()
 			-- enables copy sync and overwrites all register actions to
 			-- sync registers *, +, unnamed, and 0 till 9 from tmux in advance
 			enable = true,
+
+      -- Needed to get copy/paste to work in Tmux.
+      sync_clipboard = false,
 		},
 		navigation = {
 			-- enables default keybindings (C-hjkl) for normal mode
