@@ -18,9 +18,8 @@
     Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
 
     " ---- Display ----
-    Plug 'vim-airline/vim-airline'
-    Plug 'vim-airline/vim-airline-themes'
     Plug 'sonph/onehalf', { 'rtp': 'vim' }
+    Plug 'nvim-lualine/lualine.nvim'
 
     " ---- Search ----
     Plug 'jremmen/vim-ripgrep' " Search via RipGrep
@@ -29,35 +28,6 @@
     " ---- Code Editing ----
     Plug 'scrooloose/nerdcommenter' " Comment chunks of code
     Plug 'fedepujol/move.nvim' " Move chunk of code in visual mode
-
-    " Auto-complete engine
-    Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
-
-    " 9000+ snippets for auto-complete engine.
-    Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
-
-    " Enhance language parser, which adds better syntax highlighting and also
-    " provides a framework for installing language-specific language helpers
-    " for auto-completion.
-    Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-
-    " Support start/end tag completion for JSX/TSX files.
-    Plug 'windwp/nvim-ts-autotag'
-
-    " Improve auto-indendation for JSX files.
-    Plug 'neoclide/vim-jsx-improve'
-
-    " Auto-complete most basic pairs, e.g (), {}, etc.
-    Plug 'windwp/nvim-autopairs'
-
-    " Auto-complete if/else and def in Ruby.
-    Plug 'RRethy/nvim-treesitter-endwise'
-
-    " Add support for code diagnostics and auto-formating.
-    Plug 'jose-elias-alvarez/null-ls.nvim'
-
-    " Required by null-ls.nvim
-    Plug 'nvim-lua/plenary.nvim'
 
     " ---- Git ----
     Plug 'tpope/vim-fugitive' " Use Git commands in vim
@@ -315,12 +285,12 @@ EOF
   " reselect the visual block.
   vnoremap <silent> <Space>j :MoveBlock(1)<CR>=gv
 
-  lua require('plugins/coq_nvim')
-  lua require('plugins/nvim-treesitter')
-  lua require('plugins/nvim-autopairs')
-  lua require('plugins/nvim-treesitter-endwise')
-  lua require('plugins/nvim-ts-autotag')
-  lua require('plugins/lsp')
+  " lua require('plugins/coq_nvim')
+  " lua require('plugins/nvim-treesitter')
+  " lua require('plugins/nvim-autopairs')
+  " lua require('plugins/nvim-treesitter-endwise')
+  " lua require('plugins/nvim-ts-autotag')
+  " lua require('plugins/lsp')
 
 " }}}
 

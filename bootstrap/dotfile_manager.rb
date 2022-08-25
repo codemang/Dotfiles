@@ -1,7 +1,6 @@
 class DotfileManager
   # Support macvim and neovim
   SYMLINK_TARGETS = {
-    'dotfiles/vimrc' => ['~/.config/nvim/init.vim'],
     'dotfiles/zshrc' => ['~/.zshrc'],
     'dotfiles/tmux.conf' => ['~/.tmux.conf'],
     'dotfiles/gitconfig' => ['~/.gitconfig'],
@@ -9,11 +8,19 @@ class DotfileManager
     # Silence the 'Last login...' message in the terminal.
     # https://osxdaily.com/2010/06/22/remove-the-last-login-message-from-the-terminal/
     'dotfiles/hushlogin' => ['~/.hushlogin'],
-    'dotfiles/colors' => ['~/.local/share/nvim/site/colors'],
-    'dotfiles/autoload' => ['~/.local/share/nvim/site/autoload'],
-    'dotfiles/lua' => ['~/.config/nvim/lua']
+
+    # 'dotfiles/colors' => ['~/.local/share/nvim/site/colors'],
+    # 'dotfiles/autoload' => ['~/.local/share/nvim/site/autoload'],
+    # 'dotfiles/lua' => ['~/.config/nvim/lua']
+    # 'dotfiles/vimrc' => ['~/.config/nvim/init.vim'],
+
+    'dotfiles/nvim' => ['~/.config/nvim'],
   }
 
+   def self.symlink_dotfiles_and_print
+    file_changes = symlink_files
+    print_file_changes(file_changes)
+  end
   def self.symlink_files
     # required for neovim and macvim
     `mkdir -p ~/.local/share/nvim/site`
