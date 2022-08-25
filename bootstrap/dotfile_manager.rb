@@ -17,10 +17,11 @@ class DotfileManager
     'dotfiles/nvim' => ['~/.config/nvim'],
   }
 
-   def self.symlink_dotfiles_and_print
+  def self.symlink_dotfiles_and_print
     file_changes = symlink_files
     print_file_changes(file_changes)
   end
+
   def self.symlink_files
     # required for neovim and macvim
     `mkdir -p ~/.local/share/nvim/site`
