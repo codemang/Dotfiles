@@ -47,3 +47,7 @@ api.nvim_set_keymap('n', '<Leader>e!', ':e!<Cr>', {})
 api.nvim_set_keymap('n', '<Leader>q', ':q<Cr>', {})
 api.nvim_set_keymap('n', '<Leader>q!', ':q!<Cr>', {})
 
+api.nvim_set_keymap('n', '<Leader>ps', ':PackerSync<Cr>', {})
+api.nvim_set_keymap('n', '<Leader>pc', ':PackerClean<Cr>', {})
+api.nvim_set_keymap('n', '<Leader>s', ':luafile %<Cr>', {})
+

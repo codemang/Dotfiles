@@ -135,6 +135,31 @@ function M.setup()
       tag = 'nightly' -- optional, updated every week. (see issue #1193)
     }
 
+    -- Auto pairs
+    use {
+      "windwp/nvim-autopairs",
+      requires = { "nvim-treesitter/nvim-treesitter" },
+      module = { "nvim-autopairs.completion.cmp", "nvim-autopairs" },
+      config = function()
+        require("config.nvim-autopairs").setup()
+      end,
+    }
+
+    -- Better syntax highlighting.
+    -- Needed for nvim-ts-autotag to work.
+    use { 
+      "nvim-treesitter/nvim-treesitter",
+      config = function()
+        require("config.nvim-treesitter").setup()
+      end,
+    }
+
+    -- Auto tag
+    use {
+      "windwp/nvim-ts-autotag",
+      requires = { "nvim-treesitter/nvim-treesitter" },
+    }
+
     if packer_bootstrap then
       print "Restart Neovim required after installation!"
       require("packer").sync()

@@ -88,6 +88,10 @@ function M.setup()
     }
   }
 
+  -- Integrate completion with nvim-autopairs plugin.
+  local cmp_autopairs = require "nvim-autopairs.completion.cmp"
+  cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
+
   -- Use cmdline & path source for ':'
   -- TODO: This was annoying when I wanted to enter a command that wasn't in
   -- the completion list, e.g :w, so disabling for now.
