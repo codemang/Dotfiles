@@ -89,13 +89,15 @@ function M.setup()
   }
 
   -- Use cmdline & path source for ':'
-  cmp.setup.cmdline(":", {
-    sources = cmp.config.sources({
-      { name = "path" },
-    }, {
-      { name = "cmdline" },
-    }),
-  })
+  -- TODO: This was annoying when I wanted to enter a command that wasn't in
+  -- the completion list, e.g :w, so disabling for now.
+  --cmp.setup.cmdline(":", {
+  --  sources = cmp.config.sources({
+  --    { name = "path" },
+  --  }, {
+  --    { name = "cmdline" },
+  --  }),
+  --})
 
 end
 
