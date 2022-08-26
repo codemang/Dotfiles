@@ -15,6 +15,11 @@ function M.setup()
       completeopt = "menu,menuone,noinsert", 
       keyword_length = 1 
     },
+    snippet = {
+      expand = function(args)
+        require("luasnip").lsp_expand(args.body)
+      end,
+    },
     experimental = { 
       native_menu = false, 
       ghost_text = false 
@@ -79,6 +84,7 @@ function M.setup()
       { name = "spell" },
       { name = "emoji" },
       { name = "calc" },
+      { name = "nvim_lsp" },
     },
     window = {
       documentation = {
