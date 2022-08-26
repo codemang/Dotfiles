@@ -1,2 +1,3 @@
 .oh-my-zsh
 .color-scheme-env
+/dotfiles/nvim/plugin/packer_compiled.lua
