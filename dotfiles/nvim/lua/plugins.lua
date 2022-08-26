@@ -173,9 +173,11 @@ function M.setup()
       config = function()
         require("config.lsp").setup()
       end,
+      wants = { "nvim-lsp-installer", "cmp-nvim-lsp", "lua-dev.nvim" },
       requires = {
         "williamboman/nvim-lsp-installer",
         "ray-x/lsp_signature.nvim",
+        "folke/lua-dev.nvim",
       },
     }
 
