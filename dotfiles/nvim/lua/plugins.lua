@@ -186,6 +186,19 @@ function M.setup()
       event = "VimEnter",
     }
 
+    use {
+      'numToStr/Comment.nvim',
+      config = function()
+        require('Comment').setup({
+          mappings = {
+            basic = false,
+            extra = false,
+            extended = false,
+          },
+        })
+      end
+    }
+
     if packer_bootstrap then
       print "Restart Neovim required after installation!"
       require("packer").sync()

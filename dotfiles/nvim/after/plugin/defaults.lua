@@ -51,3 +51,10 @@ api.nvim_set_keymap('n', '<Leader>ps', ':PackerSync<Cr>', {})
 api.nvim_set_keymap('n', '<Leader>pc', ':PackerClean<Cr>', {})
 api.nvim_set_keymap('n', '<Leader>s', ':luafile %<Cr>', {})
 
+-- There are various language-specific builtin ftplugin config files that set the formatoptions field. Using an autocmd was the only way I figured out how to override them reliably.
+vim.cmd [[
+  augroup SetFormatOptions
+    autocmd!
+    autocmd Filetype * setlocal formatoptions-=ro
+  augroup end
+]]
