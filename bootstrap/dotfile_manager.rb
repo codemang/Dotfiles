@@ -4,17 +4,11 @@ class DotfileManager
     'dotfiles/zshrc' => ['~/.zshrc'],
     'dotfiles/tmux.conf' => ['~/.tmux.conf'],
     'dotfiles/gitconfig' => ['~/.gitconfig'],
-    'dotfiles/gitmessage' => ['~/.gitmessage'],
+    'dotfiles/nvim' => ['~/.config/nvim'],
+
     # Silence the 'Last login...' message in the terminal.
     # https://osxdaily.com/2010/06/22/remove-the-last-login-message-from-the-terminal/
     'dotfiles/hushlogin' => ['~/.hushlogin'],
-
-    # 'dotfiles/colors' => ['~/.local/share/nvim/site/colors'],
-    # 'dotfiles/autoload' => ['~/.local/share/nvim/site/autoload'],
-    # 'dotfiles/lua' => ['~/.config/nvim/lua']
-    # 'dotfiles/vimrc' => ['~/.config/nvim/init.vim'],
-
-    'dotfiles/nvim' => ['~/.config/nvim'],
   }
 
   def self.symlink_dotfiles_and_print
