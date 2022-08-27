@@ -199,6 +199,15 @@ function M.setup()
       end
     }
 
+    use {
+      "nvim-lualine/lualine.nvim",
+      event = "VimEnter",
+      config = function()
+        require("config.lualine").setup()
+      end,
+      requires = { "nvim-web-devicons" },
+    }
+
     if packer_bootstrap then
       print "Restart Neovim required after installation!"
       require("packer").sync()
