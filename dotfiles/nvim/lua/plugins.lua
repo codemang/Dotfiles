@@ -50,15 +50,6 @@ function M.setup()
   local function plugins(use)
     use { "wbthomason/packer.nvim" }
 
-    -- Colorscheme
-    use {
-      "sainnhe/everforest",
-      config = function()
-        vim.cmd "colorscheme everforest"
-        vim.cmd "set background=dark"
-      end,
-    }
-
     -- Git
     use {
       "TimUntersberger/neogit",
@@ -206,6 +197,15 @@ function M.setup()
         require("config.lualine").setup()
       end,
       requires = { "nvim-web-devicons" },
+    }
+
+    -- Colorscheme
+    use {
+      "sainnhe/edge",
+      config = function()
+        vim.cmd "colorscheme edge"
+        vim.o.background = "light" -- or "light" for light mode
+      end
     }
 
     if packer_bootstrap then
