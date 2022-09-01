@@ -8,7 +8,7 @@ class DotfileManager
 
     # Silence the 'Last login...' message in the terminal.
     # https://osxdaily.com/2010/06/22/remove-the-last-login-message-from-the-terminal/
-    'dotfiles/hushlogin' => ['~/.hushlogin'],
+    'dotfiles/hushlogin' => ['~/.hushlogin']
   }
 
   def self.symlink_dotfiles_and_print
@@ -25,7 +25,7 @@ class DotfileManager
     file_changes = {
       properly_symlinked_files: [],
       newly_symlinked_files: [],
-      replaced_symlinked_files: [],
+      replaced_symlinked_files: []
     }
 
     SYMLINK_TARGETS.each do |source, targets|
@@ -34,7 +34,7 @@ class DotfileManager
         full_target = File.expand_path(target)
 
         symlink_exists = `readlink -n #{full_target}`.length > 0
-        if File.exists?(full_target) || symlink_exists
+        if File.exist?(full_target) || symlink_exists
           current_symlink_source = `readlink -n #{full_target}`
           if current_symlink_source == full_source
             file_changes[:properly_symlinked_files] << full_target

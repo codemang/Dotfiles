@@ -43,6 +43,7 @@ class Packages
       alfred
       anki
       authy
+      blender
       chromedriver
       docker
       dropbox
