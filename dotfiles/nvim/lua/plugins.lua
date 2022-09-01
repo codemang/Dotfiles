@@ -208,6 +208,13 @@ function M.setup()
       end
     }
 
+    use {
+      'fedepujol/move.nvim',
+      config = function()
+        require("config.move").setup()
+      end,
+    }
+
     if packer_bootstrap then
       print "Restart Neovim required after installation!"
       require("packer").sync()
