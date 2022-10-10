@@ -27,6 +27,7 @@ alias amendn="git commit -a --amend --no-edit"
 alias wip="git commit -am 'WIP'"
 
 alias gdiff="git diff"
+alias gcp="git cherry-pick"
 
 function pushn() {
   git push origin $(git_branch)
