@@ -25,8 +25,8 @@ alias notifyDone='reattach-to-user-namespace terminal-notifier -title "Hey Nate"
 alias zprompt="vim ~/Dotfiles/zsh/zshrc_prompt"
 alias findp="ps aux | grep"
 alias pbc="pbcopy"
-
 alias dl="cd ~/Downloads"
+alias ssha="ssh-add ~/.ssh/id_rsa_github"
 
 # Colorized man pages
 man() {
