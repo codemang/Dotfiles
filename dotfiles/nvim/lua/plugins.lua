@@ -211,7 +211,7 @@ function M.setup()
     use {
       'fedepujol/move.nvim',
       config = function()
-        require("config.move").setup()
+        require("config.move")
       end,
     }
 
