@@ -96,14 +96,6 @@ api.nvim_set_keymap('v', '*', 'y/<C-R>"<CR>N', {})
 api.nvim_set_keymap('n', '<Space>]', 'Okj', {})
 api.nvim_set_keymap('n', '<Space>[', 'okj', {})
 
--- There are various language-specific builtin ftplugin config files that set the formatoptions field. Using an autocmd was the only way I figured out how to override them reliably.
-vim.cmd [[
-  augroup SetFormatOptions
-    autocmd!
-    autocmd Filetype * setlocal formatoptions-=ro
-  augroup end
-]]
-
 vim.cmd [[
   augroup RemoveTrailingLinesOnSave
     autocmd!

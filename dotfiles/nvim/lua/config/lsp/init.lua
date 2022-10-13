@@ -26,6 +26,7 @@ local function on_attach(client, bufnr)
 end
 
 local lsp_signature = require "lsp_signature"
+
 lsp_signature.setup {
   bind = true,
   handler_opts = {
