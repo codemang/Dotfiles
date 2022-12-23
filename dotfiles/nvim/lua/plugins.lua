@@ -216,6 +216,13 @@ function M.setup()
       end,
     }
 
+    use {
+      'rhysd/git-messenger.vim',
+      config = function()
+        require("config.git-messenger").setup()
+      end,
+    }
+
     if packer_bootstrap then
       print "Restart Neovim required after installation!"
       require("packer").sync()
