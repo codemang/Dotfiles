@@ -230,6 +230,8 @@ function M.setup()
       end,
     }
 
+    use { 'karb94/neoscroll.nvim' }
+
     if packer_bootstrap then
       print "Restart Neovim required after installation!"
       require("packer").sync()
