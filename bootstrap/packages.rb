@@ -21,6 +21,7 @@ class Packages
       { "package_name": 'heroku', "package_source": 'heroku/brew' },
       'htop',
       'neovim',
+      'lua-language-server', # Needed for sumneko LSP in vim
       'nmap',
       'readline',
       'reattach-to-user-namespace',

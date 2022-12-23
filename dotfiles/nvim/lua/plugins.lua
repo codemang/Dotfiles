@@ -24,7 +24,7 @@ function M.setup()
 
     -- Download packer.nvim if it hasn't been downloaded yet.
     if fn.empty(fn.glob(install_path)) > 0 then
-      packer_bootstrap = fn.system {
+      local packer_bootstrap = fn.system {
         "git",
         "clone",
         "--depth",
