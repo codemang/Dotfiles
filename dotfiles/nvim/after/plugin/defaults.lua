@@ -44,6 +44,7 @@ opt.foldmarker= '{{{,}}}' -- This is the marker used to determine fold start/end
 -- all apps. https://github.com/tmux/tmux/issues/543
 opt.clipboard = 'unnamedplus'
 
+opt.cursorline = true
 
 -- No swp files
 vim.api.nvim_command('set noswapfile')
