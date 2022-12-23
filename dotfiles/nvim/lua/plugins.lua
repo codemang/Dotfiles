@@ -81,6 +81,7 @@ function M.setup()
       requires = {
         "nvim-lua/popup.nvim",
         "nvim-lua/plenary.nvim",
+        "nvim-telescope/telescope-live-grep-args.nvim",
       }
     }
 
