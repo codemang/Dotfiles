@@ -9,12 +9,10 @@ function M.setup(servers, options)
 
     if server_available then
       server:on_ready(function()
-        local opts = vim.tbl_deep_extend("force", options, servers[server.name] or {})
+        local pre_setup_function = servers[server.name].pre_setup_function
+        if pre_setup_function then pre_setup_function() end
 
-        if server.name == "sumneko_lua" then
-          require("neodev").setup({})
-        end
-
+        local opts = vim.tbl_deep_extend("force", options, servers[server.name].setup_opts or {})
         server:setup(opts)
       end)
 

@@ -5,14 +5,19 @@ local servers = {
   jsonls = {},
   pyright = {},
   sumneko_lua = {
-    settings = {
-      Lua = {
-        diagnostics = {
-          -- Get the language server to recognize the `vim` global
-          globals = {'vim'},
+    setup_opts = {
+      settings = {
+        Lua = {
+          diagnostics = {
+            -- Get the language server to recognize the `vim` global
+            globals = {'vim'},
+          },
         },
       },
     },
+    pre_setup_function = function()
+      require("neodev").setup({})
+    end,
   },
   tsserver = {},
   vimls = {},
