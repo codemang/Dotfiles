@@ -1,3 +1,5 @@
+alias g="git"
+
 # Checkout
 alias co="git checkout" # Switch branches
 alias cob="git checkout -b" # Create new branch
@@ -29,10 +31,6 @@ alias wip="git commit -am 'WIP'"
 alias gdiff="git diff"
 alias gcp="git cherry-pick"
 
-function pushn() {
-  git push origin $(git_branch)
-}
-
 # Checkout git branch with fzf
 function cof() {
   local branches branch
@@ -41,7 +39,7 @@ function cof() {
   git checkout $(echo "$branch" | sed "s/.* //")
 }
 
-function git_branch() {
+function current_git_branch() {
   echo "$(git branch 2>/dev/null| sed -n '/^\*/s/^\* //p')"
 }
 
@@ -55,7 +53,7 @@ function mirror() {
   then
     branch="$1"
   else
-    branch="$(git_branch)"
+    branch="$(current_git_branch)"
   fi
   confirm_cmd "Are you sure you want to reset --hard to remote branch $branch" "git fetch; git reset --hard origin/$branch"
 }
@@ -93,7 +91,6 @@ alias pstat="git status -s"
 alias log="git log --graph"
 alias logo="git log --pretty=format:'%Cred%h%Creset - %s %Cgreen(%cr) %C(blue)<%an>%Creset' --abbrev-commit"
 
-# alias diff="git diff"
 alias cherry="git cherry -v"
 
 # rebase
@@ -119,43 +116,12 @@ function confirm_cmd() {
   fi
 }
 
-alias g="git"
-
 function greplog() {
   git log --grep="$*"
 }
 
 function greplogo() {
   git log --pretty=format:'%Cred%h%Creset - %s %Cgreen(%cr) %C(blue)<%an>%Creset' --abbrev-commit --grep="$*"
-}
-
-# Reset For Review
-# * Pull down latest master
-# * Collapse all commits
-# * Create new commit with template, if present
-function rfr() {
-  if ! git checkout master && git pull origin master; then
-    echo "Couldn't pull latest of master"
-    return 1
-  fi
-
-  git checkout -
-  master_head=$(git log --pretty=format:"%H" origin/master | head -1)
-  common_ancestor=$(git merge-base HEAD master)
-
-  if [[ $master_head != $common_ancestor ]]; then
-    echo "You have to rebase off of the master branch before resetting for refresh"
-    return 1
-  fi
-
-  files_changed=$(git diff --name-only HEAD $master_head)
-  git reset --soft $master_head
-  echo $files_changed | XARGS git add
-  git commit
-}
-
-function mc() {
-  ruby $DOTFILES/util/copy_commit_to_pr.rb
 }
 
 # TODO: Find way to get branch auto-complete
@@ -178,7 +144,7 @@ function git_rm_cold_storage() {
 }
 
 function changed_files() {
-  git diff --name-only $(git_branch) $(git merge-base master $(git_branch))
+  git diff --name-only $(current_git_branch) $(git merge-base master $(git_branch))
 }
 
 alias gcf="git diff --name-only master HEAD"
