@@ -180,3 +180,16 @@ function git_rm_cold_storage() {
 function changed_files() {
   git diff --name-only $(git_branch) $(git merge-base master $(git_branch))
 }
+
+alias gcf="git diff --name-only master HEAD"
+alias gucf="git diff --name-only"
+
+function vcf() {
+  file=$(gcf | fzf)
+  v $file
+}
+
+function vucf() {
+  file=$(gucf | fzf)
+  v $file
+}
