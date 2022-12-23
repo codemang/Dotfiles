@@ -166,10 +166,10 @@ alias gucf="git diff --name-only"
 
 function vcf() {
   file=$(gcf | fzf)
-  v $file
+  vim $file
 }
 
 function vucf() {
   file=$(gucf | fzf)
-  v $file
+  vim $file
 }

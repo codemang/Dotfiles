@@ -3,7 +3,13 @@ local M = {}
 function M.setup()
   local wilder = require('wilder')
 
-  wilder.setup({modes = {':', '/', '?'}})
+  wilder.setup({
+    modes = {':', '/', '?'},
+    next_key = '<Tab>',
+    previous_key = '<S-Tab>',
+    accept_key = '<Down>',
+    reject_key = '<Up>',
+  })
 
   -- Show the wildmenu as a popup.
   -- https://github.com/gelguy/wilder.nvim#command-palette-experimental
