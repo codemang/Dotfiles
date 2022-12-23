@@ -41,3 +41,34 @@ vim.keymap.set('v', '<Leader>fv', function()
 	local visually_selected_text = getVisualSelection()
 	live_grep_raw({ default_text = '"' .. visually_selected_text .. '"' })
 end)
+
+-- https://www.tutorialspoint.com/how-to-split-a-string-in-lua-programming
+function split_string(input_str, sep)
+  if sep == nil then
+    sep = "%s"
+  end
+
+  local t = {}
+
+  for str in string.gmatch(input_str, "([^" .. sep .."]+)") do
+    table.insert(t, str)
+  end
+
+  return t
+end
+
+-- https://github.com/nvim-telescope/telescope.nvim/blob/master/developers.md#first-picker
+function choose_changed_files()
+  local changed_git_files_str = io.popen("git diff --name-only"):read('*a')
+  local changed_git_files_arr = split_string(changed_git_files_str)
+
+  require('telescope.pickers').new({}, {
+    prompt_title = "Changed Files",
+    finder = require('telescope.finders').new_table {
+      results = changed_git_files_arr
+    },
+    sorter = require('telescope.config').values.generic_sorter({}),
+  }):find()
+end
+
+vim.api.nvim_set_keymap('n', '<Leader>fg', '<cmd>lua choose_changed_files()<CR>', {})
