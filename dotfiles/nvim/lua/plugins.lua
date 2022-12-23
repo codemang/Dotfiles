@@ -250,6 +250,14 @@ function M.setup()
       end
     }
 
+    -- Customize the wildmenu
+    use {
+      'gelguy/wilder.nvim',
+      config = function()
+        require("config.wilder").setup()
+      end,
+    }
+
     if packer_bootstrap then
       print "Restart Neovim required after installation!"
       require("packer").sync()
