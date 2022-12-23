@@ -258,6 +258,20 @@ function M.setup()
       end,
     }
 
+    -- Update the quickfix window to have a preview.
+    use {
+      'kevinhwang91/nvim-bqf',
+      ft = 'qf'
+    }
+
+    -- Used by 'nvim-bqf'
+    use {
+      'junegunn/fzf',
+      run = function()
+        vim.fn['fzf#install']()
+      end
+    }
+
     if packer_bootstrap then
       print "Restart Neovim required after installation!"
       require("packer").sync()
