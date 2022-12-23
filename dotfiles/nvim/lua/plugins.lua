@@ -223,6 +223,13 @@ function M.setup()
       end,
     }
 
+    use {
+      'f-person/git-blame.nvim',
+      config = function()
+        require("config.git-blame").setup()
+      end,
+    }
+
     if packer_bootstrap then
       print "Restart Neovim required after installation!"
       require("packer").sync()
