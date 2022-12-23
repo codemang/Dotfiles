@@ -232,6 +232,24 @@ function M.setup()
 
     use { 'karb94/neoscroll.nvim' }
 
+    -- Show a scrollbar in each buffer.
+    use {
+      'petertriho/nvim-scrollbar',
+      config = function()
+        require("config.nvim-scrollbar").setup()
+      end,
+    }
+
+    use {
+      "lewis6991/gitsigns.nvim",
+      config = function()
+        require('gitsigns').setup()
+        -- Show git signs in the scrollbar.
+        -- https://github.com/petertriho/nvim-scrollbar#setup-packer-1
+        require("scrollbar.handlers.gitsigns").setup()
+      end
+    }
+
     if packer_bootstrap then
       print "Restart Neovim required after installation!"
       require("packer").sync()
