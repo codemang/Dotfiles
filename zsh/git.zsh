@@ -108,6 +108,7 @@ alias cherry="git cherry -v"
 
 # rebase
 alias gm="git checkout $(main_branch) && git pull origin $(main_branch)"
+alias gmu="git checkout $(main_branch) && git fetch upstream && git rebase upstream/$(main_branch)"
 alias rem="git rebase -i $(main_branch)"
 alias rec="git rebase --continue"
 alias rea="git rebase --abort"
