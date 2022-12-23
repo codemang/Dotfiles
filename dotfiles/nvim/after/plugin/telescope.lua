@@ -1,11 +1,37 @@
-local tb = require('telescope.builtin')
-local lga_actions = require('telescope-live-grep-args.actions')
-
 vim.api.nvim_set_keymap('n', '<Leader>ff', ':Telescope find_files<CR>', {})
 vim.api.nvim_set_keymap('n', '<Leader>fl', ':Telescope live_grep<CR>', {})
 
 -- https://github.com/nvim-telescope/telescope-live-grep-args.nvim/issues/14
-live_grep_raw = function(opts, mode)
+local escape_rg_text = function(text)
+	text = text:gsub('%(', '\\%(')
+	text = text:gsub('%)', '\\%)')
+	text = text:gsub('%[', '\\%[')
+	text = text:gsub('%]', '\\%]')
+	text = text:gsub('%{', '\\%{')
+	text = text:gsub('%}', '\\%}')
+	text = text:gsub('"', '\\"')
+	text = text:gsub('-', '\\-')
+	text = text:gsub('+', '\\-')
+
+	return text
+end
+
+local get_text = function(mode)
+	local current_line = vim.api.nvim_get_current_line()
+  local start_pos, end_pos
+
+	if mode == 'v' then
+		start_pos = vim.api.nvim_buf_get_mark(0, "<")
+		end_pos = vim.api.nvim_buf_get_mark(0, ">")
+	elseif mode == 'n' then
+		start_pos = vim.api.nvim_buf_get_mark(0, "[")
+		end_pos = vim.api.nvim_buf_get_mark(0, "]")
+	end
+
+	return string.sub(current_line, start_pos[2]+1, end_pos[2]+1)
+end
+
+local live_grep_raw = function(opts, mode)
   opts = opts or {}
   if not opts.default_text then
     if mode then
@@ -21,10 +47,10 @@ end
 vim.keymap.set('n', '<Leader>fw', function()
   local word_under_cursor = vim.api.nvim_eval('expand("<cword>")')
   live_grep_raw({ default_text = '"' .. word_under_cursor .. '"' })
-end)
+end, {})
 
 -- https://github.com/nvim-telescope/telescope.nvim/issues/1923
-function getVisualSelection()
+local function getVisualSelection()
   vim.cmd('noau normal! "vy"')
   local text = vim.fn.getreg('v')
   vim.fn.setreg('v', {})
@@ -40,10 +66,10 @@ end
 vim.keymap.set('v', '<Leader>fv', function()
 	local visually_selected_text = getVisualSelection()
 	live_grep_raw({ default_text = '"' .. visually_selected_text .. '"' })
-end)
+end, {})
 
 -- https://www.tutorialspoint.com/how-to-split-a-string-in-lua-programming
-function split_string(input_str, sep)
+local function split_string(input_str, sep)
   if sep == nil then
     sep = "%s"
   end
@@ -58,7 +84,7 @@ function split_string(input_str, sep)
 end
 
 -- https://github.com/nvim-telescope/telescope.nvim/blob/master/developers.md#first-picker
-function choose_changed_files()
+local function choose_changed_files()
   local changed_git_files_str = io.popen("git diff --name-only"):read('*a')
   local changed_git_files_arr = split_string(changed_git_files_str)
 
@@ -71,4 +97,4 @@ function choose_changed_files()
   }):find()
 end
 
-vim.api.nvim_set_keymap('n', '<Leader>fg', '<cmd>lua choose_changed_files()<CR>', {})
+vim.keymap.set('n', '<Leader>fg', function() choose_changed_files() end, {})
