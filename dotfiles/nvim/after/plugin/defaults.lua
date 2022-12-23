@@ -96,6 +96,9 @@ api.nvim_set_keymap('v', '*', 'y/<C-R>"<CR>N', {})
 api.nvim_set_keymap('n', '<Space>]', 'Okj', {})
 api.nvim_set_keymap('n', '<Space>[', 'okj', {})
 
+-- Paste the current date to the current buffer.
+api.nvim_set_keymap('n', '<Leader>dd', ":pu=strftime('## %a %d %b %Y')<CR>", {})
+
 vim.cmd [[
   augroup RemoveTrailingLinesOnSave
     autocmd!
