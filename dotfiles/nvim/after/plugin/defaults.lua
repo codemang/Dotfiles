@@ -5,10 +5,9 @@ local opt = vim.opt
 
 -- Remap leader and local leader to <Space>
 api.nvim_set_keymap("", ",", "<Nop>", { noremap = true, silent = true })
+api.nvim_set_keymap('i', 'kj', '<Esc>', {})
 g.mapleader = ","
 g.maplocalleader = ","
-
-api.nvim_set_keymap('i', 'kj', '<Esc>', {})
 
 opt.termguicolors = true -- Enable colors in terminal
 opt.hlsearch = true --Set highlight on search
