@@ -1,3 +1,16 @@
+alias gbranches="git for-each-ref --format='%(refname:short)' refs/heads/"
+
+function main_branch() {
+  branches=$(gbranches)
+  does_master_branch_exist=$(echo $branches | awk '/master/')
+
+  if [ -z "${does_master_branch_exist}" ]; then
+    echo "main"
+  else
+    echo "master"
+  fi
+}
+
 alias g="git"
 
 # Checkout
@@ -6,7 +19,7 @@ alias cob="git checkout -b" # Create new branch
 alias cod="git branch -d" # Delete branch if merged
 alias codd="git branch -D" # Force delete branch
 alias col="git checkout -" # Switch to last branch
-alias com="git checkout master"
+alias com="git checkout $(main_branch)"
 alias unstage="git reset HEAD"
 
 # Push/Pull
@@ -44,7 +57,7 @@ function current_git_branch() {
 }
 
  # Set contents of file to that of origin.
-alias mirrorf="git checkout origin/master --"
+alias mirrorf="git checkout origin/$(main_branch) --"
 
 # Set contents of repo to that of origin, overwriting any changes, with no chance of retrieval.
 function mirror() {
@@ -59,7 +72,7 @@ function mirror() {
 }
 
 function mirrorm() {
-  mirror master
+  mirror $(main_branch)
 }
 
 # Remove last #{n} commit/s, removing any changes, with no chance of retrieving.
@@ -73,10 +86,10 @@ function undo() {
 }
 
 function gclean() {
-  git checkout master
+  git checkout $(main_branch)
   if [ $? -eq 0 ]
   then
-    git branch --merged ${1-master} | grep -v " ${1-master}$" | xargs git branch -d;
+    git branch --merged ${1-$(main_branch)} | grep -v " ${1-$(main_branch)}$" | xargs git branch -d;
   fi
 }
 
@@ -94,8 +107,8 @@ alias logo="git log --pretty=format:'%Cred%h%Creset - %s %Cgreen(%cr) %C(blue)<%
 alias cherry="git cherry -v"
 
 # rebase
-alias gm="git checkout master && git pull origin master"
-alias rem="git rebase -i master"
+alias gm="git checkout $(main_branch) && git pull origin $(main_branch)"
+alias rem="git rebase -i $(main_branch)"
 alias rec="git rebase --continue"
 alias rea="git rebase --abort"
 function re() {
@@ -144,10 +157,10 @@ function git_rm_cold_storage() {
 }
 
 function changed_files() {
-  git diff --name-only $(current_git_branch) $(git merge-base master $(git_branch))
+  git diff --name-only $(current_git_branch) $(git merge-base $(main_branch) $(current_git_branch))
 }
 
-alias gcf="git diff --name-only master HEAD"
+alias gcf="git diff --name-only $(main_branch) HEAD"
 alias gucf="git diff --name-only"
 
 function vcf() {
