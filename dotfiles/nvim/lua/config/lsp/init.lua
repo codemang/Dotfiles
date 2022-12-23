@@ -4,7 +4,16 @@ local servers = {
   html = {},
   jsonls = {},
   pyright = {},
-  sumneko_lua = {},
+  sumneko_lua = {
+    settings = {
+      Lua = {
+        diagnostics = {
+          -- Get the language server to recognize the `vim` global
+          globals = {'vim'},
+        },
+      },
+    },
+  },
   tsserver = {},
   vimls = {},
   solargraph = {},

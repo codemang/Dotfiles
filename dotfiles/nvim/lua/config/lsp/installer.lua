@@ -12,7 +12,7 @@ function M.setup(servers, options)
         local opts = vim.tbl_deep_extend("force", options, servers[server.name] or {})
 
         if server.name == "sumneko_lua" then
-          opts = require("neodev").setup { lspconfig = opts }
+          require("neodev").setup({})
         end
 
         server:setup(opts)
