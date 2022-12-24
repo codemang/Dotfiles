@@ -19,6 +19,8 @@ function toggleColorscheme() {
   ruby ~/Dotfiles/util/toggle_colors.rb
 }
 
+alias tc="toggleColorscheme"
+
 function isLightTheme() {
   if [ ! -f ~/.color-scheme-env ]; then
     echo "light"
