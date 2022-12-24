@@ -46,3 +46,5 @@ end
 
 vim.api.nvim_create_user_command('LoadColorscheme', load_colorscheme, {})
 
+-- Load the initial colorscheme when starting Vim.
+load_colorscheme()
