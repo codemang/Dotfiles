@@ -149,6 +149,9 @@ function M.setup()
     -- Needed for nvim-ts-autotag to work.
     use {
       "nvim-treesitter/nvim-treesitter",
+      requires = {
+        "RRethy/nvim-treesitter-endwise",
+      },
       config = function()
         require("config.nvim-treesitter").setup()
       end,
