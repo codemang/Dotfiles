@@ -32,7 +32,6 @@ local servers = {
   tsserver = {},
   vimls = {},
   solargraph = {},
-  sqls = {},
   eslint = {},
 }
 
