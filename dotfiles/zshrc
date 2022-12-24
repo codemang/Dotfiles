@@ -26,8 +26,6 @@ source $HOME/Dotfiles/zsh/zshrc_prompt
 # Helper aliases/functions
 source $DOTFILES/zsh/git.zsh
 source $DOTFILES/zsh/tmux.zsh
-source $DOTFILES/zsh/vagrant.zsh
-source $DOTFILES/zsh/eslint.zsh
 source $DOTFILES/zsh/fzf.zsh
 source $DOTFILES/zsh/vim.zsh
 source $DOTFILES/zsh/misc.zsh
