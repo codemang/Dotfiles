@@ -3,7 +3,8 @@ class Packages
     [
       'pynvim', # Needed for the 'coq_nvim' NeoVim plugin.
       'vim-vint', # Needed to lint/format the vimrc file.
-      'beautysh' # Needed to format sh/zsh files.
+      'beautysh', # Needed to format sh/zsh files.
+      'neovim-remote', # Find running neovim processes in order to toggle their colorschemes.
     ]
   end
 

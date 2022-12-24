@@ -203,14 +203,8 @@ function M.setup()
       requires = { "nvim-web-devicons" },
     }
 
-    -- Colorscheme
-    use {
-      "sainnhe/edge",
-      config = function()
-        vim.cmd "colorscheme edge"
-        vim.o.background = "light" -- or "light" for light mode
-      end
-    }
+    use { "sainnhe/edge" } -- Light colorscheme
+    use { "sainnhe/sonokai" } -- Dark colorscheme
 
     use {
       'fedepujol/move.nvim',
