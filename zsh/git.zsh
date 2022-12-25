@@ -19,7 +19,9 @@ alias cob="git checkout -b" # Create new branch
 alias cod="git branch -d" # Delete branch if merged
 alias codd="git branch -D" # Force delete branch
 alias col="git checkout -" # Switch to last branch
-alias com="git checkout $(main_branch)"
+function com() {
+  git checkout $(main_branch)
+}
 alias unstage="git reset HEAD"
 
 # Push/Pull
@@ -57,7 +59,9 @@ function current_git_branch() {
 }
 
  # Set contents of file to that of origin.
-alias mirrorf="git checkout origin/$(main_branch) --"
+ function mirrorf() {
+   git checkout origin/$(main_branch) --
+ }
 
 # Set contents of repo to that of origin, overwriting any changes, with no chance of retrieval.
 function mirror() {
@@ -107,9 +111,15 @@ alias logo="git log --pretty=format:'%Cred%h%Creset - %s %Cgreen(%cr) %C(blue)<%
 alias cherry="git cherry -v"
 
 # rebase
-alias gm="git checkout $(main_branch) && git pull origin $(main_branch)"
-alias gmu="git checkout $(main_branch) && git fetch upstream && git rebase upstream/$(main_branch)"
-alias rem="git rebase -i $(main_branch)"
+function gm() {
+  git checkout $(main_branch) && git pull origin $(main_branch)
+}
+function gmu() {
+  git checkout $(main_branch) && git fetch upstream && git rebase upstream/$(main_branch)
+}
+function rem() {
+  git rebase -i $(main_branch)
+}
 alias rec="git rebase --continue"
 alias rea="git rebase --abort"
 function re() {
@@ -161,7 +171,9 @@ function changed_files() {
   git diff --name-only $(current_git_branch) $(git merge-base $(main_branch) $(current_git_branch))
 }
 
-alias gcf="git diff --name-only $(main_branch) HEAD"
+function gcf() {
+  git diff --name-only $(main_branch) HEAD
+}
 alias gucf="git diff --name-only"
 
 function vcf() {
