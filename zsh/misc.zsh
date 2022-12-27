@@ -68,3 +68,6 @@ function postRequest() {
     -X POST \
     $1
 }
+
+# Add chromedriver to $PATH.
+export PATH=/usr/local/sbin:$HOME/.chromedriver:$PATH

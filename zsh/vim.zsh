@@ -28,3 +28,7 @@ function isLightTheme() {
     head -n 1 ~/.color-scheme-env
   fi
 }
+
+# Needed for Vint
+# https://github.com/Vimjas/vint
+export PATH=$PATH:/Users/nate/Library/Python/3.10/bin/
