@@ -119,6 +119,19 @@ function TRAPINT() {
   return $(( 128 + $1 ))
 }
 
+function job_status {
+  num_current_jobs=$(jobs | wc -l)
+  # Strip leading spaces - https://stackoverflow.com/a/13583621
+  num_current_jobs=$(echo $num_current_jobs | awk '$1=$1')
+  num_current_jobs_postfix='p'
+
+  if [[ "$num_current_jobs" -eq 0 ]]; then
+    return
+  fi
+
+  echo " $fg[green][$num_current_jobs process/s]%{$reset_color%}"
+}
+
 dark_prompt
 
 setopt promptsubst
@@ -133,5 +146,5 @@ function dir_with_optional_status() {
 
 # Generate prompt
 PS1='
-$(dir_with_optional_status) $(git_prompt) ${vim_mode}$(parse_git_dirty)$(up_stream)$(down_stream)
+$(dir_with_optional_status) $(git_prompt) ${vim_mode}$(parse_git_dirty)$(up_stream)$(down_stream)$(job_status)
 $(arrow) '
