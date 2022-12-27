@@ -82,7 +82,9 @@ class Packages
       'octokit',
       'openssl',
       'rake',
-      'solargraph'
+      'solargraph',
+      # Better man pages - https://tldr.sh/
+      'tldr',
     ]
   end
 
