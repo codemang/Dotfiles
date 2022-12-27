@@ -240,10 +240,7 @@ function M.setup()
     use {
       "lewis6991/gitsigns.nvim",
       config = function()
-        require('gitsigns').setup()
-        -- Show git signs in the scrollbar.
-        -- https://github.com/petertriho/nvim-scrollbar#setup-packer-1
-        require("scrollbar.handlers.gitsigns").setup()
+        require("config.gitsigns").setup()
       end
     }
 
