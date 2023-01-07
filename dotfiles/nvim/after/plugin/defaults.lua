@@ -72,7 +72,12 @@ api.nvim_set_keymap('n', '<Leader>.q', ':q!<Cr>', {})
 
 -- Packer helpers.
 api.nvim_set_keymap('n', '<Leader>ps', ':PackerSync<Cr>', {})
-api.nvim_set_keymap('n', '<Leader>pc', ':PackerClean<Cr>', {})
+api.nvim_set_keymap('n', '<Leader>pcl', ':PackerClean<Cr>', {})
+vim.keymap.set('n', '<Leader>pco', function()
+  vim.api.nvim_command("echo 'Running PackerCompile'")
+  api.nvim_set_keymap('n', '<Leader>pco', ':PackerCompile | echo "done"<Cr>', {})
+  vim.api.nvim_command("echo 'PackerCompile Done'")
+end)
 api.nvim_set_keymap('n', '<Leader>s', ':luafile %<Cr>', {})
 
 -- Reselect visual block after indent/outdent.
