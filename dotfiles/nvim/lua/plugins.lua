@@ -168,11 +168,17 @@ function M.setup()
       config = function()
         require("config.lsp").setup()
       end,
-      wants = { "nvim-lsp-installer", "cmp-nvim-lsp", "neodev.nvim" },
       requires = {
         "williamboman/nvim-lsp-installer",
         "ray-x/lsp_signature.nvim",
         "folke/neodev.nvim",
+        "jose-elias-alvarez/null-ls.nvim",
+        {
+          "j-hui/fidget.nvim",
+          config = function()
+            require("fidget").setup {}
+          end,
+        },
       },
     }
 

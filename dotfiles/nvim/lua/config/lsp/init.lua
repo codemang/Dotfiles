@@ -29,10 +29,10 @@ local servers = {
       require("neodev").setup({})
     end,
   },
-  tsserver = {},
+  -- tsserver = {},
   vimls = {},
   solargraph = {},
-  eslint = {},
+  -- eslint = {},
 }
 
 local function on_attach(client, bufnr)
@@ -71,6 +71,7 @@ local opts = {
 require("config.lsp.handlers").setup()
 
 function M.setup()
+  require("config.lsp.null-ls").setup(opts)
   require("config.lsp.installer").setup(servers, opts)
 end
 
