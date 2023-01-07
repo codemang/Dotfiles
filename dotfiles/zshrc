@@ -8,6 +8,9 @@ export HOST_ENV="development"
 export HISTCONTROL=ignoreboth:erasedupsG
 export DOTFILES=$HOME/Dotfiles
 
+# Create prompt
+source $HOME/Dotfiles/zsh/zshrc_prompt
+
 # Zsh shell initializer
 source $DOTFILES/zsh/zsh_shell_initializer.zsh
 
@@ -27,6 +30,3 @@ source $DOTFILES/zsh/notes.zsh
 source $DOTFILES/zsh/misc.zsh
 
 [ -f ~/.private_scripts.zsh ] && source ~/.private_scripts.zsh
-
-# Create prompt
-source $HOME/Dotfiles/zsh/zshrc_prompt
