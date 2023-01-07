@@ -35,7 +35,7 @@ task language_packages: %i[gems npm_packages python_packages]
 task :languages do
   puts_section_header('languages')
   Ruby.install
-  Nvm.install
+  Fnm.install
 end
 
 task :zsh do

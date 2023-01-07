@@ -15,7 +15,7 @@ source $HOME/Dotfiles/zsh/zshrc_prompt
 source $DOTFILES/zsh/zsh_shell_initializer.zsh
 
 # Language initializers
-source $DOTFILES/zsh/nvm.zsh
+source $DOTFILES/zsh/node.zsh
 source $DOTFILES/zsh/ruby.zsh
 
 # Helper aliases/functions

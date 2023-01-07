@@ -14,6 +14,7 @@ class Packages
       'cmake',
       'curl',
       'diff-so-fancy',
+      'fnm', # Node version manager.
       'fzf',
       'git',
       'git-lfs',
@@ -74,6 +75,7 @@ class Packages
       'csv',
       'date ',
       'docker-sync',
+      'eslint_d', # Faster eslint client, used for linting JS/TS.
       'fileutils',
       'foreman',
       'json',
