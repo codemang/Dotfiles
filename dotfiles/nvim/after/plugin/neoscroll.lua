@@ -18,8 +18,4 @@ t['zt']    = {'zt', {scrollTime}}
 t['zz']    = {'zz', {scrollTime}}
 t['zb']    = {'zb', {scrollTime}}
 
--- https://github.com/karb94/neoscroll.nvim/issues/23#issuecomment-839630060
-t['gg']    = {'scroll', {'-2*vim.api.nvim_buf_line_count(0)', 'true', '1', '5'}}
-t['G']     = {'scroll', {'2*vim.api.nvim_buf_line_count(0)', 'true', '1', '5'}}
-
 require('neoscroll.config').set_mappings(t)
