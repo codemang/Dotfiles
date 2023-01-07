@@ -29,10 +29,8 @@ local servers = {
       require("neodev").setup({})
     end,
   },
-  -- tsserver = {},
   vimls = {},
   solargraph = {},
-  -- eslint = {},
 }
 
 local function on_attach(client, bufnr)
