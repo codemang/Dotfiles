@@ -8,8 +8,6 @@ class NPM
     `ls #{root}`.split("\n")
   end
 
-  private
-
   def self.install_package(package)
     `npm install -g #{package}`
   end

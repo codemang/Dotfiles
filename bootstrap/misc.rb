@@ -6,11 +6,11 @@ class Misc
     `tic -x #{File.join(Dir.pwd, 'iterm/tmux-256color.terminfo')}`
 
     # Set Desktop background images to personal images
-    system("sudo rm /Library/Desktop\\ Pictures/* > /dev/null 2>&1")
-    system("sudo cp ~/Dotfiles/assets/desktop-images/* /Library/Desktop\\ Pictures")
+    system('sudo rm /Library/Desktop\\ Pictures/* > /dev/null 2>&1')
+    system('sudo cp ~/Dotfiles/assets/desktop-images/* /Library/Desktop\\ Pictures')
 
     # Configure Desktop background
-    script = <<-eos
+    script = <<-EOS
       tell application "System Events"
         tell every desktop
           set picture rotation to 1 -- (0=off, 1=interval, 2=login, 3=sleep)
@@ -18,7 +18,8 @@ class Misc
           set change interval to 60.0 -- seconds
         end tell
       end tell
-    eos
+    EOS
+
     system 'osascript', *script.split(/\n/).map { |line| ['-e', line] }.flatten
 
     # Other

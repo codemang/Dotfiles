@@ -9,7 +9,7 @@ class DotfileManager
     # Silence the 'Last login...' message in the terminal.
     # https://osxdaily.com/2010/06/22/remove-the-last-login-message-from-the-terminal/
     'dotfiles/hushlogin' => ['~/.hushlogin']
-  }
+  }.freeze
 
   def self.symlink_dotfiles_and_print
     file_changes = symlink_files
@@ -33,7 +33,8 @@ class DotfileManager
         full_source = File.join(Dir.pwd, source)
         full_target = File.expand_path(target)
 
-        symlink_exists = `readlink -n #{full_target}`.length > 0
+        symlink_exists = `readlink -n #{full_target}`.length.positive?
+
         if File.exist?(full_target) || symlink_exists
           current_symlink_source = `readlink -n #{full_target}`
           if current_symlink_source == full_source
@@ -69,11 +70,11 @@ class DotfileManager
   end
 
   def self.print_if_changes_present(files, message)
-    if files.count > 0
-      puts message
-      print_file_list(files)
-      puts
-    end
+    return unless files.count.positive?
+
+    puts message
+    print_file_list(files)
+    puts
   end
 
   def self.print_file_list(files)

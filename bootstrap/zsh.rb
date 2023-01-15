@@ -7,7 +7,7 @@ class Zsh
   end
 
   def self.install_oh_my_zsh
-    if File.exist? File.expand_path("~/.oh-my-zsh")
+    if File.exist? File.expand_path('~/.oh-my-zsh')
       system 'upgrade_oh_my_zsh'
     else
       system 'sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"'
@@ -19,3 +19,6 @@ class Zsh
     `chsh -s $(which zsh)` if `echo $SHELL` !~ /^.*zsh/
   end
 end
+
+
+

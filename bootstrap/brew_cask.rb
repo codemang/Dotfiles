@@ -7,8 +7,6 @@ class BrewCask
     `brew list --cask`.split("\n")
   end
 
-  private
-
   def self.install_package(package)
     `brew install --cask #{package}`
   end

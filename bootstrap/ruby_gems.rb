@@ -7,8 +7,6 @@ class RubyGems
     `gem list | sed 's/(.*)//'`.split("\n")
   end
 
-  private
-
   def self.install_package(package)
     `gem install #{package}`
   end

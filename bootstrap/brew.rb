@@ -15,10 +15,8 @@ class Brew
     super(packages, opts)
   end
 
-  private
-
   def self.install_package(package)
-    if package["package_source"]
+    if package['package_source']
       `brew tap #{package['package_source']} && brew install #{package['package_name']}`
     else
       `brew install #{package}`

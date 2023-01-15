@@ -7,6 +7,6 @@ class Vim
   end
 
   def self.install_vim_plugins
-    system("nvim +PlugInstall +qall")
+    system('nvim +PlugInstall +qall')
   end
 end

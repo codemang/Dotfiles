@@ -1,5 +1,5 @@
 module BasePackageManager
-  def self.included base
+  def self.included(base)
     base.extend ClassMethods
   end
 
@@ -14,12 +14,13 @@ module BasePackageManager
 
     def install_packages(packages = [], opts = {})
       existing_packages = list_packages
+
       packages.each do |package|
         if !existing_packages.include?(package)
           install_package(package)
           puts "* #{package} - newly installed" if opts[:log_output]
-        else
-          puts "* #{package} - already installed" if opts[:log_output]
+        elsif opts[:log_output]
+          puts "* #{package} - already installed"
         end
       end
     end

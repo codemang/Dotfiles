@@ -1,6 +1,4 @@
 module MacDefaults
-  extend self
-
   def self.execute
     # Hide the dock unless the cursor is over it (couldn't get to work with
     # defaults write'
