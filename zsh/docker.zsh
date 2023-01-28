@@ -5,8 +5,7 @@ alias dcu="docker-compose up"
 alias dcl="docker-compose logs -f"
 alias dcr="docker-compose run --rm --use-aliases"
 alias dcrp="docker-compose run --rm --service-ports"
-
-alias dm="docker-machine"
+alias dcps="docker-compose ps"
 
 dk() {
   docker kill $(docker ps -q)
