@@ -172,12 +172,18 @@ function changed_files() {
 }
 
 function gcf() {
-  git diff --name-only $(main_branch) HEAD
+  git diff --name-only $(main_branch)
 }
 alias gucf="git diff --name-only"
 
+# Bound to ctrl-g in the iTerm settings.
+function fzf_git_changed_files() {
+  gcf | fzf
+}
+alias fgcf=fzf_git_changed_files
+
 function vcf() {
-  file=$(gcf | fzf)
+  file=$(fgcf)
   vim $file
 }
 
