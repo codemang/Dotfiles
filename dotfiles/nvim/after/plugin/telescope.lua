@@ -3,32 +3,32 @@ vim.api.nvim_set_keymap('n', '<Leader>fl', ':Telescope live_grep<CR>', {})
 
 -- https://github.com/nvim-telescope/telescope-live-grep-args.nvim/issues/14
 local escape_rg_text = function(text)
-	text = text:gsub('%(', '\\%(')
-	text = text:gsub('%)', '\\%)')
-	text = text:gsub('%[', '\\%[')
-	text = text:gsub('%]', '\\%]')
-	text = text:gsub('%{', '\\%{')
-	text = text:gsub('%}', '\\%}')
-	text = text:gsub('"', '\\"')
-	text = text:gsub('-', '\\-')
-	text = text:gsub('+', '\\-')
+  text = text:gsub('%(', '\\%(')
+  text = text:gsub('%)', '\\%)')
+  text = text:gsub('%[', '\\%[')
+  text = text:gsub('%]', '\\%]')
+  text = text:gsub('%{', '\\%{')
+  text = text:gsub('%}', '\\%}')
+  text = text:gsub('"', '\\"')
+  text = text:gsub('-', '\\-')
+  text = text:gsub('+', '\\-')
 
-	return text
+  return text
 end
 
 local get_text = function(mode)
-	local current_line = vim.api.nvim_get_current_line()
+  local current_line = vim.api.nvim_get_current_line()
   local start_pos, end_pos
 
-	if mode == 'v' then
-		start_pos = vim.api.nvim_buf_get_mark(0, "<")
-		end_pos = vim.api.nvim_buf_get_mark(0, ">")
-	elseif mode == 'n' then
-		start_pos = vim.api.nvim_buf_get_mark(0, "[")
-		end_pos = vim.api.nvim_buf_get_mark(0, "]")
-	end
+  if mode == 'v' then
+    start_pos = vim.api.nvim_buf_get_mark(0, "<")
+    end_pos = vim.api.nvim_buf_get_mark(0, ">")
+  elseif mode == 'n' then
+    start_pos = vim.api.nvim_buf_get_mark(0, "[")
+    end_pos = vim.api.nvim_buf_get_mark(0, "]")
+  end
 
-	return string.sub(current_line, start_pos[2]+1, end_pos[2]+1)
+  return string.sub(current_line, start_pos[2] + 1, end_pos[2] + 1)
 end
 
 local live_grep_raw = function(opts, mode)
@@ -64,8 +64,8 @@ local function getVisualSelection()
 end
 
 vim.keymap.set('v', '<Leader>fv', function()
-	local visually_selected_text = getVisualSelection()
-	live_grep_raw({ default_text = '"' .. visually_selected_text .. '"' })
+  local visually_selected_text = getVisualSelection()
+  live_grep_raw({ default_text = '"' .. visually_selected_text .. '"' })
 end, {})
 
 -- https://www.tutorialspoint.com/how-to-split-a-string-in-lua-programming
@@ -76,7 +76,7 @@ local function split_string(input_str, sep)
 
   local t = {}
 
-  for str in string.gmatch(input_str, "([^" .. sep .."]+)") do
+  for str in string.gmatch(input_str, "([^" .. sep .. "]+)") do
     table.insert(t, str)
   end
 
@@ -98,3 +98,12 @@ local function choose_changed_files()
 end
 
 vim.keymap.set('n', '<Leader>fg', function() choose_changed_files() end, {})
+
+vim.api.nvim_set_keymap('n', '<Leader>fh', ':Telescope search_history<CR>', {})
+vim.api.nvim_set_keymap('n', '<Leader>fr', ':Telescope resume<CR>', {})
+
+vim.keymap.set('n', '<Leader>fn', function()
+  require('telescope.builtin').find_files({
+    cwd = '~/Dropbox/Notes',
+  })
+end)
