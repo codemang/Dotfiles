@@ -3,7 +3,7 @@
 	email = nateboop@gmail.com
 [core]
 	askpass = git-gui--askpass
-	excludesfile = ~/.gitignore
+	excludesFile = ~/.gitignore_global
   editor = nvim
 	pager = diff-so-fancy | less --tabs=4 -RFX
 [merge]

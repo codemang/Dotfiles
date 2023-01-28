@@ -4,11 +4,12 @@ class DotfileManager
     'dotfiles/zshrc' => ['~/.zshrc'],
     'dotfiles/tmux.conf' => ['~/.tmux.conf'],
     'dotfiles/gitconfig' => ['~/.gitconfig'],
+    'dotfiles/gitignore_global' => ['~/.gitignore_global'],
     'dotfiles/nvim' => ['~/.config/nvim'],
 
     # Silence the 'Last login...' message in the terminal.
     # https://osxdaily.com/2010/06/22/remove-the-last-login-message-from-the-terminal/
-    'dotfiles/hushlogin' => ['~/.hushlogin']
+    'dotfiles/hushlogin' => ['~/.hushlogin'],
   }.freeze
 
   def self.symlink_dotfiles_and_print
@@ -25,7 +26,7 @@ class DotfileManager
     file_changes = {
       properly_symlinked_files: [],
       newly_symlinked_files: [],
-      replaced_symlinked_files: []
+      replaced_symlinked_files: [],
     }
 
     SYMLINK_TARGETS.each do |source, targets|

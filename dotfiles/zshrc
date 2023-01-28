@@ -7,6 +7,7 @@ export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 export HOST_ENV="development"
 export HISTCONTROL=ignoreboth:erasedupsG
 export DOTFILES=$HOME/Dotfiles
+export EDITOR=nvim
 
 # Create prompt
 source $HOME/Dotfiles/zsh/zshrc_prompt
