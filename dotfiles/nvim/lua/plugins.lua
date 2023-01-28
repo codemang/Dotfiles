@@ -275,6 +275,8 @@ function M.setup()
     -- Highlight open/close tag pairs.
     use { 'andymass/vim-matchup' }
 
+    use { 'dkarter/bullets.vim' }
+
     if packer_bootstrap then
       print "Restart Neovim required after installation!"
       require("packer").sync()
