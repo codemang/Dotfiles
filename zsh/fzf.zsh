@@ -3,6 +3,18 @@ export FZF_DEFAULT_COMMAND='rg --files -L'
 export FZF_DEFAULT_OPTS='--height 80%'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
+
+# Bind ctrl-g to search over changed files in Git.
+# https://stackoverflow.com/a/51439945
+case "$(uname -sr)" in
+  Linux*)
+    bind '"\C-g":"$(git diff --name-only | fzf)\015"'
+    ;;
+  Darwin*) # Mac
+    # Set in iTerm preferences
+    ;;
+esac
+
 # Fuzzy find tmux sessions.
 # Bound to ctrl-u in the iTerm settings.
 tzf() {
