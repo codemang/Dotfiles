@@ -1,11 +1,15 @@
-NOTES_ROOT_FOLDER=/Users/nate/Dropbox/Notes
+DEFAULT_NOTES_ROOT_FOLDER=~/notes
+NOTES_ROOT_FOLDER=${NOTES_ROOT_FOLDER:=$DEFAULT_NOTES_ROOT_FOLDER}
 
 # open note
-alias on='vim $(find $NOTES_ROOT_FOLDER | grep md | fzf)'
+function on() {
+  file=$(find $NOTES_ROOT_FOLDER | grep md | fzf)
+  nvim "$file"
+}
 
 # new note
 function nn() {
-  dir=$(ls -d $NOTES_ROOT_FOLDER/**/*/ | fzf)
+  dir=$( find $NOTES_ROOT_FOLDER -type d -print | fzf)
   date=$(date +%m-%d-%Y)
 
   printf 'Enter Note Title: '
@@ -13,7 +17,7 @@ function nn() {
 
   note_filename=${note_title// /_} # Replace spaces with dashes
   note_filename=$(echo $note_filename | tr '[:upper:]' '[:lower:]') # Convert to lower case.
-  note_filepath="$dir$note_filename.md"
+  note_filepath="$dir/$note_filename.md"
 
   touch $note_filepath # Create empty note file.
 
@@ -22,5 +26,5 @@ function nn() {
 
   echo "Created note: $note_filepath"
 
-  vim $note_filepath # Open the note in Vim.
+  nvim $note_filepath # Open the note in Vim.
 }
