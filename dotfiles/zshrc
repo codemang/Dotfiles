@@ -9,6 +9,8 @@ export HISTCONTROL=ignoreboth:erasedupsG
 export DOTFILES=$HOME/Dotfiles
 export EDITOR=nvim
 
+[ f- ~/.before_init_private_scripts.sh ] && source ~/.before_init_private_scripts.sh
+
 # Create prompt
 source $HOME/Dotfiles/zsh/zshrc_prompt
 
