@@ -13,19 +13,21 @@ vim.api.nvim_set_keymap("i", "kj", "<Esc>", {})
 -- all apps. https://github.com/tmux/tmux/issues/543
 vim.opt.clipboard = 'unnamedplus'
 
--- Enable copy/paste from windows clipboard.
-vim.g.clipboard = {
-    name = "win32yank-wsl",
-    copy = {
-        ["+"] = 'win32yank.exe -i --crlf',
-        ['*'] = 'win32yank.exe -i --crlf',
-      },
-    paste = {
-        ['+'] = 'win32yank.exe -o --lf',
-        ['*'] = 'win32yank.exe -o --lf',
-      },
-    cache_enabled = 0,
-}
+if os.getenv('WSL_INTEROP') then
+  -- Enable copy/paste from windows clipboard.
+  vim.g.clipboard = {
+      name = "win32yank-wsl",
+      copy = {
+          ["+"] = 'win32yank.exe -i --crlf',
+          ['*'] = 'win32yank.exe -i --crlf',
+        },
+      paste = {
+          ['+'] = 'win32yank.exe -o --lf',
+          ['*'] = 'win32yank.exe -o --lf',
+        },
+      cache_enabled = 0,
+  }
+end
 
 -- Erase all extra spaces on save.
 vim.cmd [[

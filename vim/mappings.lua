@@ -23,21 +23,16 @@ function changed_files()
   local main_branch = has_master_branch and 'master' or 'main'
   local changed_files_string = io.popen("git.exe --no-pager diff --name-only " .. main_branch):read("*a")
   print(changed_files_string)
-  -- print("222222")
-  -- local changed_files_string = changed_files_handle:read('*a')
-  -- print("DONE")
-  -- local ok, result = pcall(vim.fn.writefile,{changed_files_string}, "./test.json")
   local files = split_string(changed_files_string)
-  -- print(files)
   return files
 end
 
-local pickers = require "telescope.pickers"
-local finders = require "telescope.finders"
-local conf = require("telescope.config").values
-
 function choose_changed_files(opts)
-  files = changed_files()
+  local pickers = require("telescope.pickers")
+  local finders = require "telescope.finders"
+  local conf = require("telescope.config").values
+
+  local files = changed_files()
   print(files)
   opts = opts or {}
 
