@@ -13,6 +13,19 @@ function main_branch() {
 
 alias g="git"
 
+# If you clone a repo, there will be an "origin" remote that points to that
+# repo. If you fork a repo, "origin" points to your fork and "upstream" points
+# to the original.
+function git_remote() {
+  has_upstream_remotes=$(git remote -v | awk '/^upstream/')
+
+  if [ -z "${has_upstream_remotes}" ]; then
+    echo "origin"
+  else
+    echo "upstream"
+  fi
+}
+
 # Checkout
 alias co="git checkout" # Switch branches
 alias cob="git checkout -b" # Create new branch
@@ -39,12 +52,18 @@ function npush() {
 # Commit
 alias cmt="git commit -m"
 alias cmta="git commit -am"
-alias amend="git commit -a --amend"
-alias amendn="git commit -a --amend --no-edit"
+alias amend="git commit --amend"
+alias amenda="git commit -a --amend"
+alias amendn="git commit --amend --no-edit"
+alias amendan="git commit -a --amend --no-edit"
 alias wip="git commit -am 'WIP'"
 
 alias gdiff="git diff"
 alias gcp="git cherry-pick"
+
+function pushn() {
+  git push origin $(git_branch)
+}
 
 # Checkout git branch with fzf
 function cof() {
@@ -54,13 +73,27 @@ function cof() {
   git checkout $(echo "$branch" | sed "s/.* //")
 }
 
-function current_git_branch() {
+function codf() {
+  local branches branch
+  branches=$(git branch) &&
+  branch=$(echo "$branches" | fzf-tmux -d 15 +m) &&
+  git branch -d $(echo "$branch" | sed "s/.* //")
+}
+
+function coddf() {
+  local branches branch
+  branches=$(git branch) &&
+  branch=$(echo "$branches" | fzf-tmux -d 15 +m) &&
+  git branch -D $(echo "$branch" | sed "s/.* //")
+}
+
+function git_branch() {
   echo "$(git branch 2>/dev/null| sed -n '/^\*/s/^\* //p')"
 }
 
  # Set contents of file to that of origin.
  function mirrorf() {
-   git checkout origin/$(main_branch) --
+   git restore -s $(git_remote)/$(main_branch) $*
  }
 
 # Set contents of repo to that of origin, overwriting any changes, with no chance of retrieval.
@@ -70,9 +103,9 @@ function mirror() {
   then
     branch="$1"
   else
-    branch="$(current_git_branch)"
+    branch="$(git_branch)"
   fi
-  confirm_cmd "Are you sure you want to reset --hard to remote branch $branch" "git fetch; git reset --hard origin/$branch"
+  confirm_cmd "Are you sure you want to reset --hard to remote branch $branch" "git fetch; git reset --hard $(git_remote)/$branch"
 }
 
 function mirrorm() {
@@ -89,14 +122,6 @@ function undo() {
   git reset HEAD~${1-1} --mixed
 }
 
-function gclean() {
-  git checkout $(main_branch)
-  if [ $? -eq 0 ]
-  then
-    git branch --merged ${1-$(main_branch)} | grep -v " ${1-$(main_branch)}$" | xargs git branch -d;
-  fi
-}
-
 function reu() {
   git rebase -i HEAD~$1
 }
@@ -108,20 +133,18 @@ alias pstat="git status -s"
 alias log="git log --graph"
 alias logo="git log --pretty=format:'%Cred%h%Creset - %s %Cgreen(%cr) %C(blue)<%an>%Creset' --abbrev-commit"
 
+alias diff="git diff"
 alias cherry="git cherry -v"
 
 # rebase
 function gm() {
   git checkout $(main_branch) && git pull origin $(main_branch)
 }
-function gmu() {
-  git checkout $(main_branch) && git fetch upstream && git rebase upstream/$(main_branch)
-}
 function rem() {
   git rebase -i $(main_branch)
 }
 alias rec="git rebase --continue"
-alias rea="git rebase --abort"
+alias reab="git rebase --abort"
 function re() {
   git rebase -i HEAD~${1-1}
 }
@@ -167,27 +190,57 @@ function git_rm_cold_storage() {
   git update-ref -d refs/hidden/$1
 }
 
-function changed_files() {
-  git diff --name-only $(current_git_branch) $(git merge-base $(main_branch) $(current_git_branch))
+function gmu() {
+  git checkout $(main_branch) && git fetch upstream && git rebase upstream/$(main_branch)
 }
 
+# Use ngh to find GitHub PRs
+# alias proc="ngh pr -o -c"
+# alias proca="ngh pr -o -c -a"
+# alias pro="ngh pr -o"
+# alias proa="ngh pr -o -a"
+
 function gcf() {
-  git diff --name-only $(main_branch)
+  git --no-pager diff --name-only $(main_branch)
 }
 alias gucf="git diff --name-only"
 
-# Bound to ctrl-g in the iTerm settings.
-function fzf_git_changed_files() {
-  gcf | fzf
-}
-alias fgcf=fzf_git_changed_files
-
 function vcf() {
-  file=$(fgcf)
-  vim $file
+  file=$(gcf | fzf)
+  nvim $file
 }
 
 function vucf() {
   file=$(gucf | fzf)
-  vim $file
+  nvim $file
 }
+
+# https://github.com/microsoft/WSL/issues/4401#issuecomment-670080585
+function isWinDir {
+  case $PWD/ in
+    /mnt/*) return $(true);;
+    *) return $(false);;
+  esac
+}
+
+# Speed up `git status` and other git commands in WSL
+# wrap the git command to either run windows git or linux
+function git {
+  if isWinDir
+  then
+    git.exe "$@"
+  else
+    /usr/bin/git "$@"
+  fi
+}
+
+# When rebasing and dealing with merge conflicts, this command stages all files
+# that needed to be addressed and continues the rebase.
+function recmc() {
+  git add $(git --no-pager diff --name-only --diff-filter=U)
+  git rebase --continue
+}
+
+alias gs="git stash"
+alias gsl="git stash list"
+alias gsa="git stash apply"
