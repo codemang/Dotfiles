@@ -3,7 +3,6 @@ export FZF_DEFAULT_COMMAND='rg --files -L'
 export FZF_DEFAULT_OPTS='--height 80%'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
-
 # Bind ctrl-g to search over changed files in Git.
 # https://stackoverflow.com/a/51439945
 case "$(uname -sr)" in
@@ -24,4 +23,4 @@ tzf() {
   tmux switch -t $chosen_tmux_session
 }
 
-source "$HOME/.fzf.zsh"
+[ -f  $HOME/.fzf.zsh ] && source $HOME/.fzf.zsh

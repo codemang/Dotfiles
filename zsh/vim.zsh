@@ -1,9 +1,13 @@
+# Needed for Vint
+# https://github.com/Vimjas/vint
+export PATH=$PATH:/Users/nate/Library/Python/3.10/bin/
+
 alias vim="nvim"
 alias v="nvim"
 alias zpref="nvim ~/.zshrc"
 
 # Toggle between vim and shell with ctrl-z
-fancy-ctrl-z () {
+function fancy-ctrl-z () {
   if [[ $#BUFFER -eq 0 ]]; then
     BUFFER="fg"
     zle accept-line
@@ -12,14 +16,15 @@ fancy-ctrl-z () {
     zle clear-screen
   fi
 }
-zle -N fancy-ctrl-z
-bindkey '^Z' fancy-ctrl-z
+
+function bind-ctrl-z() {
+  zle -N fancy-ctrl-z
+  bindkey '^Z' fancy-ctrl-z
+}
 
 function toggleColorscheme() {
   ruby ~/Dotfiles/util/toggle_colors.rb
 }
-
-alias tc="toggleColorscheme"
 
 function isLightTheme() {
   if [ ! -f ~/.color-scheme-env ]; then
@@ -29,6 +34,9 @@ function isLightTheme() {
   fi
 }
 
-# Needed for Vint
-# https://github.com/Vimjas/vint
-export PATH=$PATH:/Users/nate/Library/Python/3.10/bin/
+alias tc="toggleColorscheme"
+
+if [ "$SHELL" = "/bin/zsh" ]; then
+  bind-ctrl-z
+fi
+
