@@ -248,6 +248,23 @@ M.tabufline = {
 	},
 }
 
--- more keybinds!
+M.highlight_search = {
+    plugin = true,
+
+    n = {
+        ["n"] = {
+            function()
+                require("highlight_current_n").n()
+            end,
+            "move to next search match",
+        },
+        ["N"] = {
+            function()
+                require("highlight_current_n").N()
+            end,
+            "move to previous search match",
+        },
+    }
+}
 
 return M

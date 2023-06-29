@@ -79,7 +79,12 @@ local plugins = {
     opts = overrides.gitsigns,
   },
 
-  { "tpope/vim-sleuth" }
+  { "tpope/vim-sleuth" },
+
+  {
+    "rktjmp/highlight-current-n.nvim",
+    init = require("core.utils").load_mappings "highlight_search",
+  }
 }
 
 return plugins
