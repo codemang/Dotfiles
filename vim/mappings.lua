@@ -22,7 +22,6 @@ function changed_files()
   local has_master_branch = all_branches:match('master')
   local main_branch = has_master_branch and 'master' or 'main'
   local changed_files_string = io.popen("git.exe --no-pager diff --name-only " .. main_branch):read("*a")
-  print(changed_files_string)
   local files = split_string(changed_files_string)
   return files
 end
@@ -33,7 +32,6 @@ function choose_changed_files(opts)
   local conf = require("telescope.config").values
 
   local files = changed_files()
-  print(files)
   opts = opts or {}
 
   -- https://github.com/nvim-telescope/telescope.nvim/blob/master/developers.md#first-picker

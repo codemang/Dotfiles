@@ -1,10 +1,4 @@
--- local autocmd = vim.api.nvim_create_autocmd
-
--- Auto resize panes when resizing nvim window
--- autocmd("VimResized", {
---   pattern = "*",
---   command = "tabdo wincmd =",
--- })
+local general_utils = require("custom.utils.general")
 
 vim.g.mapleader = ","
 vim.api.nvim_set_keymap("i", "kj", "<Esc>", {})
@@ -79,4 +73,4 @@ vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
 vim.opt.softtabstop = 2
 
-vim.g.vscode_snippets_path={ "/home/nrubin19/dotfiles/nvchad_custom/snippets" }
+vim.g.vscode_snippets_path={ general_utils.script_path() .. "snippets" }
