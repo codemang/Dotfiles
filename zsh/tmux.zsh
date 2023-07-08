@@ -8,3 +8,8 @@ alias td="tmux detach"
 alias tk="tmux kill-session -t"
 alias tname="tmux display-message -p '#S'"
 alias rtmux="tmux kill-server"
+alias mux="tmuxinator"
+
+function tdev() {
+  mux start dev $*
+}
