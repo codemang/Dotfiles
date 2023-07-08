@@ -6,6 +6,7 @@ class DotfileManager
     'dotfiles/gitconfig' => ['~/.gitconfig'],
     'dotfiles/gitignore_global' => ['~/.gitignore_global'],
     'dotfiles/nvim' => ['~/.config/nvim'],
+    'dotfiles/tmuxinator' => ['~/.config/tmuxinator'],
 
     # Silence the 'Last login...' message in the terminal.
     # https://osxdaily.com/2010/06/22/remove-the-last-login-message-from-the-terminal/

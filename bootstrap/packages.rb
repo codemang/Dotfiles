@@ -34,6 +34,7 @@ class Packages
       'solargraph', # Needed for Ruby support for Vim's CoC plugin.
       'tldr',
       'tmux',
+      'tmuxinator',
       'yarn',
       'zsh',
       'zsh-syntax-highlighting'

@@ -1,0 +1,19 @@
+# https://dev.to/qmenoret/dynamic-templates-with-tmuxinator-4mkh
+# - Create a tmux session based on the current directory.
+# - E.g, if you're in ~/startups/hub3 and run `mux start dev`, it will create a
+# tmux session called 'hub3'
+<% WDIR=ENV["PWD"] %>
+
+name: <%= @args[0] || WDIR.split('/').last  %>
+root: <%= WDIR %>
+
+windows:
+  - editor:
+      layout: main-vertical
+      # Synchronize all panes of this window, can be enabled before or after the pane commands run.
+      # 'before' represents legacy functionality and will be deprecated in a future release, in favour of 'after'
+      # synchronize: after
+      panes:
+        - #empty
+        - #empty
+        - #empty
