@@ -31,8 +31,7 @@ function zip_dotfiles() {
 
 function install_dotfiles_via_scp() {
   zip_dotfiles > /dev/null
-  # read -p 'Host name/address (omit any path/destination info): ' scp_destination
-  scp_destination="digital_ocean"
+  read -p 'Host name/address (omit any path/destination info): ' scp_destination
   ssh $scp_destination "mkdir -p ~/Dotfiles"
   scp dotfiles.zip $scp_destination:~/Dotfiles/dotfiles.zip > /dev/null
   ssh $scp_destination "sudo apt install unzip > /dev/null 2>&1"
@@ -55,4 +54,3 @@ function copy_to_docker_container() {
 # copy_to_docker_container $@
 # zip_dotfiles
 install_dotfiles_via_scp
-
