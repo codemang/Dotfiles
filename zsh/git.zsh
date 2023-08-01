@@ -1,14 +1,9 @@
 alias gbranches="git for-each-ref --format='%(refname:short)' refs/heads/"
 
 function main_branch() {
-  branches=$(gbranches)
-  does_master_branch_exist=$(echo $branches | awk '/master/')
-
-  if [ -z "${does_master_branch_exist}" ]; then
-    echo "main"
-  else
-    echo "master"
-  fi
+  # Return whether the 'main' branch is called 'master' or 'main'.
+  # https://stackoverflow.com/a/68098145
+  git branch -l master main
 }
 
 alias g="git"
