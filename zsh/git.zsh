@@ -1,3 +1,24 @@
+function isWinDir {
+  # echo "fast git"
+  case $PWD/ in
+    /mnt/*) return $(true);;
+    *) return $(false);;
+  esac
+}
+
+# Speed up `git status` and other git commands
+# https://github.com/microsoft/WSL/issues/4401#issuecomment-670080585
+function fast_git {
+  if isWinDir
+  then
+    git.exe "$@"
+  else
+    /usr/bin/git "$@"
+  fi
+}
+
+alias git="fast_git"
+
 alias gbranches="git for-each-ref --format='%(refname:short)' refs/heads/"
 
 function main_branch() {
@@ -207,25 +228,6 @@ function vcf() {
 function vucf() {
   file=$(gucf | fzf)
   nvim $file
-}
-
-# https://github.com/microsoft/WSL/issues/4401#issuecomment-670080585
-function isWinDir {
-  case $PWD/ in
-    /mnt/*) return $(true);;
-    *) return $(false);;
-  esac
-}
-
-# Speed up `git status` and other git commands in WSL
-# wrap the git command to either run windows git or linux
-function git {
-  if isWinDir
-  then
-    git.exe "$@"
-  else
-    /usr/bin/git "$@"
-  fi
 }
 
 # When rebasing and dealing with merge conflicts, this command stages all files
