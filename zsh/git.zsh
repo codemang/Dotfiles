@@ -226,16 +226,13 @@ function gmu() {
 function gcf() {
   git --no-pager diff --name-only $(main_branch)
 }
-alias gucf="git diff --name-only"
 
-function vcf() {
-  file=$(gcf | fzf)
-  nvim $file
-}
-
-function vucf() {
-  file=$(gucf | fzf)
-  nvim $file
+function fuzzy_find_changed_files() {
+  # For some reason, doing `gcf | fzf` would occasionally hang on WSL,
+  # but the more verbose approach does not.
+  files=$(gcf)
+  chosen_file=$(echo -e "$files" | fzf)
+  echo $chosen_file
 }
 
 # When rebasing and dealing with merge conflicts, this command stages all files

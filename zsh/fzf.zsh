@@ -8,7 +8,7 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 case "$(uname -sr)" in
   Linux*)
     # Bind ctrl-g to fuzzy-find over changed files in Git.
-    bind '"\C-g":"$(gcf | fzf)\015"'
+    bind '"\C-g":"$(fuzzy_find_changed_files)\015"'
 
     # Bind ctrl-g to fuzzy-find over Git branches.
     bind '"\C-b":"$(fuzzy_find_branches)\015"'
