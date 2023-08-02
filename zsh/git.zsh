@@ -8,17 +8,16 @@ function main_branch() {
 
 alias g="git"
 
-# If you clone a repo, there will be an "origin" remote that points to that
-# repo. If you fork a repo, "origin" points to your fork and "upstream" points
-# to the original.
 function git_remote() {
-  has_upstream_remotes=$(git remote -v | awk '/^upstream/')
+  num_remotes=$(git remote | wc -l)
 
-  if [ -z "${has_upstream_remotes}" ]; then
-    echo "origin"
+  if [[ "$num_remotes" -eq 1 ]]; then
+    remote=$(git remote)
   else
-    echo "upstream"
+    remote=$(git remote | fzf)
   fi
+
+  echo $remote
 }
 
 # Checkout
