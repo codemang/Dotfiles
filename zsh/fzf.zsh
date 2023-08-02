@@ -7,9 +7,11 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 # https://stackoverflow.com/a/51439945
 case "$(uname -sr)" in
   Linux*)
-    # https://fabianlee.org/2022/05/07/bash-current-directory-versus-directory-of-script/
-    SCRIPT_DIR_REL=$(dirname ${BASH_SOURCE[0]})
-    bind '"\C-g":"$(source $SCRIPT_DIR_REL/git.zsh && gcf | fzf)\015"'
+    # Bind ctrl-g to fuzzy-find over changed files in Git.
+    bind '"\C-g":"$(gcf | fzf)\015"'
+
+    # Bind ctrl-g to fuzzy-find over Git branches.
+    bind '"\C-b":"$(fuzzy_find_branches)\015"'
     ;;
   Darwin*) # Mac
     # Set in iTerm preferences

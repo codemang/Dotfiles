@@ -21,6 +21,14 @@ alias git="fast_git"
 
 alias gbranches="git for-each-ref --format='%(refname:short)' refs/heads/"
 
+function fuzzy_find_branches() {
+  # For some reason, doing `gbranches | fzf` would occasionally hang, but the
+  # more verbose approach does not.
+  branches=$(gbranches)
+  chosen_branch=$(echo -e "$branches" | fzf)
+  echo $chosen_branch
+}
+
 function main_branch() {
   # Return whether the 'main' branch is called 'master' or 'main'.
   # https://stackoverflow.com/a/68098145
