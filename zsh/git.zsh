@@ -1,29 +1,52 @@
+function isWinDir {
+  # echo "fast git"
+  case $PWD/ in
+    /mnt/*) return $(true);;
+    *) return $(false);;
+  esac
+}
+
+# Speed up `git status` and other git commands
+# https://github.com/microsoft/WSL/issues/4401#issuecomment-670080585
+function fast_git {
+  if isWinDir
+  then
+    git.exe "$@"
+  else
+    /usr/bin/git "$@"
+  fi
+}
+
+alias git="fast_git"
+
 alias gbranches="git for-each-ref --format='%(refname:short)' refs/heads/"
 
-function main_branch() {
+function fuzzy_find_branches() {
+  # For some reason, doing `gbranches | fzf` would occasionally hang, but the
+  # more verbose approach does not.
   branches=$(gbranches)
-  does_master_branch_exist=$(echo $branches | awk '/master/')
+  chosen_branch=$(echo -e "$branches" | fzf)
+  echo $chosen_branch
+}
 
-  if [ -z "${does_master_branch_exist}" ]; then
-    echo "main"
-  else
-    echo "master"
-  fi
+function main_branch() {
+  # Return whether the 'main' branch is called 'master' or 'main'.
+  # https://stackoverflow.com/a/68098145
+  git branch -l master main
 }
 
 alias g="git"
 
-# If you clone a repo, there will be an "origin" remote that points to that
-# repo. If you fork a repo, "origin" points to your fork and "upstream" points
-# to the original.
 function git_remote() {
-  has_upstream_remotes=$(git remote -v | awk '/^upstream/')
+  num_remotes=$(git remote | wc -l)
 
-  if [ -z "${has_upstream_remotes}" ]; then
-    echo "origin"
+  if [[ "$num_remotes" -eq 1 ]]; then
+    remote=$(git remote)
   else
-    echo "upstream"
+    remote=$(git remote | fzf)
   fi
+
+  echo $remote
 }
 
 # Checkout
@@ -203,35 +226,13 @@ function gmu() {
 function gcf() {
   git --no-pager diff --name-only $(main_branch)
 }
-alias gucf="git diff --name-only"
 
-function vcf() {
-  file=$(gcf | fzf)
-  nvim $file
-}
-
-function vucf() {
-  file=$(gucf | fzf)
-  nvim $file
-}
-
-# https://github.com/microsoft/WSL/issues/4401#issuecomment-670080585
-function isWinDir {
-  case $PWD/ in
-    /mnt/*) return $(true);;
-    *) return $(false);;
-  esac
-}
-
-# Speed up `git status` and other git commands in WSL
-# wrap the git command to either run windows git or linux
-function git {
-  if isWinDir
-  then
-    git.exe "$@"
-  else
-    /usr/bin/git "$@"
-  fi
+function fuzzy_find_changed_files() {
+  # For some reason, doing `gcf | fzf` would occasionally hang on WSL,
+  # but the more verbose approach does not.
+  files=$(gcf)
+  chosen_file=$(echo -e "$files" | fzf)
+  echo $chosen_file
 }
 
 # When rebasing and dealing with merge conflicts, this command stages all files

@@ -7,7 +7,11 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 # https://stackoverflow.com/a/51439945
 case "$(uname -sr)" in
   Linux*)
-    bind '"\C-g":"$(git diff --name-only | fzf)\015"'
+    # Bind ctrl-g to fuzzy-find over changed files in Git.
+    bind '"\C-g":"$(fuzzy_find_changed_files)\015"'
+
+    # Bind ctrl-g to fuzzy-find over Git branches.
+    bind '"\C-b":"$(fuzzy_find_branches)\015"'
     ;;
   Darwin*) # Mac
     # Set in iTerm preferences
