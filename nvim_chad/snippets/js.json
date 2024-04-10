@@ -1,0 +1,18 @@
+{
+  "BB Log Line": {
+    "prefix": "logl",
+    "body": "logger.info(`!X!: $0`);"
+  },
+  "BB Log Object": {
+    "prefix": "logo",
+    "body": "logger.info(`!X!: ${JSON.stringify($0)}`);"
+  },
+  "BB Log Import": {
+    "prefix": "logi",
+    "body": [
+      "import ModuleId from '#moduleid';",
+      "import Runtime from '@sys-runtime';",
+      "const logger = new Runtime.Logger(ModuleId);\n\n"
+    ]
+  }
+}
