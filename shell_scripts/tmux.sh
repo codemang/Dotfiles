@@ -27,9 +27,12 @@ if [ ! $TMUX ]; then
   cd ~
 fi
 
+alias mux=tmuxinator
+
 # Start a tmux session with our preferred layout. By default, it will name the
 # session after the current directory, but you can add an optional CLI arg to
 # change the name.
 tdev() {
   mux start dev $*
 }
+
