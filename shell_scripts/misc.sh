@@ -16,3 +16,12 @@ export WDIR=/mnt/c/Users/$USER
 alias src="source ~/.bashrc"
 alias bpref="vim ~/Dotfiles/shell_scripts/wsl_bashrc.sh"
 alias cdc="cd $WDIR"
+
+lsync_dir() {
+  folder=${PWD##*/}
+  lsyncd -nodaemon -delay 1 -rsyncssh $PWD nrubin19@tscgwd-rr-880 /home/nrubin19/$folder
+}
+
+view_csv() {
+  cat $1 | sed 's/,/ ,/g' | column -t -s, | less -S
+}
