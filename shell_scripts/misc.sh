@@ -12,7 +12,7 @@ eval "$(dircolors ~/Dotfiles/dotfiles/dir_colors)"
 
 export PATH=$PATH:/usr/local/go/bin
 
-export WDIR=/mnt/c/Users/nrubin19
+export WDIR=/mnt/c/Users/$USER
 alias src="source ~/.bashrc"
 alias bpref="vim ~/Dotfiles/shell_scripts/wsl_bashrc.sh"
 alias cdc="cd $WDIR"

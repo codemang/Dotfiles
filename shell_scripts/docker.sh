@@ -32,3 +32,8 @@ derrors() {
 
   docker inspect --format "{{json .State.Health }}" $container_name | jq
 }
+
+cdocker() {
+  docker volume rm $(docker volume ls -qf dangling=true)
+  docker rmi $(docker images | awk '/^<none>/ {print $3}')
+}
