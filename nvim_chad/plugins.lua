@@ -43,7 +43,9 @@ local plugins = {
     "max397574/better-escape.nvim",
     event = "InsertEnter",
     config = function()
-      require("better_escape").setup()
+      require("better_escape").setup({
+        mapping = {"kj"}, -- a table with mappings to use
+      })
     end,
   },
 
@@ -59,9 +61,11 @@ local plugins = {
     "nvim-telescope/telescope.nvim",
     opts = overrides.telescope,
     dependencies = {
-        { "nvim-telescope/telescope-live-grep-args.nvim" },
+        { "nvim-telescope/telescope-live-grep-args.nvim",  'nvim-telescope/telescope-fzf-native.nvim' },
     }
   },
+
+  { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
 
   {
     'f-person/git-blame.nvim',

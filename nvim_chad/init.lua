@@ -8,7 +8,6 @@
 local general_utils = require("custom.utils.general")
 
 vim.g.mapleader = ","
-vim.api.nvim_set_keymap("i", "kj", "<Esc>", {})
 
 -- When using "y" to copy from Vim, copy to the global Clipboard used by
 -- all apps. https://github.com/tmux/tmux/issues/543
