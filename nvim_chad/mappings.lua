@@ -35,6 +35,20 @@ M.general = {
 		["<Leader>q"] = { ":q<Cr>" },
 		["<Leader>.q"] = { ":q!<Cr>" },
     ['<Leader>dd'] = { ":pu=strftime('## %a %d %b %Y')<CR>", "Print the current date to screen" },
+    ['<Leader>cfp'] = {
+			function()
+        local filepath = string.gsub(vim.api.nvim_buf_get_name(0), vim.loop.cwd() .. '/', '')
+        os.execute("echo '" .. filepath .."' | win32yank.exe -i --crlf")
+			end,
+			"copy file name",
+    },
+    ['<Leader>cfn'] = {
+			function()
+        local filename = vim.api.nvim_buf_get_name(0):match("^.+/(.+)$")
+        os.execute("echo '" .. filename .."' | win32yank.exe -i --crlf")
+			end,
+			"copy file path",
+    },
 	},
 }
 
