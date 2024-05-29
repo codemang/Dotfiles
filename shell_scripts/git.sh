@@ -54,12 +54,12 @@ squash() {
 
 # -- Log Commits --
 glm() { # Log commits that are not on main, one line per commit
-  git log --pretty=format:'%Cred%h%Creset - %s %Cgreen(%cr) %C(blue)<%an>%Creset' --abbrev-commit $(main_branch)..HEAD
+  git log --pretty=format:'%Cred%h%Creset - %s %Cgreen(%ci) %C(blue)<%an>%Creset' --abbrev-commit $(main_branch)..HEAD
 }
 glmv() { # Log commits that are not on main, full commit message.
   git log $(main_branch)..HEAD
 }
-alias gla="git log --pretty=format:'%Cred%h%Creset - %s %Cgreen(%cr) %C(blue)<%an>%Creset' --abbrev-commit" # Log all commits, one line per commit.
+alias gla="git log --pretty=format:'%Cred%h%Creset - %s %Cgreen(%ci) %C(blue)<%an>%Creset' --abbrev-commit" # Log all commits, one line per commit.
 alias glav="git log" # Log all commits, full commit message.
 
 # -- Rebasing --
