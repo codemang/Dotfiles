@@ -79,7 +79,10 @@ local plugins = {
 
   { "tpope/vim-sleuth" },
 
-  { "tpope/vim-fugitive", lazy = false  }
+  { "tpope/vim-fugitive", lazy = false  },
+
+  { "lambdalisue/vim-suda", keys = { ":" }},
+
 
   -- To make a plugin not be loaded
   -- {
