@@ -25,3 +25,14 @@ lsync_dir() {
 view_csv() {
   cat $1 | sed 's/,/ ,/g' | column -t -s, | less -S
 }
+
+jqc() {
+  pcb | jq
+}
+
+fuzzy_find_directories() {
+  find * -type d | fzf
+}
+
+# Bind ctrl-v to fuzzy-find over changed files in Git.
+bind '"\C-v":"$(fuzzy_find_directories)\015"'
