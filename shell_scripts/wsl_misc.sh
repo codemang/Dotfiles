@@ -7,3 +7,7 @@ ccb() {
 pcb() {
   win32yank.exe -o --lf
 }
+
+rwsl() {
+  echo 'taskkill -IM "wslservice.exe" /F' | ccb
+}
