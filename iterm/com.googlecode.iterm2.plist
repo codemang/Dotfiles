@@ -1210,7 +1210,7 @@
 			<key>Name</key>
 			<string>Codemang</string>
 			<key>Non Ascii Font</key>
-			<string>ProFontWindowsNerdFontComplete- 11</string>
+			<string>JetBrainsMonoNF-Regular 11</string>
 			<key>Non-ASCII Anti Aliased</key>
 			<true/>
 			<key>Non-ASCII Ligatures</key>
