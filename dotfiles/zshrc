@@ -22,13 +22,12 @@ source $DOTFILES/zsh/node.zsh
 source $DOTFILES/zsh/ruby.zsh
 
 # Helper aliases/functions
-source $DOTFILES/zsh/git.zsh
-source $DOTFILES/zsh/tmux.zsh
-source $DOTFILES/zsh/vim.zsh
-source $DOTFILES/zsh/z.zsh
+source $DOTFILES/shell_scripts/git.sh
+source $DOTFILES/shell_scripts/tmux.sh
+source $DOTFILES/shell_scripts/vim.sh
+source $DOTFILES/shell_scripts/z.sh
 source $DOTFILES/zsh/fzf.zsh
 source $DOTFILES/zsh/docker.zsh
-source $DOTFILES/zsh/heroku.zsh
 source $DOTFILES/zsh/notes.zsh
 source $DOTFILES/zsh/misc.zsh
 
