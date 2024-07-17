@@ -110,9 +110,9 @@ alias gs="git stash"
 alias gsl="git stash list"
 alias gsa="git stash apply"
 
-# gsd() {
-#   git stash drop stash@{$1}
-# }
+gsd() {
+  git stash drop stash@{$1}
+}
 
 # -- Cold/Warm Storage --
 git_mv_cold_storage() {
