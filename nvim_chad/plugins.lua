@@ -83,6 +83,16 @@ local plugins = {
 
   { "lambdalisue/vim-suda", keys = { ":" }},
 
+  {
+    "chentoast/marks.nvim",
+    lazy = false,
+    config = function()
+      require("marks").setup({
+        default_mappings = true,
+      })
+    end,
+  },
+
 
   -- To make a plugin not be loaded
   -- {
