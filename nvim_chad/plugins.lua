@@ -93,6 +93,16 @@ local plugins = {
     end,
   },
 
+  -- Disable the nvterm.terminal plugin
+  {
+    "nvterm.terminal",
+    enabled = false
+  },
+  {
+    "nvterm",
+    enabled = false
+  },
+
 
   -- To make a plugin not be loaded
   -- {
