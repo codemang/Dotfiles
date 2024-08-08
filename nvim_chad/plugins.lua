@@ -93,6 +93,23 @@ local plugins = {
     end,
   },
 
+  {
+    'ggandor/leap.nvim',
+    config = function()
+      vim.keymap.set({'n', 'x', 'o'}, 's',  '<Plug>(leap-forward)')
+      vim.keymap.set({'n', 'x', 'o'}, 'S',  '<Plug>(leap-backward)')
+
+      -- Define equivalence classes for brackets and quotes, in addition to
+      -- the default whitespace group.
+      require('leap').opts.equivalence_classes = { ' \t\r\n', '([{', ')]}', '\'"`' }
+    end,
+
+    -- This pluging lazy loads itself, so they advise to disable lazy loading
+    -- at the package manager level.
+    -- https://github.com/ggandor/leap.nvim?tab=readme-ov-file#installation
+    lazy = false
+  },
+
   -- Disable the nvterm.terminal plugin
   {
     "nvterm.terminal",
