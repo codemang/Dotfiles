@@ -50,6 +50,10 @@ M.general = {
 			"copy file path",
     },
 	},
+  v = {
+		["<C-K>"] = { ":move-2<CR>gv=gv", "Move visual block up one line" },
+		["<C-J>"] = { ":move'>+<CR>gv=gv", "Move visual block down one line" },
+  }
 }
 
 -- In order to disable a default keymap, use
