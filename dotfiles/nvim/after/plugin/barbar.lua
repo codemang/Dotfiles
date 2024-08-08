@@ -1,5 +1,0 @@
-vim.api.nvim_set_keymap('n', '<Space>h', '<Cmd>BufferPrevious<CR>', { silent = true })
-vim.api.nvim_set_keymap('n', '<Space>l', '<Cmd>BufferNext<CR>', { silent = true })
-vim.api.nvim_set_keymap('n', '<Space>q', '<Cmd>BufferClose<CR>', { silent = true })
-vim.api.nvim_set_keymap('n', '<Space><Space>h', '<Cmd>BufferMovePrevious<CR>', { silent = true })
-vim.api.nvim_set_keymap('n', '<Space><Space>l', '<Cmd>BufferMoveNext<CR>', { silent = true })
