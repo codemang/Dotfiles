@@ -9,5 +9,5 @@ pcb() {
 }
 
 rwsl() {
-  echo 'taskkill -IM "wslservice.exe" /F' | ccb
+  echo 'taskkill -IM "wslservice.exe" /F'
 }
