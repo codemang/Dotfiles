@@ -1,4 +1,5 @@
 source ~/Dotfiles/shell_scripts/git.sh
+source ~/Dotfiles/shell_scripts/github.sh
 source ~/Dotfiles/shell_scripts/tmux.sh
 source ~/Dotfiles/shell_scripts/notes.sh
 source ~/Dotfiles/shell_scripts/fzf.sh
