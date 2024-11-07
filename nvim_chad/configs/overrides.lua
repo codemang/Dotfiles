@@ -72,7 +72,7 @@ M.telescope = {
 
 M.gitsigns = {
   signs = {
-    delete = { hl = "DiffDelete", text = "|", numhl = "GitSignsDeleteNr" },
+    delete = { text = "|" },
   },
 }
 
