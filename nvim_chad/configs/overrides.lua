@@ -65,7 +65,8 @@ M.telescope = {
   extensions_list = {
     "themes", -- Copied from original nvchad config.
     "terms", -- Copied from original nvchad config.
-    "live_grep_args"
+    "live_grep_args",
+    "fzf"
   },
 }
 
