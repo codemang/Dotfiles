@@ -13,14 +13,10 @@ M.treesitter = {
     "markdown",
     "markdown_inline",
     "python",
-    "typescript",
     "tsx"
   },
   indent = {
     enable = true,
-    -- disable = {
-    --   "python"
-    -- },
   },
 }
 
