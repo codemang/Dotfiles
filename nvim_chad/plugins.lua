@@ -38,13 +38,14 @@ local plugins = {
     opts = overrides.nvimtree,
   },
 
-  -- Install a plugin
   {
     "max397574/better-escape.nvim",
     event = "InsertEnter",
     config = function()
       require("better_escape").setup({
-        mapping = {"kj"}, -- a table with mappings to use
+        mappings = {
+          i = { k = { j = "<ESC>"}}
+        }
       })
     end,
   },
@@ -55,7 +56,6 @@ local plugins = {
       require "custom.configs.tmux-nvim" -- just an example path
     end,
   },
-
 
   {
     "nvim-telescope/telescope.nvim",
@@ -119,7 +119,6 @@ local plugins = {
     "nvterm",
     enabled = false
   },
-
 
   -- To make a plugin not be loaded
   -- {
