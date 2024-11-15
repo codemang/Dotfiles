@@ -5,6 +5,19 @@ local general_utils = require("custom.utils.general")
 local comment_utils = require("custom.utils.comment")
 local git_utils = require("custom.utils.git")
 
+-- https://stackoverflow.com/a/4991602
+function file_exists(name)
+   local f=io.open(name,"r")
+   if f~=nil then io.close(f) return true else return false end
+end
+
+local mapping_overrides = {}
+
+-- Load the mapping overrides if they are present.
+if file_exists("./mapping_overrides.lua") then
+  mapping_overrides = require("custom.mapping_overrides")
+end
+
 function choose_changed_files(opts)
   local pickers = require("telescope.pickers")
   local finders = require "telescope.finders"
@@ -23,33 +36,39 @@ function choose_changed_files(opts)
   }):find()
 end
 
+local general_mappings = {
+  [";"] = { ":", "enter command mode", opts = { nowait = true } },
+  ["<leader>hh"] = { ":noh<CR>", "hide search highlighting" },
+  ["<Leader>j"] = { ":e #<CR>", "toggle to previously focused buffer" },
+  ["<Leader>w"] = { ":w<Cr>" },
+  ["<Leader>wq"] = { ":wq<Cr>" },
+  ["<Leader>e"] = { ":e<Cr>" },
+  ["<Leader>.e"] = { ":e!<Cr>" },
+  ["<Leader>q"] = { ":q<Cr>" },
+  ["<Leader>.q"] = { ":q!<Cr>" },
+  ['<Leader>dd'] = { ":pu=strftime('## %a %d %b %Y')<CR>", "Print the current date to screen" },
+  ['<Leader>cfp'] = {
+    function()
+      local filepath = string.gsub(vim.api.nvim_buf_get_name(0), vim.loop.cwd() .. '/', '')
+      os.execute("echo '" .. filepath .."' | win32yank.exe -i --crlf")
+    end,
+    "copy file path",
+  },
+  ['<Leader>cfn'] = {
+    function()
+      local filename = vim.api.nvim_buf_get_name(0):match("^.+/(.+)$")
+      os.execute("echo '" .. filename .."' | win32yank.exe -i --crlf")
+    end,
+    "copy file name",
+  },
+}
+
+-- Add the mapping overrides to the general mapping.
+-- https://stackoverflow.com/a/1283399
+for k,v in pairs(mapping_overrides) do general_mappings[k] = v end
+
 M.general = {
-	n = {
-		[";"] = { ":", "enter command mode", opts = { nowait = true } },
-		["<leader>hh"] = { ":noh<CR>", "hide search highlighting" },
-		["<Leader>j"] = { ":e #<CR>", "toggle to previously focused buffer" },
-		["<Leader>w"] = { ":w<Cr>" },
-		["<Leader>wq"] = { ":wq<Cr>" },
-		["<Leader>e"] = { ":e<Cr>" },
-		["<Leader>.e"] = { ":e!<Cr>" },
-		["<Leader>q"] = { ":q<Cr>" },
-		["<Leader>.q"] = { ":q!<Cr>" },
-    ['<Leader>dd'] = { ":pu=strftime('## %a %d %b %Y')<CR>", "Print the current date to screen" },
-    ['<Leader>cfp'] = {
-			function()
-        local filepath = string.gsub(vim.api.nvim_buf_get_name(0), vim.loop.cwd() .. '/', '')
-        os.execute("echo '" .. filepath .."' | win32yank.exe -i --crlf")
-			end,
-			"copy file name",
-    },
-    ['<Leader>cfn'] = {
-			function()
-        local filename = vim.api.nvim_buf_get_name(0):match("^.+/(.+)$")
-        os.execute("echo '" .. filename .."' | win32yank.exe -i --crlf")
-			end,
-			"copy file path",
-    },
-	},
+	n = general_mappings,
   v = {
 		["<C-K>"] = { ":move-2<CR>gv=gv", "Move visual block up one line" },
 		["<C-J>"] = { ":move'>+<CR>gv=gv", "Move visual block down one line" },
@@ -64,6 +83,7 @@ M.disabled = {
 		["<leader>e"] = "", -- Set by nvchad nvimtree config
 		["<leader>q"] = "", -- Set by nvchad lsp config
 		["<leader>/"] = "", -- Set by nvchad comment
+		["<leader>ca"] = "", -- Set by lsp-config
 	},
 }
 
