@@ -38,13 +38,14 @@ local plugins = {
     opts = overrides.nvimtree,
   },
 
-  -- Install a plugin
   {
     "max397574/better-escape.nvim",
     event = "InsertEnter",
     config = function()
       require("better_escape").setup({
-        mapping = {"kj"}, -- a table with mappings to use
+        mappings = {
+          i = { k = { j = "<ESC>"}}
+        }
       })
     end,
   },
@@ -55,7 +56,6 @@ local plugins = {
       require "custom.configs.tmux-nvim" -- just an example path
     end,
   },
-
 
   {
     "nvim-telescope/telescope.nvim",
@@ -83,6 +83,42 @@ local plugins = {
 
   { "lambdalisue/vim-suda", keys = { ":" }},
 
+  {
+    "chentoast/marks.nvim",
+    lazy = false,
+    config = function()
+      require("marks").setup({
+        default_mappings = true,
+      })
+    end,
+  },
+
+  {
+    'ggandor/leap.nvim',
+    config = function()
+      vim.keymap.set({'n', 'x', 'o'}, 's',  '<Plug>(leap-forward)')
+      vim.keymap.set({'n', 'x', 'o'}, 'S',  '<Plug>(leap-backward)')
+
+      -- Define equivalence classes for brackets and quotes, in addition to
+      -- the default whitespace group.
+      require('leap').opts.equivalence_classes = { ' \t\r\n', '([{', ')]}', '\'"`' }
+    end,
+
+    -- This pluging lazy loads itself, so they advise to disable lazy loading
+    -- at the package manager level.
+    -- https://github.com/ggandor/leap.nvim?tab=readme-ov-file#installation
+    lazy = false
+  },
+
+  -- Disable the nvterm.terminal plugin
+  {
+    "nvterm.terminal",
+    enabled = false
+  },
+  {
+    "nvterm",
+    enabled = false
+  },
 
   -- To make a plugin not be loaded
   -- {

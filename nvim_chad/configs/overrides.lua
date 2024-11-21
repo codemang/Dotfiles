@@ -13,14 +13,10 @@ M.treesitter = {
     "markdown",
     "markdown_inline",
     "python",
-    "typescript",
     "tsx"
   },
   indent = {
     enable = true,
-    -- disable = {
-    --   "python"
-    -- },
   },
 }
 
@@ -65,13 +61,14 @@ M.telescope = {
   extensions_list = {
     "themes", -- Copied from original nvchad config.
     "terms", -- Copied from original nvchad config.
-    "live_grep_args"
+    "live_grep_args",
+    "fzf"
   },
 }
 
 M.gitsigns = {
   signs = {
-    delete = { hl = "DiffDelete", text = "|", numhl = "GitSignsDeleteNr" },
+    delete = { text = "|" },
   },
 }
 

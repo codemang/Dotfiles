@@ -36,3 +36,7 @@ fuzzy_find_directories() {
 
 # Bind ctrl-v to fuzzy-find over changed files in Git.
 bind '"\C-v":"$(fuzzy_find_directories)\015"'
+
+list_to_comma_separated() {
+  paste -s -d, -
+}
