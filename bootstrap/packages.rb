@@ -1,13 +1,4 @@
 class Packages
-  def self.python_packages
-    [
-      'pynvim', # Needed for the 'coq_nvim' NeoVim plugin.
-      'vim-vint', # Needed to lint/format the vimrc file.
-      'beautysh', # Needed to format sh/zsh files.
-      'neovim-remote', # Find running neovim processes in order to toggle their colorschemes.
-    ]
-  end
-
   def self.kegs
     [
       'chruby',
@@ -70,22 +61,7 @@ class Packages
 
   def self.gems
     [
-      'bigdecimal',
-      'byebug',
-      'cmath',
-      'csv',
-      'date ',
-      'docker-sync',
-      'eslint_d', # Faster eslint client, used for linting JS/TS.
-      'fileutils',
-      'foreman',
-      'json',
-      'msgpack',
-      'msgpack-rpc',
-      'octokit',
-      'openssl',
       'rake',
-      'solargraph',
       # Better man pages - https://tldr.sh/
       'tldr',
       'tmuxinator',
