@@ -133,11 +133,14 @@ git_rm_cold_storage() {
   git update-ref -d refs/hidden/$1
 }
 
-# Bind ctrl-g to fuzzy-find over changed files in Git.
-bind '"\C-g":"$(fuzzy_find_changed_files)\015"'
 
-# Bind ctrl-g to fuzzy-find over Git branches.
-bind '"\C-b":"$(fuzzy_find_branches)\015"'
+case "$(uname -sr)" in Linux*)
+  # Bind ctrl-g to fuzzy-find over changed files in Git.
+  bind '"\C-g":"$(fuzzy_find_changed_files)\015"'
+
+  # Bind ctrl-g to fuzzy-find over Git branches.
+  bind '"\C-b":"$(fuzzy_find_branches)\015"'
+esac
 
 # ---- Private Helpers ----
 
