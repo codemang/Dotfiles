@@ -14,6 +14,7 @@ class Packages
       'cmake',
       'curl',
       'diff-so-fancy',
+      'font-hack-nerd-font', # Used for icons in nvim.
       'fnm', # Node version manager.
       'fzf',
       'git',
