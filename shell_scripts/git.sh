@@ -82,7 +82,8 @@ recmc() {
 
 # Set contents of file to that of origin.
 mirrorf() {
-  git restore -s $(select_git_remote)/$(main_branch) $*
+  git_remote=$(select_git_remote)
+  git restore -s $git_remote/$(main_branch) $*
 }
 
 # Set contents of repo to that of origin, overwriting any changes, with no chance of retrieval.
