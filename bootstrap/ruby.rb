@@ -1,5 +1,5 @@
 class Ruby
-  DEFAULT_RUBY_VERSION = '2.7.2'.freeze
+  DEFAULT_RUBY_VERSION = '3.3.6'.freeze
 
   # Depends on chruby and ruby-install being installed
   def self.install
