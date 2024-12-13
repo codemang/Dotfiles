@@ -43,12 +43,6 @@ task :zsh do
   Zsh.install
 end
 
-task :vim do
-  puts_section_header('vim')
-  Vim.install
-  Powerfonts.install
-end
-
 task :mac_defaults do
   puts_section_header('mac defaults')
   MacDefaults.execute
@@ -92,7 +86,6 @@ task setup: %i[
   language_packages
   zsh
   dotfiles
-  vim
   misc
   mac_defaults
   complete_msg
