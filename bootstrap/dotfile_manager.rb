@@ -5,7 +5,7 @@ class DotfileManager
     'dotfiles/tmux.conf' => ['~/.tmux.conf'],
     'dotfiles/gitconfig' => ['~/.gitconfig'],
     'dotfiles/gitignore_global' => ['~/.gitignore_global'],
-    'dotfiles/nvim' => ['~/.config/nvim'],
+    'nvim_chad/' => ['~/.config/nvim/'],
     'dotfiles/tmuxinator' => ['~/.config/tmuxinator'],
 
     # Silence the 'Last login...' message in the terminal.
