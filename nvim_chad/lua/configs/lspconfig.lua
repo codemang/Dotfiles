@@ -4,7 +4,7 @@ require("nvchad.configs.lspconfig").defaults()
 local lspconfig = require "lspconfig"
 
 -- EXAMPLE
-local servers = { "pyright" }
+local servers = { "pyright", "ruby_lsp" }
 local nvlsp = require "nvchad.configs.lspconfig"
 
 local on_attach = function(_, bufnr)

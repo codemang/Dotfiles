@@ -1,5 +1,7 @@
 local map = vim.keymap.set
 
+local general_utils = require("utils.general")
+
 return function()
   -- Misc optimizations.
   map("n", ";", ":", { desc = "CMD enter command mode" })
@@ -21,7 +23,7 @@ return function()
     "<Leader>cfp",
     function()
       local filepath = string.gsub(vim.api.nvim_buf_get_name(0), vim.loop.cwd() .. '/', '')
-      os.execute("echo '" .. filepath .."' | win32yank.exe -i --crlf")
+      os.execute("echo '" .. filepath .."' | " .. general_utils.copy_command())
     end,
     { desc = "copy file path" }
   )
@@ -32,7 +34,7 @@ return function()
     "<Leader>cfn",
     function()
       local filename = vim.api.nvim_buf_get_name(0):match("^.+/(.+)$")
-      os.execute("echo '" .. filename .."' | win32yank.exe -i --crlf")
+      os.execute("echo '" .. filename .."' | " .. general_utils.copy_command())
     end,
     { desc = "copy file name" }
   )

@@ -19,4 +19,20 @@ M.script_path = function()
    return str:match("(.*/)")
 end
 
+M.copy_command = function()
+  if vim.fn.has("wsl") == 1 then
+    return "win32yank.exe -i --crlf"
+  elseif vim.fn.has('macunix') then
+    return "pbcopy"
+  end
+end
+
+M.paste_command = function()
+  if vim.fn.has("wsl") == 1 then
+    return "win32yank.exe -o --lf"
+  elseif vim.fn.has('macunix') then
+    return "pbpaste"
+  end
+end
+
 return M
