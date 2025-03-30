@@ -11,6 +11,7 @@ class DotfileManager
     # Silence the 'Last login...' message in the terminal.
     # https://osxdaily.com/2010/06/22/remove-the-last-login-message-from-the-terminal/
     'dotfiles/hushlogin' => ['~/.hushlogin'],
+    'util/tmux_switch_session.sh' => ['/usr/local/bin/tmux_switch_session']
   }.freeze
 
   def self.symlink_dotfiles_and_print
