@@ -24,5 +24,8 @@ class Misc
 
     # Other
     `mkdir -p ~/Personal`
+
+    # Set the global git ignore file
+    system("git config --global core.excludesFile ~/.gitignore_global")
   end
 end
