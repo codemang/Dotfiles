@@ -13,7 +13,7 @@ source $DOTFILES/zsh/z.zsh
 source $DOTFILES/zsh/fzf.zsh
 source $DOTFILES/zsh/docker.zsh
 source $DOTFILES/zsh/heroku.zsh
-source $DOTFILES/zsh/notes.zsh
+source $DOTFILES/shell_scripts/notes.sh
 source $DOTFILES/zsh/misc.zsh
 
 [ -f ~/.private_scripts.zsh ] && source ~/.private_scripts.zsh

@@ -29,3 +29,7 @@ function nn() {
 
   nvim $note_filepath # Open the note in Vim.
 }
+
+function scr() {
+    vim .scratch
+}
