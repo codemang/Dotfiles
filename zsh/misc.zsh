@@ -24,9 +24,23 @@ alias mem="top -l 1 | ag Phys"
 alias notifyDone='reattach-to-user-namespace terminal-notifier -title "Hey Nate" -message "Done with task!"'
 alias zprompt="vim ~/Dotfiles/zsh/zshrc_prompt"
 alias findp="ps aux | grep"
-alias pbc="pbcopy"
 alias dl="cd ~/Downloads"
 alias ssha="ssh-add ~/.ssh/id_rsa_github"
+
+# Linux
+case "$(uname -sr)" in Linux*)
+    # Copy clipboard
+    alias ccb="win32yank.exe -i"
+    # Paste clipboard
+    alias pcb="win32yank.exe -o --lf"
+esac
+
+case "$(uname -sr)" in Darwin*)
+    # Copy clipboard
+    alias pcb="pbpaste"
+    # Paste clipboard
+    alias ccb="pbcopy"
+esac
 
 # Colorized man pages
 man() {

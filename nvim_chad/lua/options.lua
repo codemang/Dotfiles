@@ -73,9 +73,9 @@ vim.opt.spelllang="en_us"
 vim.opt.spell=true
 
 -- Default tab width.
-vim.opt.tabstop = 2
-vim.opt.shiftwidth = 2
-vim.opt.softtabstop = 2
+vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4
+vim.opt.softtabstop = 4
 
 -- Set the snippet path.
 vim.g.vscode_snippets_path={ require("utils.general").script_path() .. "snippets" }

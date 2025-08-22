@@ -17,6 +17,23 @@ alias src="source ~/.bashrc"
 alias bpref="vim ~/Dotfiles/shell_scripts/wsl_bashrc.sh"
 alias cdc="cd $WDIR"
 
+# Linux
+case "$(uname -sr)" in Linux*)
+    # Copy clipboard
+    alias ccb="win32yank.exe -i"
+    # Paste clipboard
+    alias pcb="win32yank.exe -o --lf"
+esac
+
+# OSX
+case "$(uname -sr)" in Darwin*)
+    echo "here"
+    # Copy clipboard
+    alias pcb="pbpaste"
+    # Paste clipboard
+    alias ccb="pbcopy"
+esac
+
 lsync_dir() {
   folder=${PWD##*/}
   lsyncd -nodaemon -delay 1 -rsyncssh $PWD nrubin19@tscgwd-rr-880 /home/nrubin19/$folder

@@ -1,3 +1,2 @@
-# Run chruby scripts so that we use the correct ruby version
-source /usr/local/share/chruby/chruby.sh
-chruby ruby-3.3.6
+source $HOMEBREW_PREFIX/opt/chruby/share/chruby/chruby.sh
+source $HOMEBREW_PREFIX/opt/chruby/share/chruby/auto.sh

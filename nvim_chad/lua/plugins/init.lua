@@ -92,7 +92,7 @@ return {
   { "lewis6991/gitsigns.nvim" },
 
   -- Auto-set shift/expand tab amount depending on contents of file.
-  { "tpope/vim-sleuth" },
+  -- { "tpope/vim-sleuth" },
 
   -- Git integration for dealing with commits.
   { "tpope/vim-fugitive", lazy = false  },
@@ -173,6 +173,7 @@ return {
           "pylint", -- python linter
           "eslint_d", -- js linter
           "ruby_lsp",
+          "pyright"
         },
       })
     end
