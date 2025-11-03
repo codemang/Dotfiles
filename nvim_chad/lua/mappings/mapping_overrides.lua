@@ -1,7 +1,7 @@
 local alpha_log_file = function()
-  local date_process = io.popen("date '+%Y%m%d' -u | tr -d '\n'")
+  local date_process = io.popen("date '+%Y%m%d' | tr -d '\n'")
   local date = date_process:read('*a')
-  local alpha_log_file = "/mnt/c/Users/nrubin19/AppData/Local/Temp/Bloomberg/Log/bplus." .. date .. ".log"
+  local alpha_log_file = os.getenv("CDRIVE") .. "/Users/bbuser/AppData/Local/Temp/Bloomberg/Log/bplus." .. date .. ".log"
   date_process:close()
   return alpha_log_file
 end
@@ -13,7 +13,7 @@ return function()
     "n",
     "<Leader>ca",
     function()
-      os.execute("echo > " .. alpha_log_file())
+      os.execute("echo > '" .. alpha_log_file() .. "'")
 
       if vim.api.nvim_buf_get_name(0) == alpha_log_file() then
         vim.cmd("e!")
