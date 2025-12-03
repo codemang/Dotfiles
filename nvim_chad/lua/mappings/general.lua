@@ -38,4 +38,26 @@ return function()
     end,
     { desc = "copy file name" }
   )
+
+  map(
+    "v",
+    "<Leader>cd",
+    function()
+        -- Copy visual selection to clipboard.
+        vim.api.nvim_exec("call feedkeys('y')", true)
+
+        -- Reselect the last visual selection, since yanking exits visual mode.
+        vim.api.nvim_exec("call feedkeys('gv')", true)
+
+        -- Comment out the visual selection.
+        vim.api.nvim_feedkeys('gc', 'v', true) -- Sends "hello" in normal mode
+
+        -- Jump to the end of the last visual mode block.
+        vim.api.nvim_exec("call feedkeys('`>')", true)
+
+        -- Paste the original code that was copied via yank.
+        vim.api.nvim_exec("call feedkeys('p')", true)
+    end,
+    { desc = "coment and duplicate" }
+  )
 end
