@@ -21,12 +21,6 @@ alias tname="tmux display-message -p '#S'"
 # Kill all tmux sessions and restart the process.
 alias rtmux="tmux kill-server"
 
-# If opening a new pane in TMUX, don't change to the home directory, but open
-# all new terminals in the home directory.
-if [ ! $TMUX ]; then
-  cd ~
-fi
-
 alias mux=tmuxinator
 
 # Start a tmux session with our preferred layout. By default, it will name the

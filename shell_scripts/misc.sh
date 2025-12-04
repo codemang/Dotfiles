@@ -5,10 +5,14 @@ export RIPGREP_CONFIG_PATH=$HOME/.ripgreprc
 eval `ssh-agent` > /dev/null
 
 # Initialize brew
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+if [ -f "/home/linuxbrew/.linuxbrew/bin/brew shellenv" ]; then
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
 
 # Update ls colors
-eval "$(dircolors ~/Dotfiles/dotfiles/dir_colors)"
+# ~/Dotfiles
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+eval "$(dircolors $SCRIPT_DIR/../dotfiles/dir_colors)"
 
 export PATH=$PATH:/usr/local/go/bin
 
@@ -17,21 +21,16 @@ alias src="source ~/.bashrc"
 alias bpref="vim ~/Dotfiles/shell_scripts/wsl_bashrc.sh"
 alias cdc="cd $WDIR"
 
-# Linux
-case "$(uname -sr)" in Linux*)
-    # Copy clipboard
-    alias ccb="win32yank.exe -i"
-    # Paste clipboard
-    alias pcb="win32yank.exe -o --lf"
-esac
+case "$(uname -s)" in
+    Linux*) # Linux
+        alias ccb="xclip -selection clipboard" # Copy clipboard
+        alias pcb="xclip -o -selection clipboard" # Paste clipboard
+        ;;
 
-# OSX
-case "$(uname -sr)" in Darwin*)
-    echo "here"
-    # Copy clipboard
-    alias pcb="pbpaste"
-    # Paste clipboard
-    alias ccb="pbcopy"
+    Darwin*) # OSX
+        alias ccb="pbcopy" # Copy clipboard
+        alias pcb="pbpaste" # Paste clipboard
+        ;;
 esac
 
 lsync_dir() {

@@ -1,10 +1,5 @@
 # ---- Public Interface ----
 
-# Make 'git' command always use the fastest git executable for the current
-# OS/environment. This must be the first alias, to ensure all other
-# aliases/functions use it.
-alias git="fast_git"
-
 # -- List Branches --
 alias gbr="git branch"
 
@@ -161,20 +156,10 @@ is_win_dir() {
   esac
 }
 
-# Speed up `git status` and other git commands in WSL.
-# https://github.com/microsoft/WSL/issues/4401#issuecomment-670080585
-fast_git() {
-  if is_win_dir; then
-    git.exe "$@"
-  else
-    /usr/bin/git "$@"
-  fi
-}
-
 # Removes asterisk from current branch.
 # https://stackoverflow.com/a/51697007
 list_git_branches() {
-  fast_git for-each-ref --format='%(refname:short)' refs/heads/
+  git for-each-ref --format='%(refname:short)' refs/heads/
 }
 
 fuzzy_find_branches() {

@@ -22,16 +22,20 @@ end
 M.copy_command = function()
   if vim.fn.has("wsl") == 1 then
     return "win32yank.exe -i --crlf"
-  elseif vim.fn.has('macunix') then
+  elseif vim.fn.has('macunix') == 1 then
     return "pbcopy"
+  elseif vim.fn.has('unix') == 1 then
+    return "xclip -selection clipboard"
   end
 end
 
 M.paste_command = function()
   if vim.fn.has("wsl") == 1 then
     return "win32yank.exe -o --lf"
-  elseif vim.fn.has('macunix') then
+  elseif vim.fn.has('macunix') == 1 then
     return "pbpaste"
+  elseif vim.fn.has('unix') == 1 then
+    return "xclip -o -selection clipboard"
   end
 end
 
