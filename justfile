@@ -1,6 +1,9 @@
 # Detect OS
 os := os()
 
+test:
+    echo "hiiii"
+
 # Ensure we're running on Linux
 _check-os:
     #!/usr/bin/env bash
@@ -17,14 +20,14 @@ source_install_utils := "source " + justfile_directory() + "/bin/install_utils.s
 # Installation Profiles
 # ============================================================================
 
-# Bloomberg Linux profile - Install everything needed for Bloomberg Linux machines
-profile-bloomberg-linux: _check-os \
+# Linux profile - Install everything needed for Linux machines
+linux: _check-os \
     setup-bashrc \
     install-neovim \
     install-tmux \
     install-fzf \
     install-shell-scripts
-    @echo "✅ Bloomberg Linux profile installation complete!"
+    @echo "✅ Linux profile installation complete!"
 
 # ============================================================================
 # Shell Configuration

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -eou pipefail
 
 # Check if just is already installed
 if command -v just &> /dev/null; then
@@ -20,5 +20,7 @@ if [ -z "$1" ]; then
 fi
 
 # If an argument is provided, call just with that argument
-echo "Running just $1..."
-just "$1"
+echo "Running 'just $1'"
+script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+just --justfile "$script_dir/justfile" "$1"
+echo "Completed execution of 'just $1'"
