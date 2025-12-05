@@ -1,23 +1,6 @@
 require "nvchad.options"
 
-local general_utils = require("utils.general")
-
 vim.opt.clipboard = 'unnamedplus'
-
--- In WSL use win32yank.exe so that copy/paste works between vim and host
--- machine.
-vim.g.clipboard = {
-  name = "copy/paste",
-  copy = {
-    ["+"] = general_utils.copy_command(),
-    ["*"] = general_utils.copy_command(),
-  },
-  paste = {
-    ["+"] = general_utils.paste_command(),
-    ["*"] = general_utils.paste_command(),
-  },
-  cache_enabled = true,
-}
 
 -- Erase all extra spaces on save.
 vim.cmd [[

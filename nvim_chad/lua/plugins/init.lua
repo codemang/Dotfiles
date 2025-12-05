@@ -59,6 +59,9 @@ return {
         },
         resize = {
           enable_default_keybindings = false,
+        },
+        copy_sync = {
+          redirect_to_clipboard = true,
         }
       })
     end,
