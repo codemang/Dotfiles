@@ -22,7 +22,7 @@ return function()
     "n",
     "<Leader>cfp",
     function()
-      local filepath = string.gsub(vim.api.nvim_buf_get_name(0), vim.loop.cwd() .. '/', '')
+      local filepath = vim.fn.expand('%:.')
       os.execute("echo '" .. filepath .."' | " .. general_utils.copy_command())
     end,
     { desc = "copy file path" }
