@@ -30,6 +30,41 @@ gpm() { # Switch to the main/master branch and fetch the latest from upstream or
   git checkout $(main_branch) && git fetch $(main_remote) && git rebase $(main_remote)/$(main_branch)
 }
 
+# -- Worktrees --
+
+alias gwt="git worktree"
+alias gwtls="git worktree list"
+gwtc() {
+    if [ -z "$1" ]; then
+        echo "You must pass in the name of the new git worktree"
+        return 1
+    fi
+    git worktree add worktrees/$*
+
+    # Copy untracked files to the worktree.
+    git ls-files --others --exclude-standard -z | while IFS= read -r -d '' filename; do
+        final_path="worktrees/$*/$filename"
+        final_dir=$(dirname $final_path)
+        mkdir -p $final_dir
+        cp -r $filename $final_path
+    done
+
+    cd worktrees/$*
+}
+gwts() {
+    worktree_names=$(git worktree list | awk -F'[][]' '{print $2}')
+    chosen_worktree=$(echo -e "$worktree_names" | fzf)
+    matching_line=$(git worktree list | grep "\[$chosen_worktree\]")
+    filepath=$(echo $matching_line | awk '{print $1}')
+    cd $filepath
+}
+gwtd() {
+    worktree_names=$(git worktree list | awk -F'[][]' '{print $2}')
+    chosen_worktree=$(echo -e "$worktree_names" | fzf)
+    git worktree remove $chosen_worktree --force
+    cod $chosen_worktree
+}
+
 # -- Viewing Changes --
 alias gstat="git status"
 alias gdiff="git diff"
@@ -225,4 +260,5 @@ fuzzy_find_changed_files() {
   chosen_file=$(echo -e "$files" | fzf)
   echo $chosen_file
 }
+
 
