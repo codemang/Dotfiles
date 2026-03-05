@@ -34,6 +34,7 @@ gpm() { # Switch to the main/master branch and fetch the latest from upstream or
 
 alias gwt="git worktree"
 alias gwtls="git worktree list"
+# Create a worktree
 gwtc() {
     if [ -z "$1" ]; then
         echo "You must pass in the name of the new git worktree"
@@ -51,6 +52,7 @@ gwtc() {
 
     cd worktrees/$*
 }
+# Switch to a worktree (requires fzf to be installed)
 gwts() {
     worktree_names=$(git worktree list | awk -F'[][]' '{print $2}')
     chosen_worktree=$(echo -e "$worktree_names" | fzf)
@@ -58,6 +60,7 @@ gwts() {
     filepath=$(echo $matching_line | awk '{print $1}')
     cd $filepath
 }
+# Delete a worktree (requires fzf to be installed)
 gwtd() {
     worktree_names=$(git worktree list | awk -F'[][]' '{print $2}')
     chosen_worktree=$(echo -e "$worktree_names" | fzf)
