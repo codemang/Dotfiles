@@ -24,6 +24,10 @@ the local Claude Code session working on that PR's branch to address it.
 ## Setup
 
 1. Clone this repo and navigate to it.
+1. Create a skill for addressing feedback, e.g.
+    1. `mkdir -p ~/.claude/skills/address-pr-feedback`
+    1. `cp sample_address_pr_feedback_skill.md > ~/.claude/skills/address-pr-feedback/SKILL.md`
+
 1. Create your config from the template:
 
    ```sh
@@ -31,7 +35,7 @@ the local Claude Code session working on that PR's branch to address it.
    cp config.template.ini ~/.config/poll_gh/config.ini
    ```
 
-1. Update the config file you just created with the correct values. There are 3 values to update:
+1. Update the config file `~/.config/poll_gh/config.ini` you just created with the correct values. There are 3 values to update:
     1. The path to the `gh` executable, typical examples are included in the config file.
     1. The path to the `claude` executable, typical examples are included in the config file.
     1. The path to the claude skill directory that you want to execute, e.g `~/.claude/skills/address-pr-feedback`. You must create this!
