@@ -1,0 +1,3 @@
+#!/bin/bash
+
+osascript -e "display dialog \"Claude needs your input in ${PWD##*/}\""
