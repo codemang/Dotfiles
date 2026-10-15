@@ -144,6 +144,11 @@ launchctl load ~/Library/LaunchAgents/com.$USER.poll_gh.plist
    systemctl --user daemon-reload
    systemctl --user enable --now poll_gh.timer
    ```
+## Commenting on your own PR
+
+If you want to leave comments on your own PR and have them trigger Claude,
+prefix the comment with `/claude` or `@claude`, e.g `/claude rename this to
+isDone`. Your other comments, like replies to reviewers, are ignored.
 
 ## Troubleshooting
 
@@ -166,6 +171,8 @@ If you'd like to see the raw log of events the script has processed, they can be
 ## How it works
 
 1. Every run, `main.py` fetches your open PRs and their reviews/comments with `gh api graphql`.
+1. Unsubmitted reviews are ignored, and so are your own comments unless they start with
+   `/claude` or `@claude`.
 1. For every PR feedback (i.e a collection of comments from a single
    commenter), a deterministic unique ID is generated.
 1. Feedback IDs that have already been sent to Claude are stored in

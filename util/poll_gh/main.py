@@ -18,6 +18,7 @@ import configparser
 import json
 import os
 import pwd
+import re
 import subprocess
 import sys
 from collections import defaultdict
@@ -38,6 +39,9 @@ CLAUDE: str
 SKILL_DIR: Path
 GH_HOST = "bbgithub.dev.bloomberg.com"
 SEEN_FILE = Path.home() / ".local/state/poll_gh/seen_ids"
+# My own comments are ignored unless they start with one of these, e.g. "/claude add tests".
+# Claude posts as me, so the skill must never start a comment this way, or it would loop.
+COMMAND_PREFIX = re.compile(r"^\s*[/@]claude\b", re.IGNORECASE)
 RELAY_TIMEOUT_S = 120
 # The user's login shell from the user database, not $SHELL, which launchd doesn't set.
 LOGIN_SHELL = pwd.getpwuid(os.getuid()).pw_shell or "/bin/sh"
@@ -54,8 +58,8 @@ QUERY = """
         title url headRefName
         repository { nameWithOwner name }
         headRepository { name }
-        reviews(last: 50) { nodes { id state author { login } } }
-        comments(last: 50) { nodes { id author { login } } }
+        reviews(last: 50) { nodes { id state body author { login } } }
+        comments(last: 50) { nodes { id body author { login } } }
       }
     }
   }
@@ -101,7 +105,8 @@ def run(cmd: list[str], **kwargs) -> subprocess.CompletedProcess:
 
 
 def fetch_feedback() -> tuple[list[dict], list[dict]]:
-    """Return (open PRs, feedback items). Each item: id, kind, author, state, pr."""
+    """Return (open PRs, feedback items). Each item: id, kind, author, state, instruction, pr.
+    kind is "review", "comment", or "command" (my own /claude or @claude comment)."""
     result = run([GH, "api", "graphql", "-f", f"query={QUERY}"])
     if result.returncode != 0:
         raise RuntimeError(f"gh api failed: {result.stderr.strip()}")
@@ -118,15 +123,22 @@ def fetch_feedback() -> tuple[list[dict], list[dict]]:
         ):
             for node in nodes:
                 author = (node["author"] or {}).get("login", "ghost")
-                # Skip my own replies (or Claude's on my behalf) and unsubmitted reviews.
-                if author == me or node.get("state") == "PENDING":
+                body = node.get("body") or ""
+                if node.get("state") == "PENDING":
                     continue
+                # Skip my own replies (or Claude's on my behalf) unless they're a command.
+                instruction = None
+                if author == me:
+                    if not COMMAND_PREFIX.match(body):
+                        continue
+                    instruction = COMMAND_PREFIX.sub("", body, count=1).strip()
                 items.append(
                     {
                         "id": node["id"],
-                        "kind": kind,
+                        "kind": "command" if instruction is not None else kind,
                         "author": author,
                         "state": node.get("state", "COMMENTED"),
+                        "instruction": instruction,
                         "pr": pr,
                     }
                 )
@@ -346,11 +358,13 @@ def main() -> int:
             status = "no-session"
             log(f"no Claude session on {pr['repository']['nameWithOwner']}:{pr['headRefName']}, skipping relay")
         else:
-            authors = ", ".join(sorted({item["author"] for item in new}))
-            message = (
-                f"New GitHub feedback on your PR \"{pr['title']}\" from {authors}: {pr['url']}\n"
-                f"Please use the {SKILL_DIR.name} skill to address it."
-            )
+            authors = ", ".join(sorted({item["author"] for item in new if item["kind"] != "command"}))
+            message = f"New GitHub activity on your PR \"{pr['title']}\": {pr['url']}"
+            if authors:
+                message += f"\nFeedback from {authors}. Please use the {SKILL_DIR.name} skill to address it."
+            for item in new:
+                if item["kind"] == "command":
+                    message += f"\nInstruction from the PR author:\n{item['instruction']}"
             if dry_run:
                 status = f"dry-run:{session}"
                 log(f"DRY RUN would relay to {session}: {message!r}")

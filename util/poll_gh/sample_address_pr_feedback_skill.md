@@ -7,6 +7,8 @@ description: Address all PR feedback on Github
 
 When interacting with PRs, you should always use the `gh` client. Do NOT use the GitHub web API.
 
+NEVER start a GitHub comment with `/claude` or `@claude`. Comments you post appear as the PR author, and those prefixes would trigger another run.
+
 If you are asked to respond to comments on a PR, do the following:
 
 1. Find the right PR by using the branch name.
