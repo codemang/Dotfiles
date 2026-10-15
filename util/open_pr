@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Ensure a default repo is set
+if gh repo set-default --view 2>&1 | grep -q "No default remote repository"; then
+    # Try upstream first, then fall back to origin
+    remote_url=$(git config --get remote.upstream.url)
+    if [ -z "$remote_url" ]; then
+        remote_url=$(git config --get remote.origin.url)
+    fi
+
+    if [ -z "$remote_url" ]; then
+        echo "Error: No upstream or origin remote configured" >&2
+        exit 1
+    fi
+
+    # Extract owner/repo from the remote URL
+    # Handles both SSH (git@github.com:owner/repo.git) and HTTPS (https://github.com/owner/repo.git)
+    repo=$(echo "$remote_url" | sed -E 's#^(https://|git@)[^/:]+[/:]##' | sed 's/\.git$//')
+
+    if [ -z "$repo" ]; then
+        echo "Error: Could not parse repository from remote: $remote_url" >&2
+        exit 1
+    fi
+
+    # Set default repo
+    gh repo set-default "$repo"
+fi
+
+# Open the current PR in the web browser
+gh pr view --web
