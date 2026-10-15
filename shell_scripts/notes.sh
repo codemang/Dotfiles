@@ -1,6 +1,6 @@
 #!/bin/bash
 
-NOTES_ROOT_FOLDER=/home/nrubin19/notes
+NOTES_ROOT_FOLDER=$HOME/notes
 
 # open note
 function on() {
