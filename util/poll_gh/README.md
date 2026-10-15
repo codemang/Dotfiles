@@ -6,7 +6,7 @@ to address it.
 
 ## Requirements
 
-- The Github CLI client - [`gh`](https://cli.github.com/)
+- **The Github CLI client - [`gh`](https://cli.github.com/)**
     - For Mac: `brew install gh`
     - For WSL:
         ```
@@ -30,7 +30,7 @@ to address it.
     - Test your connection via `gh auth status`
 
 
-- A skill for addressing PR feedback, e.g. `~/.claude/skills/address-pr-feedback/SKILL.md`.
+- **A skill for addressing PR feedback, e.g. `~/.claude/skills/address-pr-feedback/SKILL.md`.**
     - If you already have a skill that you want triggered whenever PR comments come in, great! We'll show you how to configure that below.
     - If you don't yet have a skill, we've included a sample one that works well (more below).
 
@@ -111,6 +111,8 @@ Then load it:
 launchctl load ~/Library/LaunchAgents/com.$USER.poll_gh.plist
 ```
 
+**At this point, comments on your PRs should be forwarded to your local Claude instances!**
+
 ### Linux / WSL (systemd)
 
 1. Make sure systemd is running: `systemctl --user status` should work.
@@ -120,7 +122,7 @@ launchctl load ~/Library/LaunchAgents/com.$USER.poll_gh.plist
        systemd=true
        ```
 
-2. Write the service and timer:
+1. Write the service and timer:
 
    ```sh
    mkdir -p ~/.config/systemd/user
@@ -146,12 +148,15 @@ launchctl load ~/Library/LaunchAgents/com.$USER.poll_gh.plist
    EOF
    ```
 
-3. Start the timer:
+1. Start the timer:
 
    ```sh
    systemctl --user daemon-reload
    systemctl --user enable --now poll_gh.timer
    ```
+
+**At this point, comments on your PRs should be forwarded to your local Claude instances!**
+
 ## Commenting on your own PR
 
 If you want to leave comments on your own PR and have them trigger Claude,
