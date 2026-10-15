@@ -2,12 +2,13 @@
 """Poll GitHub for new reviews/comments on my open PRs and relay them to the
 local Claude session working on that PR's branch.
 
-See README.md for setup. Settings come from ~/.config/poll_gh/config.ini;
-start from config.template.ini next to this file.
+See README.md for setup. Settings come from config.ini next to this file;
+start from config.template.ini.
 
-Usage: main.py [--dry-run | --healthcheck]
-  --dry-run      log relays instead of sending them
-  --healthcheck  check that every dependency is set up, then exit
+Usage: main.py [--dry-run | --healthcheck | --debug PR_URL]
+  --dry-run       log relays instead of sending them
+  --healthcheck   check that every dependency is set up, then exit
+  --debug PR_URL  print the feedback seen on PR_URL and whether it reached Claude, then exit
 """
 
 # Lets Python 3.9 accept `str | None` annotations.
@@ -17,15 +18,19 @@ import configparser
 import json
 import os
 import pwd
-import shutil
 import subprocess
 import sys
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 
-CONFIG_FILE = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config")) / "poll_gh/config.ini"
+CONFIG_FILE = Path(__file__).with_name("config.ini")
 REQUIRED_SETTINGS = ("gh", "claude", "skill_dir")
+# Typical install paths, used when the config leaves gh or claude empty.
+PLATFORM_DEFAULTS = {
+    "darwin": {"gh": "/opt/homebrew/bin/gh", "claude": "/opt/homebrew/bin/claude"},
+    "linux": {"gh": "/home/linuxbrew/.linuxbrew/bin/gh", "claude": "~/.npm/bin/claude"},
+}
 CONFIG_TEMPLATE = Path(__file__).with_name("config.template.ini")
 # Set from CONFIG_FILE by load_config().
 GH: str
@@ -33,11 +38,6 @@ CLAUDE: str
 SKILL_DIR: Path
 GH_HOST = "bbgithub.dev.bloomberg.com"
 SEEN_FILE = Path.home() / ".local/state/poll_gh/seen_ids"
-# $USER may be unset under launchd/cron, so fall back to the user database.
-USER = os.environ.get("USER") or pwd.getpwuid(os.getuid()).pw_name
-LAUNCHD_LABEL = f"com.{USER}.poll_gh"
-SYSTEMD_TIMER = "poll_gh.timer"
-PLIST = Path.home() / f"Library/LaunchAgents/{LAUNCHD_LABEL}.plist"
 RELAY_TIMEOUT_S = 120
 # The user's login shell from the user database, not $SHELL, which launchd doesn't set.
 LOGIN_SHELL = pwd.getpwuid(os.getuid()).pw_shell or "/bin/sh"
@@ -78,8 +78,9 @@ def load_config() -> None:
         raise RuntimeError(f"can't parse {CONFIG_FILE}: {e}")
     if not parser.has_section("poll_gh"):
         raise no_section
-    config = parser["poll_gh"]
-    missing = [key for key in REQUIRED_SETTINGS if not config.get(key)]
+    defaults = PLATFORM_DEFAULTS.get(sys.platform, {})
+    config = {key: parser["poll_gh"].get(key) or defaults.get(key) for key in REQUIRED_SETTINGS}
+    missing = [key for key, value in config.items() if not value]
     if missing:
         raise RuntimeError(f"{CONFIG_FILE} is missing: {', '.join(missing)}")
     GH = os.path.expanduser(config["gh"])
@@ -197,10 +198,6 @@ def seen_line(item: dict, status: str) -> str:
     return "\t".join(fields) + "\n"
 
 
-class SkipCheck(Exception):
-    """Raised by a healthcheck that doesn't apply on this platform."""
-
-
 def healthcheck() -> int:
     """Check each dependency the poller needs, print PASS/FAIL per check."""
 
@@ -248,19 +245,6 @@ def healthcheck() -> int:
             raise RuntimeError(f"{SEEN_FILE.parent} not writable")
         return "seeded" if SEEN_FILE.exists() else "not seeded yet (first run will seed)"
 
-    def check_scheduler() -> str:
-        if sys.platform == "darwin":
-            if not PLIST.exists():
-                raise RuntimeError(f"missing {PLIST}; see README.md")
-            if run(["launchctl", "list", LAUNCHD_LABEL]).returncode != 0:
-                raise RuntimeError(f"not loaded; run: launchctl load {PLIST}")
-            return f"launchd job {LAUNCHD_LABEL} loaded"
-        if shutil.which("systemctl"):
-            if run(["systemctl", "--user", "is-active", SYSTEMD_TIMER]).returncode != 0:
-                raise RuntimeError(f"not active; see README.md, then: systemctl --user enable --now {SYSTEMD_TIMER}")
-            return f"systemd {SYSTEMD_TIMER} active"
-        raise SkipCheck("no launchd or systemd; schedule this script yourself")
-
     checks = [
         ("python >= 3.9", lambda: require(sys.version_info >= (3, 9), sys.version.split()[0], sys.version)),
         ("config", lambda: load_config() or str(CONFIG_FILE)),
@@ -272,28 +256,58 @@ def healthcheck() -> int:
         (f"claude -p via login shell ({LOGIN_SHELL})", check_claude_headless),
         ("skill_dir", check_skill),
         ("state dir", check_state_dir),
-        ("scheduler", check_scheduler),
     ]
-    failed = skipped = 0
+    failed = 0
     for name, check in checks:
         try:
             print(f"PASS  {name}: {check()}")
-        except SkipCheck as e:
-            skipped += 1
-            print(f"SKIP  {name}: {e}")
         except Exception as e:
             failed += 1
             print(f"FAIL  {name}: {e}")
             if name.startswith(("python", "config")):
                 print("\nStopping: the remaining checks need this one to pass.")
                 return 1
-    print(f"\n{len(checks) - failed - skipped} passed, {failed} failed, {skipped} skipped")
+    print(f"\n{len(checks) - failed} passed, {failed} failed")
     return 1 if failed else 0
+
+
+def debug(pr_url: str) -> int:
+    """Print every seen_ids record for `pr_url` and whether it was relayed to Claude."""
+    if not SEEN_FILE.exists():
+        print(f"{SEEN_FILE} doesn't exist yet; the poller hasn't run")
+        return 1
+    pr_url = pr_url.rstrip("/")
+    records = [line.split("\t") for line in SEEN_FILE.read_text().splitlines()]
+    records = [r for r in records if len(r) >= 6 and r[2] == pr_url]
+    if not records:
+        print(f"No feedback seen on {pr_url}")
+        return 1
+
+    def outcome(status: str) -> str:
+        action, _, session = status.partition(":")
+        return {
+            "seeded": "not relayed: already there on the first run",
+            "no-session": "not relayed: no Claude session on the PR's repo + branch",
+            "dry-run": f"not relayed: dry run, would have sent to {session}",
+            "relayed": f"OK: relayed to {session}",
+            "error": "FAILED: relay to Claude errored; see the scheduler log",
+        }.get(action, status)
+
+    print(f"{len(records)} reviews/comments seen on {pr_url}:\n")
+    for _id, time, _url, kind, author, status in (r[:6] for r in records):
+        print(f"{time}  {kind:<7}  {author:<20}  {outcome(status)}")
+    return 0
 
 
 def main() -> int:
     if "--healthcheck" in sys.argv:
         return healthcheck()
+    if "--debug" in sys.argv:
+        i = sys.argv.index("--debug")
+        if i + 1 >= len(sys.argv):
+            print("usage: main.py --debug PR_URL")
+            return 2
+        return debug(sys.argv[i + 1])
 
     try:
         load_config()

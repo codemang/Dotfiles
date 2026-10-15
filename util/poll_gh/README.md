@@ -1,11 +1,12 @@
-# poll_gh
+# Github Comments Trigger for Claude
 
-Polls GitHub for new reviews and comments on your open PRs. When one arrives, it tells
-the local Claude Code session working on that PR's branch to address it.
+A script that polls GitHub for new reviews and comments on your open PRs. When
+one arrives, it tells the local Claude Code session working on that PR's branch
+to address it.
 
 ## Requirements
 
-- [`gh`](https://cli.github.com/), logged in to your GitHub host
+- The Github CLI client - [`gh`](https://cli.github.com/)
     - For Mac: `brew install gh`
     - For WSL:
         ```
@@ -17,28 +18,40 @@ the local Claude Code session working on that PR's branch to address it.
         && sudo apt update \
         && sudo apt install gh -y
         ```
-    - Once installed, run `gh auth login`
+    - Once installed, run `gh auth login` and fill in the instructions as follows:
+        ```
+        ? Where do you use GitHub? Other
+        ? Hostname: bbgithub.dev.bloomberg.com
+        ? What is your preferred protocol for Git operations on this host? HTTPS
+        ? Authenticate Git with your GitHub credentials? Yes
+        ? How would you like to authenticate GitHub CLI? Login with a web browser
+        ```
+    - Then follow the instructions to open github and verify your identity with an auth code.
+    - Test your connection via `gh auth status`
 
-- A skill for addressing PR feedback, e.g. `~/.claude/skills/address-pr-feedback/SKILL.md`
+
+- A skill for addressing PR feedback, e.g. `~/.claude/skills/address-pr-feedback/SKILL.md`.
+    - If you already have a skill that you want triggered whenever PR comments come in, great! We'll show you how to configure that below.
+    - If you don't yet have a skill, we've included a sample one that works well (more below).
 
 ## Setup
 
 1. Clone this repo and navigate to it.
-1. Create a skill for addressing feedback, e.g.
-    1. `mkdir -p ~/.claude/skills/address-pr-feedback`
-    1. `cp sample_address_pr_feedback_skill.md > ~/.claude/skills/address-pr-feedback/SKILL.md`
 
-1. Create your config from the template:
+1. Create a skill that will be triggered in Claude to handle the PR comments. If you want to use the repo-supplied skill, do:
+    ```
+    mkdir -p ~/.claude/skills/address-pr-feedback
+    cp sample_address_pr_feedback_skill.md ~/.claude/skills/address-pr-feedback/SKILL.md
+    ``````
+
+1. Create the script config from the template:
 
    ```sh
-   mkdir -p ~/.config/poll_gh
-   cp config.template.ini ~/.config/poll_gh/config.ini
+   cp config.template.ini config.ini
    ```
 
-1. Update the config file `~/.config/poll_gh/config.ini` you just created with the correct values. There are 3 values to update:
-    1. The path to the `gh` executable, typical examples are included in the config file.
-    1. The path to the `claude` executable, typical examples are included in the config file.
-    1. The path to the claude skill directory that you want to execute, e.g `~/.claude/skills/address-pr-feedback`. You must create this!
+1. Update the `config.ini` you just created (it's gitignored):
+    1. Set `skill_dir` to the claude skill directory that you want to execute, e.g `~/.claude/skills/address-pr-feedback`. You must create this!
 
 1. Check that everything is set up:
 
@@ -46,20 +59,17 @@ the local Claude Code session working on that PR's branch to address it.
    ./main.py --healthcheck
    ```
 
-   Every line should say `PASS` (or `SKIP`). Each `FAIL` says what to fix.
+   Every line should say `PASS`. Each `FAIL` says what to fix.
 
-1. Schedule it to run every 10 seconds (see below).
+**At this point, the script is able to read PR comments from Github and
+interact with local Claude instances. You now need to schedule it to run every
+10 seconds.**
 
 ## Scheduling
 
-Run the commands below from this directory. Schedulers start with a bare `PATH`, so
-they bake in the full path to your current `python3` rather than relying on the
-`#!/usr/bin/env python3` shebang. That way the scheduler uses the same Python the
-healthcheck passed with.
-
 ### macOS (launchd)
 
-Write the plist (the healthcheck looks for the label `com.$USER.poll_gh`):
+Write the plist:
 
 ```sh
 cat > ~/Library/LaunchAgents/com.$USER.poll_gh.plist <<EOF
@@ -95,13 +105,12 @@ launchctl load ~/Library/LaunchAgents/com.$USER.poll_gh.plist
 
 ### Linux / WSL (systemd)
 
-1. Make sure systemd is running: `systemctl --user status` should work. On WSL, if it
-   doesn't, add this to `/etc/wsl.conf`, then run `wsl --shutdown` from Windows:
-
-   ```ini
-   [boot]
-   systemd=true
-   ```
+1. Make sure systemd is running: `systemctl --user status` should work.
+    1. **If it doesn't**, add this to `/etc/wsl.conf`, then run `wsl --shutdown` from Windows:
+       ```ini
+       [boot]
+       systemd=true
+       ```
 
 2. Write the service and timer:
 
@@ -136,34 +145,33 @@ launchctl load ~/Library/LaunchAgents/com.$USER.poll_gh.plist
    systemctl --user enable --now poll_gh.timer
    ```
 
-Logs go to the journal: `journalctl --user -u poll_gh -f`.
+## Troubleshooting
 
-`Type=oneshot` means a slow run delays the next one instead of overlapping it. On WSL,
-the timer only runs while WSL does; WSL shuts down shortly after its last terminal
-closes. That's fine, since the Claude sessions it relays to live in WSL too.
-
-## Usage
+If Github comments are not triggering Claude to address them, you can run the debug script:
 
 ```sh
-./main.py                # poll once and relay new feedback
-./main.py --dry-run      # poll once, log what would be relayed, send nothing
-./main.py --healthcheck  # check dependencies and config, then exit
+./main.py --debug <PR_URL>
 ```
 
-To re-send feedback for a PR, delete its lines from `seen_ids`:
+This will print a list of events and actions that have been seen by the script.
+This typically highlights whatever the issue is, which can include:
 
-```sh
-grep -v pull/668 ~/.local/state/poll_gh/seen_ids > /tmp/seen && mv /tmp/seen ~/.local/state/poll_gh/seen_ids
-```
+1. Is there a Claude instance running locally on the same branch as the PR that
+   has comments? If not, there is no Claude instance to send instructions to.
+
+1. Is the script healthy? Run `./main.py --healthcheck` to confirm.
+
+If you'd like to see the raw log of events the script has processed, they can be found at `~/.local/state/poll_gh/seen_ids`.
 
 ## How it works
 
 1. Every run, `main.py` fetches your open PRs and their reviews/comments with `gh api graphql`.
-2. Anything not already listed in `~/.local/state/poll_gh/seen_ids` is new. Your own
-   comments and unsubmitted reviews are ignored.
+1. For every PR feedback (i.e a collection of comments from a single
+   commenter), a deterministic unique ID is generated.
+1. Feedback IDs that have already been sent to Claude are stored in
+   `~/.local/state/poll_gh/seen_ids`, to prevent re-processing the same
+feedback over and over.
 3. For each PR with new feedback, it finds the most recently started Claude session
    whose working directory is on the PR's repo and branch (`claude agents --json`).
 4. It runs a headless `claude -p` that sends that session a message asking it to use
    your PR-feedback skill.
-
-The first run only records existing feedback, so you won't get a flood of old comments.

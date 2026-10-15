@@ -1,3 +1,4 @@
 .oh-my-zsh
 .color-scheme-env
 /dotfiles/nvim/plugin/packer_compiled.lua
+util/poll_gh/config.ini
