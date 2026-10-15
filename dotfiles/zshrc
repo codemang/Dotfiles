@@ -28,4 +28,7 @@ source $DOTFILES/zsh/docker.zsh
 source $DOTFILES/shell_scripts/notes.sh
 source $DOTFILES/zsh/misc.zsh
 
+# Allow certain utils to be called with no path, e.g `claude_notif`
+export PATH=$PATH:$DOTFILES/util
+
 [ -f ~/.private_scripts.zsh ] && source ~/.private_scripts.zsh
