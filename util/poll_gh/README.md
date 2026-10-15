@@ -44,6 +44,14 @@ to address it.
     cp sample_address_pr_feedback_skill.md ~/.claude/skills/address-pr-feedback/SKILL.md
     ``````
 
+    **The sample skill will determine if the comments are from pr-review-bot.
+    If it is, it will address the feedback, commit and push the changes,
+    respond and resolve the comments, and re-request the pr-review-bot. This
+    leads to a fully autonomous loop of your local Claude and the pr-review-bot
+    working together to perfect the PR until it's ready.**
+
+    **If the comments are from a human, it will address the comments locally but not commit/push anything.**
+
 1. Create the script config from the template:
 
    ```sh
