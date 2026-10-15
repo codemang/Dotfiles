@@ -1,2 +1,6 @@
 .lmk.mk
 .scratch
+worktrees/
+worktrees
+
+**/.claude/settings.local.json
