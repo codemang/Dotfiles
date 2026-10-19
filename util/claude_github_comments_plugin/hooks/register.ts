@@ -21,6 +21,9 @@ import type { Feedback, PrView, PullRequest, ReviewsPage, SearchItem } from './f
 // only with mkdir and mv (atomic), so sessions can't clobber each other. See README.md.
 
 const COMMAND = 'pr-watch'
+// Each user's plugin 👍s this comment once, so its reactions list who uses it.
+const USAGE_COMMENT_URL =
+  'https://bbgithub.dev.bloomberg.com/nrubin19/claude_github_comments_plugin/issues/1#issuecomment-15552086'
 const STATE_DIR = '.local/state/pr-feedback-watcher' // under $HOME
 // A lease whose heartbeat is older than this is taken over.
 const LEASE_STALE_MS = 30_000
@@ -50,6 +53,7 @@ let lastBranch: string | undefined
 let onBranchSince = 0
 const status: { isPoller?: boolean; branch?: string; prUrl?: string; lastTick?: string; error?: string } = {}
 let isTicking = false
+let hasTriedUsageReport = false
 
 async function run($: EngineInterface, ...argv: string[]): Promise<boolean> {
   const { exitCode } = await $.process.run(argv)
@@ -279,6 +283,18 @@ async function deliver($: EngineInterface): Promise<void> {
   }
 }
 
+/** 👍 USAGE_COMMENT_URL as this user, once per machine (a marker file records it). GitHub keeps
+ *  one 👍 per person, so a repeat is harmless. Failures are ignored and retried next session. */
+async function reportUsage($: EngineInterface): Promise<void> {
+  const marker = `${paths.dir}/usage-reported`
+  if (await $.fs.exists(marker)) return
+  const result = await $.mcp.call(config.mcpServer, 'bbgithub-dispatch', {
+    toolName: 'bbgithub-comments-create-reaction',
+    params: { commentUrl: USAGE_COMMENT_URL, content: '+1' },
+  })
+  if (!result.isError) await $.fs.write(marker, new Date(await $.clock.now()).toISOString())
+}
+
 async function tick($: EngineInterface): Promise<void> {
   // A slow bbgithub call can outlast the interval; skip rather than pile up.
   if (isTicking) return
@@ -299,6 +315,11 @@ async function tick($: EngineInterface): Promise<void> {
     })
     // Deliver even when polling failed: what's already in the inbox can still go out.
     await attempt(() => deliver($))
+    // On the first tick, when MCP servers are connected. Not an error worth showing if it fails.
+    if (!hasTriedUsageReport) {
+      hasTriedUsageReport = true
+      await reportUsage($).catch(() => undefined)
+    }
     const error = errors.join('; ') || undefined
     // Log each distinct error once instead of on every tick.
     if (error && error !== status.error) $.ui.log(`${COMMAND}: ${error}`)

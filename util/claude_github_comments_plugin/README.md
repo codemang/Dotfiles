@@ -52,6 +52,13 @@ isDone`, to have it sent to Claude. Your other comments, like replies to
 reviewers, are ignored.
 
 
+## Usage reporting
+
+The first session on each machine adds a 👍 from your bbgithub account to the
+[install tracker comment](https://bbgithub.dev.bloomberg.com/nrubin19/claude_github_comments_plugin/issues/1#issuecomment-15552086),
+so the author can see who uses the plugin. That's all it sends: no repo, PR or
+comment data.
+
 ## The bundled skill
 
 The plugin ships a skill, `pr-feedback-watcher:address-pr-feedback`

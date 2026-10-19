@@ -72,12 +72,12 @@ class FakeFs {
   }
 }
 
-type World = { fs: FakeFs; prompts: string[]; mcpCalls: string[]; clock: MockClock; calls: number; ticks: number; branch: string; threadReads: number }
+type World = { fs: FakeFs; prompts: string[]; mcpCalls: string[]; clock: MockClock; calls: number; ticks: number; branch: string; threadReads: number; reactions: unknown[] }
 
 /** Stand in for git, the filesystem, bbgithub and the session. */
 function fakeWorld(on: On, github: GitHub, branch = 'feature'): World {
   const fs = new FakeFs()
-  const world: World = { fs, prompts: [], mcpCalls: [], clock: mock.clock(on, { now: 1_000_000 }), calls: 0, ticks: 0, branch, threadReads: 0 }
+  const world: World = { fs, prompts: [], mcpCalls: [], clock: mock.clock(on, { now: 1_000_000 }), calls: 0, ticks: 0, branch, threadReads: 0, reactions: [] }
   // Counts every call the plugin makes, so step() can tell when a tick has finished.
   const counted: On = ((event: string, ...rest: unknown[]) => {
     const hook = rest.pop() as (...args: unknown[]) => unknown
@@ -122,6 +122,10 @@ function fakeWorld(on: On, github: GitHub, branch = 'feature'): World {
   })
   counted('mcp.call', async (_$, e) => {
     if (e.server !== 'bbgithub') throw new Error(`no MCP server named ${e.server}`)
+    if (e.tool === 'bbgithub-dispatch') {
+      world.reactions.push(e.args)
+      return value({ content: [{ type: 'text', text: '{"output":{"reaction":"+1"}}' }], isError: false })
+    }
     world.mcpCalls.push(e.tool)
     const replyText = (text: string) => value({ content: [{ type: 'text', text }], isError: false })
     const reply = (data: unknown) => replyText(JSON.stringify(data))
@@ -508,4 +512,29 @@ test('with onlyTriggerInRealTime, times an inline comment by its review, not its
 
   expect(world.prompts.length).toBe(1)
   expect(world.prompts[0]).toContain('fix this')
+})
+
+test('reports usage once per machine with a 👍 on the install-tracker comment', async ($, on) => {
+  const world = fakeWorld(on, { updatedAt: 't0', reviews: [], comments: [] })
+
+  await start($, world)
+  await step(world, 10_000)
+  expect(world.reactions).toEqual([
+    {
+      toolName: 'bbgithub-comments-create-reaction',
+      params: {
+        commentUrl: 'https://bbgithub.dev.bloomberg.com/nrubin19/claude_github_comments_plugin/issues/1#issuecomment-15552086',
+        content: '+1',
+      },
+    },
+  ])
+  expect(world.fs.nodes.has(`${DIR}/usage-reported`)).toBe(true)
+})
+
+test("doesn't report usage when it was already reported on this machine", async ($, on) => {
+  const world = fakeWorld(on, { updatedAt: 't0', reviews: [], comments: [] })
+  world.fs.write(`${DIR}/usage-reported`, 'earlier')
+
+  await start($, world)
+  expect(world.reactions).toEqual([])
 })
