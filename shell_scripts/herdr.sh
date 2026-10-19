@@ -1,0 +1,70 @@
+#!/bin/bash
+
+# Open a GitHub PR for review in a new Herdr workspace.
+#
+# Finds the local clone with z, checks the PR branch out into a git worktree
+# inside the clone (<repo>/worktrees/<branch>), and opens a workspace with
+# nvim on the left, a shell top-right, and claude bottom-right.
+#
+# Usage: review_pr <pr_url>
+review_pr() {
+  local url=$1
+  if [[ -z "$url" ]]; then
+    echo "Usage: review_pr <pr_url>" >&2
+    return 1
+  fi
+
+  local repo
+  repo=$(sed -E 's#^https?://[^/]+/[^/]+/([^/]+)/pull/[0-9]+.*#\1#' <<< "$url")
+  if [[ "$repo" == "$url" ]]; then
+    echo "review_pr: not a PR URL: $url" >&2
+    return 1
+  fi
+
+  local branch
+  branch=$(gh pr view "$url" --json headRefName --jq .headRefName) || return 1
+
+  # Walk z's matches from best to worst and take the first one that's a clone
+  # of the repo. Resolve worktrees back to their main clone.
+  local repo_dir="" candidate common_dir
+  while read -r candidate; do
+    common_dir=$(git -C "$candidate" rev-parse --path-format=absolute --git-common-dir 2>/dev/null) || continue
+    candidate=$(dirname "$common_dir")
+    if git -C "$candidate" remote -v | grep -qE "[/:][^/]+/$repo(\.git)?[[:space:]]"; then
+      repo_dir=$candidate
+      break
+    fi
+  done < <(_z -l "$repo" 2>&1 | sort -rn | awk '{ $1 = ""; sub(/^ /, ""); print }')
+
+  if [[ -z "$repo_dir" ]]; then
+    echo "review_pr: couldn't find a local clone of '$repo' with z" >&2
+    return 1
+  fi
+
+  local worktree_dir
+  worktree_dir="$repo_dir/worktrees/${branch//\//-}"
+
+  # Keep the worktrees out of the main clone's 'git status'.
+  local exclude_file="$repo_dir/.git/info/exclude"
+  grep -qxF '/worktrees/' "$exclude_file" 2>/dev/null || echo '/worktrees/' >> "$exclude_file"
+
+  if [[ ! -d "$worktree_dir" ]]; then
+    git -C "$repo_dir" worktree add --detach "$worktree_dir" || return 1
+  fi
+
+  # 'gh pr checkout' adds the fork's remote if needed. Rerunning it on an
+  # existing worktree pulls the latest commits.
+  cd "$worktree_dir" || return 1
+  gh pr checkout "$url" || return 1
+
+  local left_pane top_right_pane bottom_right_pane
+  left_pane=$(herdr workspace create --cwd "$worktree_dir" --label "PR Review: $branch" --focus \
+    | jq -r .result.root_pane.pane_id) || return 1
+  top_right_pane=$(herdr pane split "$left_pane" --direction right --cwd "$worktree_dir" --no-focus \
+    | jq -r .result.pane.pane_id) || return 1
+  bottom_right_pane=$(herdr pane split "$top_right_pane" --direction down --cwd "$worktree_dir" --no-focus \
+    | jq -r .result.pane.pane_id) || return 1
+
+  herdr pane run "$left_pane" nvim > /dev/null
+  herdr pane run "$bottom_right_pane" claude > /dev/null
+}

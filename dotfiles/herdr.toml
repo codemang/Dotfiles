@@ -1,0 +1,86 @@
+# Herdr port of tmux.conf. Herdr isn't tmux, so some settings are approximate.
+# Print every available option with 'herdr --default-config'.
+
+# Skip the first-run notification setup.
+onboarding = false
+
+[terminal]
+# New panes, tabs, and workspaces start in the current pane's directory
+# (tmux: -c '#{pane_current_path}').
+new_cwd = "follow"
+
+[keys]
+# Use 'Ctrl-a' as the prefix since it's easier to reach than 'Ctrl-b'.
+prefix = "ctrl+a"
+
+# prefix + r: Reload the config. Resize mode moves to prefix + R.
+reload_config = "prefix+r"
+resize_mode = "prefix+shift+r"
+
+# prefix + '\': Split the current pane vertically.
+split_vertical = "prefix+backslash"
+
+# prefix + '-': Split the current pane horizontally.
+split_horizontal = "prefix+minus"
+
+# prefix + Shift-H/J/K/L: Resize panes.
+resize_pane_left = "prefix+shift+h"
+resize_pane_down = "prefix+shift+j"
+resize_pane_up = "prefix+shift+k"
+resize_pane_right = "prefix+shift+l"
+
+# prefix + s: Fuzzy-find workspaces (Herdr's version of tmux sessions).
+# Settings move to prefix + comma.
+workspace_picker = "prefix+s"
+settings = "prefix+comma"
+
+# prefix + [: Open the scrollback in $EDITOR (closest thing to vi copy-mode).
+edit_scrollback = "prefix+["
+
+# Move between panes with ctrl + h/j/k/l (uses Vim movement). Works even if a
+# pane has Vim open.
+[[keys.command]]
+key = "ctrl+h"
+type = "shell"
+command = "$HOME/Dotfiles/util/herdr_navigate.sh left ctrl+h"
+
+[[keys.command]]
+key = "ctrl+j"
+type = "shell"
+command = "$HOME/Dotfiles/util/herdr_navigate.sh down ctrl+j"
+
+[[keys.command]]
+key = "ctrl+k"
+type = "shell"
+command = "$HOME/Dotfiles/util/herdr_navigate.sh up ctrl+k"
+
+[[keys.command]]
+key = "ctrl+l"
+type = "shell"
+command = "$HOME/Dotfiles/util/herdr_navigate.sh right ctrl+l"
+
+# prefix + Ctrl-l: Restore 'clear screen'.
+[[keys.command]]
+key = "prefix+ctrl+l"
+type = "shell"
+command = "herdr pane send-keys \"$(herdr pane current | jq -r .result.pane.pane_id)\" ctrl+l"
+
+[[keys.command]]
+key = "prefix+k"
+type = "plugin_action"
+command = "herdr-bar.open"
+description = "command bar"
+
+[ui]
+# Create tabs immediately, like tmux's new-window.
+prompt_new_tab_name = false
+
+# Hide the tab row unless there's more than one tab (tmux: status off).
+hide_tab_bar_when_single_tab = true
+
+# tmux-style borders: thin shared dividers, no outer frame.
+pane_outer_borders = false
+pane_gaps = false
+
+# Active pane border color.
+accent = "#af005f"
