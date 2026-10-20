@@ -30,6 +30,12 @@ const LEASE_STALE_MS = 30_000
 const PER_PAGE = 100
 // After a PR fails to read, wait this long before trying it again.
 const RETRY_FAILED_PR_MS = 5 * 60_000
+// A bbgithub call still running after this long counts as failed (one once hung for 18 min).
+const MCP_TIMEOUT_MS = 60_000
+// Errors go to errors.log, never the transcript; it's moved to errors.log.1 past this size.
+const ERROR_LOG_MAX_BYTES = 256 * 1024
+// An error lasting this long also shows on the status line, until it clears.
+const STATUS_LINE_AFTER_MS = 3 * 60_000
 // Stops paging through a PR's reviews/comments after this many pages.
 const MAX_PAGES = 10
 
@@ -45,7 +51,7 @@ const config = {
   intervalMs: 10_000,
   isRealTimeOnly: false,
 }
-const paths = { dir: '', lock: '', heartbeat: '', prs: '' }
+const paths = { dir: '', lock: '', heartbeat: '', prs: '', errorLog: '' }
 let sessionId = ''
 let version = ''
 let startedAt = 0
@@ -53,7 +59,16 @@ let startedAt = 0
 // onlyTriggerInRealTime, feedback posted before onBranchSince is skipped.
 let lastBranch: string | undefined
 let onBranchSince = 0
-const status: { isPoller?: boolean; branch?: string; prUrl?: string; lastTick?: string; error?: string } = {}
+const status: {
+  isPoller?: boolean
+  branch?: string
+  prUrl?: string
+  lastTick?: string
+  error?: string
+  // When the current run of errors started (ms), and whether the status line shows it.
+  errorSince?: number
+  isOnStatusLine?: boolean
+} = {}
 let isTicking = false
 let hasTriedUsageReport = false
 // PRs that failed to read: when to retry each, and the error to keep showing until then.
@@ -122,7 +137,12 @@ async function releaseLease($: EngineInterface): Promise<void> {
 
 /** Call a bbgithub MCP tool and parse its JSON reply. */
 async function mcp<T>($: EngineInterface, tool: string, args: Record<string, unknown>): Promise<T> {
-  const result = await $.mcp.call(config.mcpServer, tool, args)
+  const abort = new AbortController()
+  const timeout = $.clock.sleep(MCP_TIMEOUT_MS, { signal: abort.signal }).then(() => 'timeout' as const)
+  const result = await Promise.race([$.mcp.call(config.mcpServer, tool, args), timeout])
+  abort.abort()
+  timeout.catch(() => undefined)
+  if (result === 'timeout') throw new Error(`${tool} didn't answer within ${MCP_TIMEOUT_MS / 1000}s`)
   const text = result.content.map(block => block.text ?? '').join('')
   if (result.isError) throw new Error(`${tool} failed: ${text.slice(0, 300)}`)
   try {
@@ -322,6 +342,34 @@ async function reportUsage($: EngineInterface): Promise<void> {
   if (!result.isError) await $.fs.write(marker, new Date(await $.clock.now()).toISOString())
 }
 
+/** Append a line to errors.log. `>>` appends in one write, so sessions logging at the same
+ *  moment don't clobber each other's lines. */
+async function logError($: EngineInterface, line: string): Promise<void> {
+  const stamp = new Date(await $.clock.now()).toISOString()
+  await $.process.run(['/bin/sh', '-c', 'printf \'%s\\n\' "$1" >> "$2"', 'sh', `${stamp} session ${sessionId}: ${line}`, paths.errorLog])
+  const size = await $.fs.stat(paths.errorLog).then(s => s.size, () => 0)
+  if (size > ERROR_LOG_MAX_BYTES) await run($, 'mv', '-f', paths.errorLog, `${paths.errorLog}.1`)
+}
+
+/** Record this tick's error (or its absence): errors.log on each change, the status line once
+ *  an error has lasted STATUS_LINE_AFTER_MS. Nothing goes to the transcript. */
+async function reportError($: EngineInterface, error: string | undefined): Promise<void> {
+  const now = await $.clock.now()
+  if (error !== status.error) await logError($, error ?? 'cleared')
+  if (!error) {
+    status.errorSince = undefined
+    if (status.isOnStatusLine) $.ui.status(undefined)
+    status.isOnStatusLine = false
+  } else {
+    status.errorSince ??= now
+    if (now - status.errorSince >= STATUS_LINE_AFTER_MS) {
+      $.ui.status(`${COMMAND}: ⚠ ${error.slice(0, 60)}${error.length > 60 ? '…' : ''} (see /pr-watch)`)
+      status.isOnStatusLine = true
+    }
+  }
+  status.error = error
+}
+
 async function tick($: EngineInterface): Promise<void> {
   // A slow bbgithub call can outlast the interval; skip rather than pile up.
   if (isTicking) return
@@ -347,11 +395,7 @@ async function tick($: EngineInterface): Promise<void> {
       hasTriedUsageReport = true
       await reportUsage($).catch(() => undefined)
     }
-    const error = errors.join('; ') || undefined
-    // Log each distinct error once instead of on every tick.
-    if (error && error !== status.error) $.ui.log(`${COMMAND}: ${error}`)
-    if (!error && status.error) $.ui.log(`${COMMAND}: recovered`)
-    status.error = error
+    await reportError($, errors.join('; ') || undefined).catch(() => undefined)
   } finally {
     isTicking = false
   }
@@ -375,6 +419,7 @@ async function describe($: EngineInterface): Promise<string> {
     `State: ${paths.dir}`,
   ]
   if (status.error) lines.push(`Error: ${status.error}`)
+  lines.push(`Error log: ${paths.errorLog}`)
   if (status.prUrl) {
     const h = await hash(status.prUrl)
     const waiting = await $.fs.list(`${paths.dir}/inbox/${h}`).catch(() => [])
@@ -405,6 +450,7 @@ export const register: Register = (on, options) => {
     paths.lock = `${paths.dir}/poller.lock`
     paths.heartbeat = `${paths.lock}/heartbeat`
     paths.prs = `${paths.dir}/prs.json`
+    paths.errorLog = `${paths.dir}/errors.log`
     sessionId = await $.session.id()
     startedAt = await $.clock.now()
     const manifest = await readJson<{ version?: string }>($, `${$.plugin.root}/.claude-plugin/plugin.json`)

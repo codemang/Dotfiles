@@ -76,8 +76,13 @@ it. It uses the bbgithub MCP tools and follows these rules:
 
 Run `/pr-watch`. It shows the branch, the matched PR, which session is the
 poller, the last error, how many items are waiting in the inbox, and the last
-10 delivered. Errors also appear once in the transcript as a dim `pr-watch:`
-line.
+10 delivered.
+
+Errors never go to the transcript. Each time one starts or clears, a line goes
+to `~/.local/state/pr-feedback-watcher/errors.log` (moved to `errors.log.1`
+past 256 KB). An error that lasts over 3 minutes also shows on the status line
+until it clears. A bbgithub call that hasn't answered within 60 seconds counts
+as failed.
 
 Common causes:
 

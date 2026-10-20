@@ -24,6 +24,9 @@ type GitHub = {
   oversized?: 'tokens' | 'bytes' | 'partial'
   // Also list a second open PR (#8) whose pr-read returns non-JSON text.
   hasBrokenPr?: boolean
+  // Make the search fail with this error, or never answer.
+  searchError?: string
+  isSearchHung?: boolean
 }
 
 /** A folder tree in memory: a path maps to file text, or to null for a folder. */
@@ -73,12 +76,12 @@ class FakeFs {
   }
 }
 
-type World = { fs: FakeFs; prompts: string[]; mcpCalls: string[]; clock: MockClock; calls: number; ticks: number; branch: string; threadReads: number; reactions: unknown[]; prReads: number[] }
+type World = { fs: FakeFs; prompts: string[]; mcpCalls: string[]; clock: MockClock; calls: number; ticks: number; branch: string; threadReads: number; reactions: unknown[]; prReads: number[]; transcriptLines: string[]; statusLine?: string }
 
 /** Stand in for git, the filesystem, bbgithub and the session. */
 function fakeWorld(on: On, github: GitHub, branch = 'feature'): World {
   const fs = new FakeFs()
-  const world: World = { fs, prompts: [], mcpCalls: [], clock: mock.clock(on, { now: 1_000_000 }), calls: 0, ticks: 0, branch, threadReads: 0, reactions: [], prReads: [] }
+  const world: World = { fs, prompts: [], mcpCalls: [], clock: mock.clock(on, { now: 1_000_000 }), calls: 0, ticks: 0, branch, threadReads: 0, reactions: [], prReads: [], transcriptLines: [] }
   // Counts every call the plugin makes, so step() can tell when a tick has finished.
   const counted: On = ((event: string, ...rest: unknown[]) => {
     const hook = rest.pop() as (...args: unknown[]) => unknown
@@ -92,7 +95,8 @@ function fakeWorld(on: On, github: GitHub, branch = 'feature'): World {
   counted('session.end', async (_$, e) => ({ sessionId: e.sessionId }))
   counted('session.id', async () => value('session-a'))
   counted('command.register', async (_$, e) => value({ command: e.name }))
-  counted('ui.log', async () => value(undefined))
+  counted('ui.log', async (_$, e) => (world.transcriptLines.push(JSON.stringify(e)), value(undefined)))
+  counted('ui.status', async (_$, e) => ((world.statusLine = (e as { text?: string }).text), value(undefined)))
   counted('prompt.submit', async (_$, e) => {
     world.prompts.push(e.text)
     return { text: e.text }
@@ -102,6 +106,12 @@ function fakeWorld(on: On, github: GitHub, branch = 'feature'): World {
     // Every tick reads the branch once.
     if (cmd === 'git branch') return world.ticks++, ran(0, `${world.branch}\n`)
     if (cmd === 'git remote') return ran(0, 'origin\tgit@bbgithub.dev.bloomberg.com:me/repo.git (fetch)\n')
+    // errors.log appends: sh -c 'printf ... >> "$2"' sh <line> <file>
+    if (e.argv[0] === '/bin/sh') {
+      const [, , , , line = '', file = ''] = e.argv
+      fs.write(file, (fs.nodes.get(file) ?? '') + `${line}\n`)
+      return ran(0)
+    }
     return ran(fs.run(e.argv))
   })
   counted('fs.read', async (_$, e) => {
@@ -131,6 +141,10 @@ function fakeWorld(on: On, github: GitHub, branch = 'feature'): World {
     if (e.tool === 'bbgithub-pr-read') world.prReads.push(Number(e.args.pullNumber))
     const replyText = (text: string) => value({ content: [{ type: 'text', text }], isError: false })
     const reply = (data: unknown) => replyText(JSON.stringify(data))
+    if (e.tool === 'bbgithub-search-issues-and-pull-requests' && github.isSearchHung) return new Promise<never>(() => {})
+    if (e.tool === 'bbgithub-search-issues-and-pull-requests' && github.searchError) {
+      return value({ content: [{ type: 'text', text: github.searchError }], isError: true })
+    }
     if (e.tool === 'bbgithub-search-issues-and-pull-requests') {
       const broken = github.hasBrokenPr ? [{ htmlUrl: BROKEN_PR_URL, updatedAt: github.updatedAt }] : []
       return reply({ items: [...broken, { htmlUrl: PR_URL, updatedAt: github.updatedAt }] })
@@ -591,4 +605,55 @@ test('retries a PR that failed only every 5 minutes, showing its error meanwhile
   // 5 minutes after the failure (start's tick was at 10s; we're at 70s), it's tried again.
   for (let i = 0; i < 24; i++) await step(world, 10_000)
   expect(brokenReads()).toBe(2)
+})
+
+const AUTH_ERROR = 'upstream connect: authentication required; run `forge auth login` first'
+
+test('logs errors to errors.log, never the transcript, and logs when they clear', async ($, on) => {
+  const github: GitHub = { updatedAt: 't0', reviews: [], comments: [], searchError: AUTH_ERROR }
+  const world = fakeWorld(on, github)
+
+  await start($, world)
+  for (let i = 0; i < 5; i++) await step(world, 10_000)
+  github.searchError = undefined
+  await step(world, 10_000)
+
+  expect(world.transcriptLines).toEqual([])
+  const log = world.fs.nodes.get(`${DIR}/errors.log`)!.trim().split('\n')
+  expect(log.length).toBe(2)
+  expect(log[0]).toContain(`session session-a: bbgithub-search-issues-and-pull-requests failed: ${AUTH_ERROR}`)
+  expect(log[1]).toContain('session session-a: cleared')
+})
+
+test('shows a lasting error on the status line, and clears it once things work', async ($, on) => {
+  const github: GitHub = { updatedAt: 't0', reviews: [], comments: [], searchError: AUTH_ERROR }
+  const world = fakeWorld(on, github)
+
+  await start($, world)
+  for (let i = 0; i < 6; i++) await step(world, 10_000)
+  expect(world.statusLine).toBeUndefined()
+  // 3 minutes after the first error.
+  for (let i = 0; i < 12; i++) await step(world, 10_000)
+  expect(world.statusLine).toContain('pr-watch: ⚠ bbgithub-search-issues-and-pull-requests failed')
+  expect(world.statusLine).toContain('(see /pr-watch)')
+
+  github.searchError = undefined
+  await step(world, 10_000)
+  expect(world.statusLine).toBeUndefined()
+})
+
+test("gives up on a bbgithub call that hasn't answered within 60s", async ($, on) => {
+  const github: GitHub = { updatedAt: 't0', reviews: [], comments: [], isSearchHung: true }
+  const world = fakeWorld(on, github)
+
+  await $.session.start({ cwd: '/repo', surface: 'terminal', isInteractive: true })
+  await world.clock.advance(10_000)
+  for (let i = 0; i < 200 && !world.mcpCalls.length; i++) await world.clock.settle()
+  expect(world.ticks).toBe(0)
+  // The tick is stuck on the search until the timeout; then it delivers and logs the error.
+  await world.clock.advance(60_000)
+  for (let i = 0; i < 2_000 && world.ticks === 0; i++) await world.clock.settle()
+  expect(world.ticks).toBe(1)
+  for (let i = 0; i < 2_000 && !world.fs.nodes.has(`${DIR}/errors.log`); i++) await world.clock.settle()
+  expect(world.fs.nodes.get(`${DIR}/errors.log`)).toContain("bbgithub-search-issues-and-pull-requests didn't answer within 60s")
 })
