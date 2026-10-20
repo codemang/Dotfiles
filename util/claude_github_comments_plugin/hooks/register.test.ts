@@ -19,8 +19,9 @@ type GitHub = {
   reviews: Node[]
   comments: Node[]
   threads?: Thread[]
-  // Answer pr-read the way Claude Code does when a reply is over its MCP output limit.
-  isOversized?: boolean
+  // Answer pr-read the way Claude Code does when a reply is over one of its size limits:
+  // 'tokens' (MCP token limit), 'bytes' (general size limit), or 'partial' (only part saved).
+  oversized?: 'tokens' | 'bytes' | 'partial'
   // Also list a second open PR (#8) whose pr-read returns non-JSON text.
   hasBrokenPr?: boolean
 }
@@ -72,12 +73,12 @@ class FakeFs {
   }
 }
 
-type World = { fs: FakeFs; prompts: string[]; mcpCalls: string[]; clock: MockClock; calls: number; ticks: number; branch: string; threadReads: number; reactions: unknown[] }
+type World = { fs: FakeFs; prompts: string[]; mcpCalls: string[]; clock: MockClock; calls: number; ticks: number; branch: string; threadReads: number; reactions: unknown[]; prReads: number[] }
 
 /** Stand in for git, the filesystem, bbgithub and the session. */
 function fakeWorld(on: On, github: GitHub, branch = 'feature'): World {
   const fs = new FakeFs()
-  const world: World = { fs, prompts: [], mcpCalls: [], clock: mock.clock(on, { now: 1_000_000 }), calls: 0, ticks: 0, branch, threadReads: 0, reactions: [] }
+  const world: World = { fs, prompts: [], mcpCalls: [], clock: mock.clock(on, { now: 1_000_000 }), calls: 0, ticks: 0, branch, threadReads: 0, reactions: [], prReads: [] }
   // Counts every call the plugin makes, so step() can tell when a tick has finished.
   const counted: On = ((event: string, ...rest: unknown[]) => {
     const hook = rest.pop() as (...args: unknown[]) => unknown
@@ -127,6 +128,7 @@ function fakeWorld(on: On, github: GitHub, branch = 'feature'): World {
       return value({ content: [{ type: 'text', text: '{"output":{"reaction":"+1"}}' }], isError: false })
     }
     world.mcpCalls.push(e.tool)
+    if (e.tool === 'bbgithub-pr-read') world.prReads.push(Number(e.args.pullNumber))
     const replyText = (text: string) => value({ content: [{ type: 'text', text }], isError: false })
     const reply = (data: unknown) => replyText(JSON.stringify(data))
     if (e.tool === 'bbgithub-search-issues-and-pull-requests') {
@@ -147,9 +149,17 @@ function fakeWorld(on: On, github: GitHub, branch = 'feature'): World {
         view: actions.includes('view') ? view : null,
         reviews: { reviews: github.reviews, comments: github.comments, reviewThreads: threads },
       }
-      if (!github.isOversized) return reply(data)
+      if (!github.oversized) return reply(data)
       const saved = `/home/me/.claude/projects/x/tool-results/mcp-bbgithub-pr-read-${world.calls}.txt`
-      fs.write(saved, JSON.stringify(data))
+      const text = JSON.stringify(data)
+      if (github.oversized === 'partial') {
+        fs.write(saved, text.slice(0, 50))
+        return replyText(`<persisted-output>Output exceeded the 64KB persist limit; only the first 64KB were saved to: ${saved}\n</persisted-output>`)
+      }
+      fs.write(saved, text)
+      if (github.oversized === 'bytes') {
+        return replyText(`<persisted-output>Output too large (68.3KB). Full output saved to: ${saved}\n\nPreview (first 2KB):\n${text.slice(0, 100)}\n</persisted-output>`)
+      }
       return replyText(
         `Error: result (148,576 characters) exceeds maximum allowed tokens. Output has been saved to ${saved}.\n` +
           'Format: JSON with schema: {...}\nUse jq to make structured queries (find a value, filter by field).',
@@ -432,7 +442,7 @@ test('with onlyTriggerInRealTime, skips feedback posted before a checkout onto t
 })
 
 test('reads replies over the MCP output limit from the file Claude Code saved them to', async ($, on) => {
-  const github: GitHub = { updatedAt: 't0', reviews: [], comments: [], isOversized: true }
+  const github: GitHub = { updatedAt: 't0', reviews: [], comments: [], oversized: 'tokens' }
   const world = fakeWorld(on, github)
 
   await start($, world)
@@ -537,4 +547,48 @@ test("doesn't report usage when it was already reported on this machine", async 
 
   await start($, world)
   expect(world.reactions).toEqual([])
+})
+
+test("reads replies over Claude Code's general size limit from the file it saved them to", async ($, on) => {
+  const github: GitHub = { updatedAt: 't0', reviews: [], comments: [], oversized: 'bytes' }
+  const world = fakeWorld(on, github)
+
+  await start($, world)
+  github.comments.push(comment(1, 'alice'))
+  github.updatedAt = 't1'
+  await step(world, 10_000)
+
+  expect(world.prompts.length).toBe(1)
+  expect(world.prompts[0]).toContain('Feedback from alice.')
+})
+
+test('says so when Claude Code saved only part of a reply', async ($, on) => {
+  const world = fakeWorld(on, { updatedAt: 't0', reviews: [], comments: [], oversized: 'partial' })
+
+  await start($, world)
+  const { text } = await $.command.run({
+    command: 'pr-watch', args: '', origin: { kind: 'composer' },
+    presentation: { isFullscreen: false, columns: 120 },
+  })
+  expect(text).toContain(`couldn't read ${PR_URL}: bbgithub-pr-read reply too large: Claude Code saved only part of it`)
+})
+
+test('retries a PR that failed only every 5 minutes, showing its error meanwhile', async ($, on) => {
+  const github: GitHub = { updatedAt: 't0', reviews: [], comments: [], hasBrokenPr: true }
+  const world = fakeWorld(on, github)
+  const brokenReads = () => world.prReads.filter(n => n === 8).length
+
+  await start($, world)
+  expect(brokenReads()).toBe(1)
+  for (let i = 0; i < 6; i++) await step(world, 10_000)
+  expect(brokenReads()).toBe(1)
+  const { text } = await $.command.run({
+    command: 'pr-watch', args: '', origin: { kind: 'composer' },
+    presentation: { isFullscreen: false, columns: 120 },
+  })
+  expect(text).toContain(`couldn't read ${BROKEN_PR_URL}`)
+
+  // 5 minutes after the failure (start's tick was at 10s; we're at 70s), it's tried again.
+  for (let i = 0; i < 24; i++) await step(world, 10_000)
+  expect(brokenReads()).toBe(2)
 })

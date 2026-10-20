@@ -28,6 +28,8 @@ const STATE_DIR = '.local/state/pr-feedback-watcher' // under $HOME
 // A lease whose heartbeat is older than this is taken over.
 const LEASE_STALE_MS = 30_000
 const PER_PAGE = 100
+// After a PR fails to read, wait this long before trying it again.
+const RETRY_FAILED_PR_MS = 5 * 60_000
 // Stops paging through a PR's reviews/comments after this many pages.
 const MAX_PAGES = 10
 
@@ -54,6 +56,8 @@ let onBranchSince = 0
 const status: { isPoller?: boolean; branch?: string; prUrl?: string; lastTick?: string; error?: string } = {}
 let isTicking = false
 let hasTriedUsageReport = false
+// PRs that failed to read: when to retry each, and the error to keep showing until then.
+const failedPrs = new Map<string, { retryAt: number; error: string }>()
 
 async function run($: EngineInterface, ...argv: string[]): Promise<boolean> {
   const { exitCode } = await $.process.run(argv)
@@ -124,12 +128,24 @@ async function mcp<T>($: EngineInterface, tool: string, args: Record<string, unk
   try {
     return JSON.parse(text) as T
   } catch {
-    // A reply over Claude Code's MCP output limit (MAX_MCP_OUTPUT_TOKENS) arrives as an
-    // "Error: result (N characters) exceeds maximum allowed tokens. Output has been saved
-    // to <file>." note instead, isError unset; the full reply is in that file.
-    const saved = /Output has been saved to (\S+)/.exec(text)?.[1]?.replace(/\.$/, '')
+    // A reply over one of Claude Code's size limits arrives as a note instead, isError unset:
+    // - the MCP token limit (MAX_MCP_OUTPUT_TOKENS): "Error: result (N characters) exceeds
+    //   maximum allowed tokens. Output has been saved to <file>. ..."
+    // - the general size limit: "<persisted-output>Output too large (68.3KB). Full output
+    //   saved to: <file> ..."
+    // Both save the whole reply to <file>. Over a further limit only part is saved ("...persist
+    // limit; only the first ... were saved to:", "...could not all be saved to..."), which
+    // can't be parsed.
+    if (/persist limit; only the first|could not all be saved/.test(text)) {
+      throw new Error(`${tool} reply too large: Claude Code saved only part of it`)
+    }
+    const saved = /(?:Output has been saved to|Full output saved to:)\s+(\S+)/.exec(text)?.[1]?.replace(/\.$/, '')
     if (!saved) throw new Error(`${tool} returned non-JSON: ${text.slice(0, 200)}`)
-    return JSON.parse((await $.fs.read(saved)) as string) as T
+    try {
+      return JSON.parse((await $.fs.read(saved)) as string) as T
+    } catch {
+      throw new Error(`${tool} reply too large, and its saved copy (${saved}) isn't readable JSON`)
+    }
   }
 }
 
@@ -216,15 +232,26 @@ async function pollGitHub($: EngineInterface): Promise<void> {
       prs[item.htmlUrl] = pr
       continue
     }
+    // A PR that failed recently: keep its old record and error until it's due for a retry, so
+    // a PR that fails every time isn't re-read (and its big reply re-saved) every tick.
+    const failed = failedPrs.get(item.htmlUrl)
+    if (failed && (await $.clock.now()) < failed.retryAt) {
+      failures.push(`${item.htmlUrl}: ${failed.error}`)
+      if (pr) prs[item.htmlUrl] = pr
+      continue
+    }
     try {
       const read = await readPr($, item, pr)
       // The search was for my PRs, so the PR's author is me.
       await fileFeedback($, read.pr, feedbackOn(read.page, read.pr.author), read.page.reviewThreads !== null)
       prs[item.htmlUrl] = read.pr
+      failedPrs.delete(item.htmlUrl)
     } catch (err) {
       // One bad PR mustn't stop the rest. Keeping its old record (old updatedAt) retries it
-      // next tick.
-      failures.push(`${item.htmlUrl}: ${err instanceof Error ? err.message : String(err)}`)
+      // once RETRY_FAILED_PR_MS has passed.
+      const error = `${err instanceof Error ? err.message : String(err)} (retrying every ${RETRY_FAILED_PR_MS / 60_000} min)`
+      failedPrs.set(item.htmlUrl, { retryAt: (await $.clock.now()) + RETRY_FAILED_PR_MS, error })
+      failures.push(`${item.htmlUrl}: ${error}`)
       if (pr) prs[item.htmlUrl] = pr
     }
   }
