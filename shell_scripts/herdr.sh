@@ -4,14 +4,21 @@
 #
 # Finds the local clone with z, checks the PR branch out into a git worktree
 # inside the clone (<repo>/worktrees/<branch>), and opens a workspace with
-# nvim on the left, a shell top-right, and claude bottom-right.
+# nvim on the left, a shell top-right, and claude bottom-right. If a review
+# workspace for the PR is already open, focuses it instead.
 #
-# Usage: review_pr <pr_url>
+# With no argument, picks from the open PRs awaiting your review with fzf.
+#
+# Usage: review_pr [pr_url]
 review_pr() {
   local url=$1
   if [[ -z "$url" ]]; then
-    echo "Usage: review_pr <pr_url>" >&2
-    return 1
+    url=$(gh search prs is:open is:pr user-review-requested:@me archived:false --limit 100 \
+        --json url,number,title,repository \
+        --jq '.[] | "\(.url)\t\(.repository.nameWithOwner)#\(.number)\t\(.title)"' \
+      | fzf --delimiter='\t' --with-nth=2.. --prompt='Review PR> ' \
+      | cut -f1)
+    [[ -z "$url" ]] && return 0
   fi
 
   local repo
@@ -23,6 +30,15 @@ review_pr() {
 
   local branch
   branch=$(gh pr view "$url" --json headRefName --jq .headRefName) || return 1
+
+  local label="PR Review: $branch" workspace_id
+  workspace_id=$(herdr workspace list \
+    | jq -r --arg label "$label" '.result.workspaces[] | select(.label == $label) | .workspace_id' \
+    | head -n 1)
+  if [[ -n "$workspace_id" ]]; then
+    herdr workspace focus "$workspace_id" > /dev/null
+    return
+  fi
 
   # Walk z's matches from best to worst and take the first one that's a clone
   # of the repo. Resolve worktrees back to their main clone.
@@ -58,7 +74,7 @@ review_pr() {
   gh pr checkout "$url" || return 1
 
   local left_pane top_right_pane bottom_right_pane
-  left_pane=$(herdr workspace create --cwd "$worktree_dir" --label "PR Review: $branch" --focus \
+  left_pane=$(herdr workspace create --cwd "$worktree_dir" --label "$label" --focus \
     | jq -r .result.root_pane.pane_id) || return 1
   top_right_pane=$(herdr pane split "$left_pane" --direction right --cwd "$worktree_dir" --no-focus \
     | jq -r .result.pane.pane_id) || return 1
