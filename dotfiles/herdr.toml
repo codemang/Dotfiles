@@ -37,6 +37,9 @@ settings = "prefix+comma"
 # prefix + [: Open the scrollback in $EDITOR (closest thing to vi copy-mode).
 edit_scrollback = "prefix+["
 
+# Free up prefix + l for the last workspace (panes already use ctrl + l).
+focus_pane_right = ""
+
 # Move between panes with ctrl + h/j/k/l (uses Vim movement). Works even if a
 # pane has Vim open.
 [[keys.command]]
@@ -64,6 +67,14 @@ command = "$HOME/Dotfiles/util/herdr_navigate.sh right ctrl+l"
 key = "prefix+ctrl+l"
 type = "shell"
 command = "herdr pane send-keys \"$(herdr pane current | jq -r .result.pane.pane_id)\" ctrl+l"
+
+# prefix + l: Jump to the last workspace (tmux: switch-client -l). Needs the
+# local plugin: 'herdr plugin link ~/dotfiles/herdr_plugins/last-workspace --enabled'.
+[[keys.command]]
+key = "prefix+l"
+type = "plugin_action"
+command = "last-workspace.toggle"
+description = "last workspace"
 
 [[keys.command]]
 key = "prefix+k"

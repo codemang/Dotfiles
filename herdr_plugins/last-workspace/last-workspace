@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# Tracks the current and previous workspace so 'toggle' can flip between them.
+#
+# Usage: last-workspace <record|toggle>
+
+state_dir=${HERDR_PLUGIN_STATE_DIR:-${TMPDIR:-/tmp}/herdr-last-workspace}
+mkdir -p "$state_dir"
+current_file=$state_dir/current
+previous_file=$state_dir/previous
+
+focused_workspace() {
+  herdr workspace list | jq -r '.result.workspaces[] | select(.focused) | .workspace_id'
+}
+
+case $1 in
+  record)
+    focused=$(focused_workspace)
+    current=$(cat "$current_file" 2> /dev/null)
+    if [[ -n $focused && $focused != "$current" ]]; then
+      [[ -n $current ]] && echo "$current" > "$previous_file"
+      echo "$focused" > "$current_file"
+    fi
+    ;;
+  toggle)
+    previous=$(cat "$previous_file" 2> /dev/null)
+    [[ -n $previous ]] && herdr workspace focus "$previous" > /dev/null
+    ;;
+esac
