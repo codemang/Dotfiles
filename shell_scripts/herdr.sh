@@ -2,8 +2,8 @@
 
 # Open a GitHub PR for review in a new Herdr workspace.
 #
-# Finds the local clone with z, checks the PR branch out into a git worktree
-# inside the clone (<repo>/worktrees/<branch>), and opens a workspace with
+# Finds the local clone with z (cloning into $DEV_DIR, default ~/projects, if
+# there isn't one), checks the PR branch out into a git worktree inside the clone (<repo>/worktrees/<branch>), and opens a workspace with
 # herdr-reviewr on the left showing the PR's diff against its base branch, a
 # shell top-right, and claude bottom-right. If a review workspace for the PR is
 # already open, focuses it instead.
@@ -54,9 +54,12 @@ review_pr() {
     fi
   done < <(_z -l "$repo" 2>&1 | sort -rn | awk '{ $1 = ""; sub(/^ /, ""); print }')
 
+  # z doesn't know a clone, so clone into $DEV_DIR (or reuse one already there).
   if [[ -z "$repo_dir" ]]; then
-    echo "review_pr: couldn't find a local clone of '$repo' with z" >&2
-    return 1
+    repo_dir="${DEV_DIR:-$HOME/projects}/$repo"
+    if [[ ! -d "$repo_dir/.git" ]]; then
+      gh repo clone "${url%%/pull/*}" "$repo_dir" || return 1
+    fi
   fi
 
   local worktree_dir
