@@ -2,6 +2,7 @@ class DotfileManager
   # Support macvim and neovim
   SYMLINK_TARGETS = {
     'dotfiles/zshrc' => ['~/.zshrc'],
+    'dotfiles/profile' => ['~/.profile'],
     'dotfiles/tmux.conf' => ['~/.tmux.conf'],
     'dotfiles/gitconfig' => ['~/.gitconfig'],
     'dotfiles/gitignore_global' => ['~/.gitignore_global'],
@@ -22,10 +23,9 @@ class DotfileManager
   end
 
   def self.symlink_files
-    # required for neovim and macvim
+    # required for neovim
     `mkdir -p ~/.local/share/nvim/site`
     `mkdir -p ~/.config/nvim`
-    `mkdir -p ~/.vim`
 
     file_changes = {
       properly_symlinked_files: [],
