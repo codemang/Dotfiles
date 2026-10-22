@@ -4,3 +4,6 @@ worktrees/
 worktrees
 
 **/.claude/settings.local.json
+
+# Used by bloomberg spaces
+.space
