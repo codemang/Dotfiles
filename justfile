@@ -1,9 +1,6 @@
 # Detect OS
 os := os()
 
-test:
-    echo "hiiii"
-
 # Ensure we're running on Linux
 _check-os:
     #!/usr/bin/env bash

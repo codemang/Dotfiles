@@ -1,5 +1,7 @@
 #!/bin/bash
 
+alias hr="herdr-reviewr"
+
 # Open a GitHub PR for review in a new Herdr workspace.
 #
 # Finds the local clone with z (cloning into $DEV_DIR, default ~/projects, if
