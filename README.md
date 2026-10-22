@@ -47,8 +47,6 @@ hotkeys for spotlight
     * Screenshots
     * Personal directory
 
-1) Set iterm to load its preferences from the Dotfiles repo
-
 1) Change the [next/previous tab shortcut
 keys](https://superuser.com/questions/497526/how-to-customize-google-chrome-keyboard-shortcuts) for chrome
 
@@ -61,9 +59,6 @@ token](https://help.github.com/en/articles/creating-a-personal-access-token-for-
 to be used by the [Copy Commit To PR](https://github.com/codemang/Dotfiles/blob/master/util/copy_commit_to_pr.rb) script
 
 1)  Run `$ token_manager add github_copy_commit_to_pr [GITHUB TOKEN]`
-
-1) Give iTerm access to send key strokes via an osascript for the [color toggle
-script](util/toggle_colors.rb)
 
 1) Install all dependencies for the `coq_nvim` plugin for `nvim`. Simply open up a vim buffer and run the command `:COQdeps`.
 

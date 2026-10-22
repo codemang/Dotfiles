@@ -35,16 +35,5 @@ else
   fi
 fi
 
-function toggleColorscheme() {
-  ruby ~/Dotfiles/util/toggle_colors.rb
-}
-
-function isLightTheme() {
-  if [ ! -f ~/.color-scheme-env ]; then
-    echo "light"
-  else
-    head -n 1 ~/.color-scheme-env
-  fi
-}
-
-alias tc="toggleColorscheme"
+# Cycle iTerm and Neovim through color schemes.
+alias tc="$DOTFILES/util/toggle_colors.sh"

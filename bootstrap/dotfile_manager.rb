@@ -1,3 +1,5 @@
+require 'shellwords'
+
 class DotfileManager
   # Support macvim and neovim
   SYMLINK_TARGETS = {
@@ -38,20 +40,20 @@ class DotfileManager
         full_source = File.join(Dir.pwd, source)
         full_target = File.expand_path(target)
 
-        symlink_exists = `readlink -n #{full_target}`.length.positive?
+        symlink_exists = `readlink -n #{full_target.shellescape}`.length.positive?
 
         if File.exist?(full_target) || symlink_exists
-          current_symlink_source = `readlink -n #{full_target}`
+          current_symlink_source = `readlink -n #{full_target.shellescape}`
           if current_symlink_source == full_source
             file_changes[:properly_symlinked_files] << full_target
           else
             file_changes[:replaced_symlinked_files] << full_target
-            `mv #{full_target} #{full_target}.replaced`
-            system "ln -s #{full_source} #{full_target}"
+            `mv #{full_target.shellescape} #{"#{full_target}.replaced".shellescape}`
+            system "ln -s #{full_source.shellescape} #{full_target.shellescape}"
           end
         else
           file_changes[:newly_symlinked_files] << full_target
-          system "ln -s #{full_source} #{full_target}"
+          system "ln -s #{full_source.shellescape} #{full_target.shellescape}"
         end
       end
     end
