@@ -5,7 +5,7 @@ export RIPGREP_CONFIG_PATH=$HOME/.ripgreprc
 eval `ssh-agent` > /dev/null
 
 # LS SHORTCUTS
-alias ls="ls -G"
+alias ls="ls -G --color=auto"
 alias la="ls -A"
 alias ll="ls -l -h"
 alias lla="ls -al"
@@ -91,14 +91,12 @@ function postRequest() {
     $1
 }
 
-# Update ls colors
-# ~/Dotfiles
-# eval "$(dircolors $DOTFILES/dotfiles/dir_colors)"
-
 case "$(uname -s)" in
     Linux*) # Linux
         alias ccb="xclip -selection clipboard" # Copy clipboard
         alias pcb="xclip -o -selection clipboard" # Paste clipboard
+        # Turn on colors for ls
+        eval "$(dircolors -b $DOTFILES/dotfiles/dir_colors)" # Update ls colors
         ;;
 
     Darwin*) # OSX
