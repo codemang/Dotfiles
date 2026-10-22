@@ -23,6 +23,7 @@ function light_prompt() {
   ARROW_COLOR=$(color_256 166)
   BAD_EXIT_STATUS_COLOR=$(color_256 160)
   DIRTY_CHANGES=$(color_256 160)
+  SSH_COLOR=$(color_256 196)
 }
 
 function dark_prompt() {
@@ -32,6 +33,7 @@ function dark_prompt() {
   BAD_EXIT_STATUS_COLOR="\[\e[31m\]"
   ARROW_COLOR="\[\e[33m\]"
   DIRTY_CHANGES="\[\e[31m\]"
+  SSH_COLOR="\[\e[91m\]"
 }
 
 # --------------------------------------------------------
@@ -52,6 +54,13 @@ function git_branch() {
 function exit_status() {
   if [ "$LAST_EXIT_STATUS" -ne 0 ]; then
     echo "${BAD_EXIT_STATUS_COLOR}[${LAST_EXIT_STATUS}]${RESET_COLOR}"
+  fi
+}
+
+# Show the host name when connected over SSH
+function ssh_host() {
+  if [ -n "$SSH_CONNECTION" ]; then
+    echo "${SSH_COLOR}[[SSH: \h]]${RESET_COLOR} "
   fi
 }
 
@@ -88,9 +97,13 @@ function parse_git_dirty() {
   fi
 }
 
-# Show the orange arrows
+# Show the orange arrows, or a single '>' over SSH
 function arrow() {
-  echo "$(color_256 202)❯$(color_256 208)❯$(color_256 214)❯${RESET_COLOR}"
+  if [ -n "$SSH_CONNECTION" ]; then
+    echo "$(color_256 202)>${RESET_COLOR}"
+  else
+    echo "$(color_256 202)❯$(color_256 208)❯$(color_256 214)❯${RESET_COLOR}"
+  fi
 }
 
 # Show if currently in vim mode. Readline puts the indicator at the start of
@@ -115,9 +128,9 @@ dark_prompt
 
 function dir_with_optional_status() {
   if [ "$LAST_EXIT_STATUS" -eq 0 ]; then
-    echo "$(working_directory)"
+    echo "$(ssh_host)$(working_directory)"
   else
-    echo "$(exit_status) $(working_directory)"
+    echo "$(exit_status) $(ssh_host)$(working_directory)"
   fi
 }
 
