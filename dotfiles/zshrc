@@ -3,33 +3,16 @@
 # Set global ENV vars.
 export ZSH=$HOME/.oh-my-zsh
 export HISTCONTROL=ignoreboth:erasedupsG
-export DOTFILES=$HOME/Dotfiles
-export EDITOR=nvim
+export DOTFILES=${${(%):-%x}:A:h:h}
 
 [ -f ~/.before_init_private_scripts.sh ] && source ~/.before_init_private_scripts.sh
 
+source $DOTFILES/shell_scripts/dev_box_entrypoint.sh
+
 # Create prompt
-source $HOME/Dotfiles/zsh/zshrc_prompt
+source $DOTFILES/shell_scripts/zshrc_prompt
 
 # Zsh shell initializer
-source $DOTFILES/zsh/zsh_shell_initializer.zsh
-
-# Language initializers
-source $DOTFILES/zsh/node.zsh
-source $DOTFILES/zsh/ruby.zsh
-
-# Helper aliases/functions
-source $DOTFILES/shell_scripts/git.sh
-source $DOTFILES/shell_scripts/tmux.sh
-source $DOTFILES/shell_scripts/herdr.sh
-source $DOTFILES/shell_scripts/vim.sh
-source $DOTFILES/shell_scripts/z.sh
-source $DOTFILES/zsh/fzf.zsh
-source $DOTFILES/zsh/docker.zsh
-source $DOTFILES/shell_scripts/notes.sh
-source $DOTFILES/zsh/misc.zsh
-
-# Allow certain utils to be called with no path, e.g `claude_notif`
-export PATH=$PATH:$DOTFILES/util
+source $DOTFILES/shell_scripts/zsh_shell_initializer.zsh
 
 [ -f ~/.private_scripts.zsh ] && source ~/.private_scripts.zsh

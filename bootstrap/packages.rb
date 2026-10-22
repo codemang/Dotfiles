@@ -12,7 +12,6 @@ class Packages
       'git-lfs',
       'unison',
       'eugenmayer/dockersync/unox',
-      { "package_name": 'heroku', "package_source": 'heroku/brew' },
       'htop',
       'neovim',
       'lua-language-server', # Needed for sumneko LSP in vim

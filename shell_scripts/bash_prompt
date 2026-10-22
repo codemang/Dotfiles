@@ -1,0 +1,133 @@
+# Bash port of shell_scripts/zshrc_prompt. Works with macOS's bash 3.2, but the vim-mode
+# indicator needs bash 4.4+.
+
+# Enable vim mode in the shell
+set -o vi
+bind -m vi-insert '"kj": vi-movement-mode'
+
+function print_colors() {
+  for x in {0..8}; do for i in {30..37}; do for a in {40..47}; do echo -ne "\e[$x;$i;$a""m\\\e[$x;$i;$a""m\e[0;37;40m "; done; echo; done; done; echo ""
+}
+
+# Wrap a color code in \[ \] so bash doesn't count it toward the prompt width.
+function color_256() {
+  echo "\[\e[38;5;$1m\]"
+}
+
+RESET_COLOR="\[\e[0m\]"
+
+function light_prompt() {
+  WORKING_DIRECTORY_COLOR=$(color_256 4)
+  GOOD_EXIT_STATUS_COLOR=$(color_256 112)
+  GIT_BRANCH_COLOR=$(color_256 128)
+  ARROW_COLOR=$(color_256 166)
+  BAD_EXIT_STATUS_COLOR=$(color_256 160)
+  DIRTY_CHANGES=$(color_256 160)
+}
+
+function dark_prompt() {
+  WORKING_DIRECTORY_COLOR="\[\e[35m\]"
+  GIT_BRANCH_COLOR="\[\e[34m\]"
+  GOOD_EXIT_STATUS_COLOR="\[\e[32m\]"
+  BAD_EXIT_STATUS_COLOR="\[\e[31m\]"
+  ARROW_COLOR="\[\e[33m\]"
+  DIRTY_CHANGES="\[\e[31m\]"
+}
+
+# --------------------------------------------------------
+#                TERMINAL PROMPT
+# --------------------------------------------------------
+
+# Detect if git is initialized in this directory
+function is_git_branch() {
+  [[ -n "$(git status -s 2> /dev/null)" ]] && echo true
+}
+
+# Find the current git branch, if any
+function git_branch() {
+  echo "$(git branch 2>/dev/null| sed -n '/^\*/s/^\* //p')"
+}
+
+# Show return code of last command
+function exit_status() {
+  if [ "$LAST_EXIT_STATUS" -ne 0 ]; then
+    echo "${BAD_EXIT_STATUS_COLOR}[${LAST_EXIT_STATUS}]${RESET_COLOR}"
+  fi
+}
+
+# Show the current working directory
+function working_directory() {
+  echo "${WORKING_DIRECTORY_COLOR}\w${RESET_COLOR}"
+}
+
+# Show the current git branch, if any
+function git_prompt() {
+  echo "${GIT_BRANCH_COLOR}$(git_branch)${RESET_COLOR}"
+}
+
+# Show if there are upstream changes
+function up_stream() {
+  behind=$(command git rev-list HEAD..@{upstream} 2>/dev/null | wc -l)
+  if [ $behind -gt 0 ]; then
+    echo "${ARROW_COLOR}↑${RESET_COLOR}"
+  fi
+}
+
+# Show if there are downstream changes
+function down_stream() {
+  ahead=$(command git rev-list @{upstream}..HEAD 2>/dev/null | wc -l)
+  if [ $ahead -gt 0 ]; then
+    echo "${ARROW_COLOR}↓${RESET_COLOR}"
+  fi
+}
+
+# Show if there are changes to be committed.
+function parse_git_dirty() {
+  if [[ $(is_git_branch) == true ]] && ! command git diff-index --quiet HEAD 2> /dev/null; then
+    echo "${DIRTY_CHANGES}●${RESET_COLOR}"
+  fi
+}
+
+# Show the orange arrows
+function arrow() {
+  echo "$(color_256 202)❯$(color_256 208)❯$(color_256 214)❯${RESET_COLOR}"
+}
+
+# Show if currently in vim mode. Readline puts the indicator at the start of
+# the last prompt line, not inline like zsh.
+if (( BASH_VERSINFO[0] > 4 || (BASH_VERSINFO[0] == 4 && BASH_VERSINFO[1] >= 4) )); then
+  bind 'set show-mode-in-prompt on'
+  bind 'set vi-ins-mode-string ""'
+  bind 'set vi-cmd-mode-string "\1\e[32m\2[vim-mode] \1\e[0m\2"'
+fi
+
+function job_status() {
+  num_current_jobs=$(jobs -p | wc -l | tr -d ' ')
+
+  if [[ "$num_current_jobs" -eq 0 ]]; then
+    return
+  fi
+
+  echo " \[\e[32m\][$num_current_jobs process/s]${RESET_COLOR}"
+}
+
+dark_prompt
+
+function dir_with_optional_status() {
+  if [ "$LAST_EXIT_STATUS" -eq 0 ]; then
+    echo "$(working_directory)"
+  else
+    echo "$(exit_status) $(working_directory)"
+  fi
+}
+
+# Generate prompt. Rebuilt before each prompt so it can use the last exit
+# status (zsh: setopt promptsubst).
+function build_prompt() {
+  LAST_EXIT_STATUS=$?
+  PS1="
+$(dir_with_optional_status) $(git_prompt) $(parse_git_dirty)$(up_stream)$(down_stream)$(job_status)
+$(arrow) "
+}
+
+PROMPT_COMMAND="build_prompt${PROMPT_COMMAND:+; $PROMPT_COMMAND}"

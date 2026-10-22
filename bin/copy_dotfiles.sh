@@ -43,8 +43,8 @@ function copy_to_docker_container() {
   parse_command_line_args $@
   docker_container_id=$(docker-compose ps -q $DOCKER_COMPOSE_SERVICE_NAME)
 
-  for local_file_name in $(ls $FULL_PATH_TO_THIS_FILE/../zsh); do
-    docker cp $COPY_COMMAND $FULL_PATH_TO_THIS_FILE/../zsh/$local_file_name $docker_container_id:/$local_file_name
+  for local_file_name in $(ls $FULL_PATH_TO_THIS_FILE/../shell_scripts); do
+    docker cp $COPY_COMMAND $FULL_PATH_TO_THIS_FILE/../shell_scripts/$local_file_name $docker_container_id:/$local_file_name
     echo "Copied $local_file_name"
   done
   # copy_dotfiles COPY_COMMAND=cp $DOTFILES_DIR/dotfiles/helpers/git.sh

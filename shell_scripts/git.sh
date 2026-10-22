@@ -263,5 +263,3 @@ fuzzy_find_changed_files() {
   chosen_file=$(echo -e "$files" | fzf)
   echo $chosen_file
 }
-
-

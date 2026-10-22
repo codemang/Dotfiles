@@ -62,6 +62,18 @@ key = "ctrl+l"
 type = "shell"
 command = "$HOME/Dotfiles/util/herdr_navigate.sh right ctrl+l"
 
+# prefix + { / }: Swap the current pane with the previous/next pane
+# (tmux: swap-pane -U / -D).
+[[keys.command]]
+key = "prefix+{"
+type = "shell"
+command = "$HOME/Dotfiles/util/herdr_swap_pane.sh prev"
+
+[[keys.command]]
+key = "prefix+}"
+type = "shell"
+command = "$HOME/Dotfiles/util/herdr_swap_pane.sh next"
+
 # prefix + Ctrl-l: Restore 'clear screen'.
 [[keys.command]]
 key = "prefix+ctrl+l"
