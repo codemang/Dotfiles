@@ -8,6 +8,7 @@ class DotfileManager
     'nvim_chad/' => ['~/.config/nvim/'],
     'dotfiles/tmuxinator' => ['~/.config/tmuxinator'],
     'dotfiles/herdr.toml' => ['~/.config/herdr/config.toml'],
+    'dotfiles/herdr-reviewr.toml' => ['~/.config/herdr/plugins/config/persiyanov.reviewr/config.toml'],
 
     # Silence the 'Last login...' message in the terminal.
     # https://osxdaily.com/2010/06/22/remove-the-last-login-message-from-the-terminal/

@@ -1,0 +1,3 @@
+# Config for the herdr-reviewr plugin (persiyanov.reviewr).
+github_host = "bbgithub.dev.bloomberg.com"
+default_scope = "branch"

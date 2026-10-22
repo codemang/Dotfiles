@@ -4,8 +4,9 @@
 #
 # Finds the local clone with z, checks the PR branch out into a git worktree
 # inside the clone (<repo>/worktrees/<branch>), and opens a workspace with
-# nvim on the left, a shell top-right, and claude bottom-right. If a review
-# workspace for the PR is already open, focuses it instead.
+# herdr-reviewr on the left showing the PR's diff against its base branch, a
+# shell top-right, and claude bottom-right. If a review workspace for the PR is
+# already open, focuses it instead.
 #
 # With no argument, picks from the open PRs awaiting your review with fzf.
 #
@@ -28,8 +29,9 @@ review_pr() {
     return 1
   fi
 
-  local branch
-  branch=$(gh pr view "$url" --json headRefName --jq .headRefName) || return 1
+  local branch base_branch
+  { read -r branch; read -r base_branch; } < <(gh pr view "$url" --json headRefName,baseRefName --jq '.headRefName, .baseRefName')
+  [[ -z "$branch" ]] && return 1
 
   local label="PR Review: $branch" workspace_id
   workspace_id=$(herdr workspace list \
@@ -81,6 +83,7 @@ review_pr() {
   bottom_right_pane=$(herdr pane split "$top_right_pane" --direction down --cwd "$worktree_dir" --no-focus \
     | jq -r .result.pane.pane_id) || return 1
 
-  herdr pane run "$left_pane" nvim > /dev/null
+  git fetch --quiet origin "$base_branch"
+  herdr pane run "$left_pane" "herdr-reviewr --base origin/$base_branch" > /dev/null
   herdr pane run "$bottom_right_pane" claude > /dev/null
 }
