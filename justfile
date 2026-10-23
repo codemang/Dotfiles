@@ -80,7 +80,7 @@ install-neovim: _check-os
     {{source_install_utils}}
 
     echo "Installing Neovim and xclip on Linux..."
-    yum install -y xclip
+    apt install -y xclip
     apt-get install -y neovim # yum had an older version of neovim.
     echo "✅ Neovim and xclip installed successfully!"
 
@@ -128,7 +128,7 @@ install-fzf: _check-os
     {{source_install_utils}}
 
     echo "Installing FZF and ripgrep on Linux..."
-        yum install -y fzf ripgrep
+        apt install -y fzf ripgrep
         echo "✅ FZF and ripgrep installed successfully!"
 
         # Add fzf bash integration to bashrc_dotfiles
