@@ -1,12 +1,30 @@
 #!/bin/bash
 
-alias hr="herdr-reviewr"
+# herdr-reviewr, diffing against the local copy of the repo's default branch
+# instead of a remote's. A --base you pass wins.
+hr() {
+  local arg base candidate
+  for arg in "$@"; do
+    [[ "$arg" == --base || "$arg" == --base=* ]] && { herdr-reviewr "$@"; return; }
+  done
+  # The default branch: what origin/HEAD names when it's set, else main or master.
+  # Not origin/HEAD alone: it's often unset, and origin may be a stale fork.
+  base=$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD 2> /dev/null)
+  for candidate in "${base#origin/}" main master; do
+    if [[ -n "$candidate" ]] && git show-ref --verify --quiet "refs/heads/$candidate"; then
+      herdr-reviewr --base "$candidate" "$@"
+      return
+    fi
+  done
+  herdr-reviewr "$@"
+}
 
 # Open a GitHub PR for review in a new Herdr workspace.
 #
 # Finds the local clone with z (cloning into $DEV_DIR, default ~/projects, if
 # there isn't one), checks the PR branch out into a git worktree inside the clone (<repo>/worktrees/<branch>), and opens a workspace with
-# herdr-reviewr on the left showing the PR's diff against its base branch, a
+# herdr-reviewr on the left showing the PR's diff against the local copy of its
+# base branch (updated from origin first), a
 # shell top-right, and claude bottom-right. If a review workspace for the PR is
 # already open, focuses it instead.
 #
@@ -88,7 +106,6 @@ review_pr() {
   bottom_right_pane=$(herdr pane split "$top_right_pane" --direction down --cwd "$worktree_dir" --no-focus \
     | jq -r .result.pane.pane_id) || return 1
 
-  git fetch --quiet origin "$base_branch"
-  herdr pane run "$left_pane" "herdr-reviewr --base origin/$base_branch" > /dev/null
+  herdr pane run "$left_pane" "herdr-reviewr --base $base_branch" > /dev/null
   herdr pane run "$bottom_right_pane" claude > /dev/null
 }
