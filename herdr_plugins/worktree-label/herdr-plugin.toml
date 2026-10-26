@@ -1,0 +1,31 @@
+id = "worktree-label"
+name = "Worktree Label"
+version = "0.1.0"
+min_herdr_version = "0.9.0"
+description = "Label workspaces in a Git worktree as repo/worktree instead of the bare directory name"
+platforms = ["linux", "macos"]
+
+# Herdr has no event for a pane changing directory, so re-sync whenever a
+# workspace appears or gains focus.
+[[events]]
+on = "workspace.created"
+command = ["./worktree-label", "sync"]
+
+[[events]]
+on = "workspace.focused"
+command = ["./worktree-label", "sync"]
+
+[[events]]
+on = "worktree.created"
+command = ["./worktree-label", "sync"]
+
+[[events]]
+on = "worktree.opened"
+command = ["./worktree-label", "sync"]
+
+[[actions]]
+id = "sync"
+title = "Sync worktree labels"
+description = "Relabel every workspace that sits in a Git worktree"
+contexts = ["global"]
+command = ["./worktree-label", "sync"]

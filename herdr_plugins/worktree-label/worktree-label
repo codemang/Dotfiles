@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# Labels each workspace whose first pane sits in a linked Git worktree as
+# repo/worktree (e.g. pm/nr-scrivener). Labels you set by hand are left alone:
+# only labels that still match the directory name, or that this script set
+# last time, get replaced.
+#
+# Usage: worktree-label sync
+
+state_dir=${HERDR_PLUGIN_STATE_DIR:-${TMPDIR:-/tmp}/herdr-worktree-label}
+mkdir -p "$state_dir"
+
+# Prints repo/worktree for a directory inside a linked worktree, else the
+# directory's basename.
+label_for() {
+  local cwd=$1 git_dir common_dir top repo
+  git_dir=$(git -C "$cwd" rev-parse --path-format=absolute --git-dir 2> /dev/null)
+  common_dir=$(git -C "$cwd" rev-parse --path-format=absolute --git-common-dir 2> /dev/null)
+  if [[ -z $git_dir || $git_dir == "$common_dir" ]]; then
+    basename "$cwd"
+    return
+  fi
+  top=$(git -C "$cwd" rev-parse --show-toplevel)
+  if [[ $(basename "$common_dir") == .git ]]; then
+    repo=$(basename "$(dirname "$common_dir")")
+  else
+    repo=$(basename "$common_dir" .git)
+  fi
+  echo "$repo/$(basename "$top")"
+}
+
+[[ $1 == sync ]] || exit 1
+
+herdr api snapshot | jq -r '
+  .result.snapshot as $s
+  | $s.workspaces[]
+  | .workspace_id as $id
+  | [$id, .label, ([$s.panes[] | select(.workspace_id == $id)][0].cwd // "")]
+  | @tsv' |
+  while IFS=$'\t' read -r id label cwd; do
+    [[ -n $cwd ]] || continue
+    state_file=$state_dir/$id
+    ours=$(cat "$state_file" 2> /dev/null)
+    if [[ $label != "$(basename "$cwd")" && $label != "$ours" ]]; then
+      continue
+    fi
+    want=$(label_for "$cwd")
+    [[ $want == "$label" ]] || herdr workspace rename "$id" "$want" > /dev/null
+    echo "$want" > "$state_file"
+  done
