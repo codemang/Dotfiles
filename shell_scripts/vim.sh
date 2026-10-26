@@ -26,7 +26,8 @@ function bind-ctrl-z() {
 }
 
 # Toggle back into Neovim with Ctrl+Z
-if [ "$SHELL" = "/bin/zsh" ]; then
+# The running shell, not $SHELL (the login shell): bash can run under a zsh login.
+if [ -n "$ZSH_VERSION" ]; then
   bind-ctrl-z
 else
   if [[ $- == *i* ]]; then

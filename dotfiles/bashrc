@@ -2,7 +2,7 @@
 
 [ -f ~/.before_init_private_scripts.sh ] && source ~/.before_init_private_scripts.sh
 
-# Repo root, found by following the ~/.profile symlink back to this file.
+# Repo root, found by this file's path (sourced from ~/.bashrc, or ~/.profile symlinked here).
 export DOTFILES=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.." && pwd)
 source $DOTFILES/shell_scripts/dev_box_entrypoint.sh
 

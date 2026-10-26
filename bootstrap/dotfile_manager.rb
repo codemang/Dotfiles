@@ -4,7 +4,7 @@ class DotfileManager
   # Support macvim and neovim
   SYMLINK_TARGETS = {
     'dotfiles/zshrc' => ['~/.zshrc'],
-    'dotfiles/profile' => ['~/.profile'],
+    'dotfiles/bashrc' => ['~/.profile'],
     'dotfiles/tmux.conf' => ['~/.tmux.conf'],
     'dotfiles/gitconfig' => ['~/.gitconfig'],
     'dotfiles/gitignore_global' => ['~/.gitignore_global'],

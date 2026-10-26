@@ -1,0 +1,12 @@
+# Everything for a Mac.
+system-packages
+languages
+language-packages
+shell-rc
+zsh
+dotfiles
+nvim-config
+tmux-config
+mac-misc
+mac-defaults
+mac-next-steps

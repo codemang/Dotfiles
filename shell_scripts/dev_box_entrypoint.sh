@@ -1,4 +1,3 @@
-# Repo root, found by following the ~/.zshrc symlink back to this file.
 export EDITOR=nvim
 
 # Language initializers
