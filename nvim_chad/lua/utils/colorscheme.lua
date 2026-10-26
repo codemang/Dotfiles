@@ -23,14 +23,39 @@ local function read_theme()
   return theme and theme_exists(theme) and theme or default
 end
 
+-- Names the theme base46's highlight cache was last compiled for. The cache is
+-- shared by every Neovim, and init.lua loads it at startup, so without this a
+-- new Neovim shows whichever theme some other Neovim compiled last.
+local CACHED_THEME_FILE = vim.g.base46_cache .. "theme_name"
+
+local function read_cached_theme()
+  local file = io.open(CACHED_THEME_FILE)
+  if not file then
+    return nil
+  end
+  local theme = file:read "*l"
+  file:close()
+  return theme
+end
+
+-- The theme this Neovim is showing, starting as the one init.lua loaded.
+local loaded_theme = read_cached_theme()
+
 -- Switch the theme in memory instead of using base46's toggle_theme, which
 -- rewrites chadrc.lua on every switch.
 local function apply()
   local theme = read_theme()
-  local opts = require("nvconfig").base46
-  if opts.theme ~= theme then
-    opts.theme = theme
-    require("base46").load_all_highlights()
+  if loaded_theme == theme then
+    return
+  end
+  require("nvconfig").base46.theme = theme
+  require("base46").load_all_highlights()
+  loaded_theme = theme
+
+  local file = io.open(CACHED_THEME_FILE, "w")
+  if file then
+    file:write(theme, "\n")
+    file:close()
   end
 end
 
