@@ -105,7 +105,8 @@ return {
 
   -- Jump around the screen easily.
   {
-    'ggandor/leap.nvim',
+    -- Moved to Codeberg; the GitHub repo (ggandor/leap.nvim) is now an empty README.
+    url = 'https://codeberg.org/andyg/leap.nvim',
     config = function()
       vim.keymap.set({'n', 'x', 'o'}, 's',  '<Plug>(leap-forward)')
       vim.keymap.set({'n', 'x', 'o'}, 'S',  '<Plug>(leap-backward)')
@@ -117,7 +118,7 @@ return {
 
     -- This pluging lazy loads itself, so they advise to disable lazy loading
     -- at the package manager level.
-    -- https://github.com/ggandor/leap.nvim?tab=readme-ov-file#installation
+    -- https://codeberg.org/andyg/leap.nvim#installation
     lazy = false
   },
 
