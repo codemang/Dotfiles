@@ -1,9 +1,10 @@
-# Global npm packages
+# Global npm packages, for mise's Node (needs mise)
 packages=(
   instant-markdown-d
   eslint_d # Formats JSX in NeoVim.
   neovim
   npm
   vtop
+  yarn
 )
-install_missing 'ls "$(npm root -g)"' 'npm install -g' "${packages[@]}"
+npm_install "${packages[@]}"

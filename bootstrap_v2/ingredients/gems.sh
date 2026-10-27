@@ -1,7 +1,8 @@
-# Global Ruby gems
+# Global Ruby gems, for mise's Ruby (needs mise)
 gems=(
   rake
   tldr # Better man pages: https://tldr.sh/
   tmuxinator
+  solargraph # Ruby support for Vim's CoC plugin.
 )
-install_missing "gem list --no-versions" 'gem install' "${gems[@]}"
+gem_install "${gems[@]}"

@@ -1,7 +1,5 @@
 # Homebrew and everything installed with it (macOS).
 homebrew
 cli-tools
-ruby-tools
-node-tools
 mac-tools
 casks

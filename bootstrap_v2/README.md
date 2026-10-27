@@ -33,8 +33,11 @@ To add a step, add an ingredient. To group steps, add a recipe listing them.
 | Helper | What it does |
 | --- | --- |
 | `link <repo path> <target>` | Symlink a repo file into place; an existing different file is moved to `<target>.replaced` |
-| `install_missing <list cmd> <install cmd> <pkg>...` | Install the packages the list command doesn't show |
-| `pkgs <pkg>...` | Install packages on either OS: Homebrew on macOS (skipping installed formulae and casks), `pkg_install` on Linux |
-| `pkg_install <pkg>...` | Install system packages, each with the first of apt-get, dnf/yum that has it, using sudo unless root; one none has is a warning (Linux) |
+| `install_packages <pkg>...` | Install on either OS: `brew_install` on macOS, `linux_install` on Linux |
+| `brew_install [--cask] <pkg>...` | Homebrew formulae or casks, skipping installed ones (macOS) |
+| `linux_install <pkg>...` | System packages, each with the first of apt-get, dnf/yum that has it, using sudo unless root; one none has is a warning (Linux) |
+| `gem_install <gem>...` | Global gems for mise's Ruby, skipping installed ones |
+| `npm_install <pkg>...` | Global npm packages for mise's Node, skipping installed ones |
+| `activate_mise` | Put mise's tools on PATH and point them at the system's certificates |
 | `require_macos`, `require_linux` | Stop the ingredient on the wrong OS |
 | `ok`, `warn`, `die`, `green`, `section` | Output |

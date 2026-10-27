@@ -40,12 +40,39 @@ link() {
   ok "linked: $target -> $source"
 }
 
-# Install system packages (Linux), through sudo unless already root. Each package
+# ---- Installing packages ----
+#
+# install_packages works on either OS. The others each use one package manager.
+
+# Install packages on either OS: Homebrew on macOS, the system's package managers
+# on Linux.
+install_packages() {
+  if is_macos; then
+    brew_install "$@"
+  else
+    linux_install "$@"
+  fi
+}
+
+# Install Homebrew formulae or casks, skipping ones already installed. Homebrew
+# works out which a name is; pass --cask first to insist on casks.
+brew_install() {
+  require_macos
+  if [[ "${1:-}" == --cask ]]; then
+    shift
+    _install_missing "$(brew list --cask -1)" brew install --cask -- "$@"
+  else
+    _install_missing "$(brew list --formula -1; brew list --cask -1)" brew install -- "$@"
+  fi
+}
+
+# Install system packages on Linux, through sudo unless already root. Each package
 # goes to the first package manager that can install it: apt-get, then dnf (or
 # yum where there's no dnf). Some machines have several that each carry different
 # packages (Bloomberg RHEL's apt-get has neovim but no fzf; its dnf has fzf). A
 # package none can install is a warning, not a failure.
-pkg_install() {
+linux_install() {
+  require_linux
   # A string, not an array: bash < 4.4 (macOS, RHEL 7) treats an empty array as
   # unset under `set -u`.
   local sudo="" managers=() manager package installed
@@ -76,27 +103,44 @@ pkg_install() {
   done
 }
 
-# Install packages on either OS: with Homebrew on macOS (formulae and casks,
-# skipping ones already installed), with pkg_install on Linux.
-pkgs() {
-  if is_macos; then
-    install_missing 'brew list --formula -1; brew list --cask -1' 'brew install' "$@"
-  else
-    pkg_install "$@"
-  fi
+# Install global gems for mise's Ruby, skipping ones already installed.
+gem_install() {
+  activate_mise
+  _install_missing "$(gem list --no-versions)" gem install -- "$@"
 }
 
-# Install each package that `list_cmd` doesn't already show, with `install_cmd`.
-# A package like tap/repo/name is matched on its last part.
-install_missing() {
-  local list_cmd=$1 install_cmd=$2 installed package
-  shift 2
-  installed=" $(eval "$list_cmd" | tr '\n' ' ') "
+# Install global npm packages for mise's Node, skipping ones already installed.
+npm_install() {
+  activate_mise
+  _install_missing "$(ls "$(npm root -g)")" npm install -g -- "$@"
+}
+
+# Put mise's tools (node, gem, npm, python) on PATH, for ingredients that use them.
+activate_mise() {
+  export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$PATH"
+  # The repo's config, in case the dotfiles step hasn't linked it into place yet.
+  export MISE_GLOBAL_CONFIG_FILE="$DOTFILES_DIR/dotfiles/mise.toml"
+  # So gem, npm and pip can verify HTTPS behind a corporate TLS proxy.
+  source "$DOTFILES_DIR/shell_scripts/ca_certs.sh"
+  command -v mise > /dev/null || die "mise isn't installed; run the mise ingredient first"
+}
+
+# Usage: _install_missing <installed names, one per line> <command>... -- <package>...
+# Run `<command> <package>` for each package not among the installed names. A
+# package like tap/repo/name is matched on its last part.
+_install_missing() {
+  local installed=" $(tr '\n' ' ' <<< "$1") " command=() package
+  shift
+  while [[ $1 != -- ]]; do
+    command+=("$1")
+    shift
+  done
+  shift
   for package in "$@"; do
     if [[ "$installed" == *" ${package##*/} "* ]]; then
       echo "* $package - already installed"
     else
-      eval "$install_cmd \"\$package\""
+      "${command[@]}" "$package"
       echo "* $package - newly installed"
     fi
   done

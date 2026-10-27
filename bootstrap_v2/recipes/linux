@@ -1,5 +1,6 @@
 # Everything for a Linux machine.
 shell-rc
 cli-tools
+dotfiles
 nvim-config
 tmux-config

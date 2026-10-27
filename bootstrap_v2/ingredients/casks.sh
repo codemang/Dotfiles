@@ -5,4 +5,4 @@ casks=(
   google-chrome google-drive iterm2 kindle sketch skitch
   spectacle spotify sublime-text xquartz
 )
-install_missing 'brew list --cask -1' 'brew install --cask' "${casks[@]}"
+brew_install --cask "${casks[@]}"

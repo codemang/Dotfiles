@@ -1,0 +1,12 @@
+# Global tool versions for mise (https://mise.jdx.dev), linked to
+# ~/.config/mise/config.toml by bootstrap_v2's `mise` step. A project's own
+# mise.toml or version file overrides these inside that project.
+[tools]
+node = "lts"
+ruby = "3.4.4"
+python = "3.15"
+
+[settings]
+# Also honor projects' .ruby-version, .nvmrc/.node-version and .python-version
+# files, which mise otherwise ignores.
+idiomatic_version_file_enable_tools = ["ruby", "node", "python"]

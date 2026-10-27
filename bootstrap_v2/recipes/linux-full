@@ -1,4 +1,4 @@
-# A Linux machine, plus Ruby and Node tooling.
+# A Linux machine, plus Node, Ruby and Python (via mise) and their global packages.
 linux
-ruby-tools
-node-tools
+mise
+language-packages

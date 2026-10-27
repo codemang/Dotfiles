@@ -8,5 +8,5 @@ source ~/Dotfiles/shell_scripts/docker.sh
 source ~/Dotfiles/shell_scripts/prompt.sh
 source ~/Dotfiles/shell_scripts/vim.sh
 source ~/Dotfiles/shell_scripts/misc.sh
-source ~/Dotfiles/shell_scripts/ruby.sh
+source ~/Dotfiles/shell_scripts/mise.sh
 source ~/Dotfiles/shell_scripts/wsl_misc.sh

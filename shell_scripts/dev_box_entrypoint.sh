@@ -1,8 +1,11 @@
 export EDITOR=nvim
 
-# Language initializers
-source $DOTFILES/shell_scripts/node.sh
-source $DOTFILES/shell_scripts/ruby.sh
+# Commands installed per user: mise (its Linux installer puts it here) and the
+# links bootstrap_v2's dotfiles step makes, like tmux_switch_session.
+export PATH="$HOME/.local/bin:$PATH"
+
+# Node, Ruby and Python versions
+source $DOTFILES/shell_scripts/mise.sh
 
 # Helper aliases/functions
 source $DOTFILES/shell_scripts/git.sh

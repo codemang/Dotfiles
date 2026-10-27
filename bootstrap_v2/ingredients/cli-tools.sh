@@ -1,5 +1,5 @@
 # Command-line tools for any machine: git, fzf, ripgrep, tmux, neovim, ...
-pkgs \
+install_packages \
   git \
   git-lfs \
   curl \
@@ -14,5 +14,5 @@ pkgs \
   nmap \
   cmake
 # Clipboard access for neovim; macOS has pbcopy built in.
-is_linux && pkgs xclip
+is_linux && install_packages xclip
 true
