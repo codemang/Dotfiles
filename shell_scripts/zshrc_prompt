@@ -50,9 +50,18 @@ if [ $? -eq 0 ]
   fi
 }
 
+# Color schemes `tc` (util/toggle_colors.sh) can switch to that have a light background
+LIGHT_COLOR_SCHEMES=(solarized_light catppuccin_latte)
+
 # Show the current working directory
 function working_directory() {
-  echo "${WORKING_DIRECTORY_COLOR}%~%{$reset_color%}"
+  local color=$WORKING_DIRECTORY_COLOR
+  # The terminal's magenta is too faint on a light background, so use a darker
+  # purple. Checked every prompt so it follows `tc` right away.
+  if [[ -f ~/.color-scheme-env && ${LIGHT_COLOR_SCHEMES[(Ie)$(< ~/.color-scheme-env)]} -gt 0 ]]; then
+    color=%F{90}
+  fi
+  echo "${color}%~%{$reset_color%}"
 }
 
 
@@ -133,12 +142,6 @@ function job_status {
 }
 
 dark_prompt
-
-# The terminal's magenta is too faint on a light background, so use a darker
-# purple for the directory when macOS is in light mode
-if [[ "$OSTYPE" == darwin* && "$(defaults read -g AppleInterfaceStyle 2>/dev/null)" != "Dark" ]]; then
-  WORKING_DIRECTORY_COLOR=%F{90}
-fi
 
 setopt promptsubst
 
