@@ -25,7 +25,7 @@ hr() {
 #
 # Finds the local clone with z (cloning into $DEV_DIR, default ~/projects, if
 # there isn't one), checks the PR branch out into a git worktree inside the clone (<repo>/worktrees/<branch>), and opens a workspace with
-# herdr-reviewr on the left showing the PR's diff against the local copy of its
+# Neovim's diffview on the left showing the PR's diff against the local copy of its
 # base branch (updated from origin first), a
 # shell top-right, and claude bottom-right. If a review workspace for the PR is
 # already open, focuses it instead.
@@ -108,6 +108,6 @@ review_pr() {
   bottom_right_pane=$(herdr pane split "$top_right_pane" --direction down --cwd "$worktree_dir" --no-focus \
     | jq -r .result.pane.pane_id) || return 1
 
-  herdr pane run "$left_pane" "herdr-reviewr --base $base_branch" > /dev/null
+  herdr pane run "$left_pane" "nvim -c 'DiffviewOpen $base_branch...HEAD'" > /dev/null
   herdr pane run "$bottom_right_pane" claude > /dev/null
 }
