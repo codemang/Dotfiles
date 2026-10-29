@@ -1,6 +1,7 @@
 local general_utils = require("utils.general")
 local telescope_utils = require("utils.telescope")
 local git_utils = require("utils.git")
+local diffview_utils = require("utils.diffview")
 local map = vim.keymap.set
 
 function choose_changed_files(opts)
@@ -35,9 +36,12 @@ return function()
     "n",
     "<Leader>fl",
     function()
+      if diffview_utils.current_view() then
+        return diffview_utils.live_grep({ default_text = "" })
+      end
       require("telescope").extensions.live_grep_args.live_grep_args()
     end,
-    { desc = "Live grep by line" }
+    { desc = "Live grep by line (diff files only inside diffview)" }
   )
 
   map(
@@ -54,9 +58,13 @@ return function()
     "<Leader>fw",
     function()
       local word_under_cursor = vim.api.nvim_eval('expand("<cword>")')
-      telescope_utils.live_grep_raw({ default_text = '"' .. word_under_cursor .. '"' })
+      local opts = { default_text = '"' .. word_under_cursor .. '"' }
+      if diffview_utils.current_view() then
+        return diffview_utils.live_grep(opts)
+      end
+      telescope_utils.live_grep_raw(opts)
     end,
-    { desc = "Live grep for word under cursor"}
+    { desc = "Live grep for word under cursor (diff files only inside diffview)"}
   )
 
   map(
