@@ -5,6 +5,7 @@ require("mappings.telescope")()
 require("mappings.nvimtree")()
 require("mappings.tmux")()
 require("mappings.tabufline")()
+require("mappings.claude")()
 
 local function load_mapping_overrides()
   require("mappings.mapping_overrides")()

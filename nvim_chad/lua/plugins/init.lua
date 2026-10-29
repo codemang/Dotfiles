@@ -100,6 +100,23 @@ return {
   -- Git integration for dealing with commits.
   { "tpope/vim-fugitive", lazy = false  },
 
+  -- Side-by-side git diffs and file history.
+  {
+    "sindrets/diffview.nvim",
+    cmd = {
+      "DiffviewOpen",
+      "DiffviewClose",
+      "DiffviewToggleFiles",
+      "DiffviewFocusFiles",
+      "DiffviewRefresh",
+      "DiffviewFileHistory",
+    },
+    keys = {
+      { "<leader>gr", "<cmd>DiffviewOpen upstream/main...HEAD<CR>", desc = "Review branch against upstream/main" },
+      { "<leader>gc", "<cmd>DiffviewClose<CR>", desc = "Close diffview" },
+    },
+  },
+
   -- Save via sudo.
   { "lambdalisue/vim-suda", keys = { ":" }},
 
