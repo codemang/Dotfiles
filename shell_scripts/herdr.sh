@@ -2,6 +2,8 @@
 
 # herdr-reviewr, diffing against the local copy of the repo's default branch
 # instead of a remote's. A --base you pass wins.
+# Drop the old 'hr' alias first, or re-sourcing in an older shell can't parse this.
+unalias hr 2> /dev/null
 hr() {
   local arg base candidate
   for arg in "$@"; do

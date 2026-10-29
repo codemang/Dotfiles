@@ -134,6 +134,12 @@ function job_status {
 
 dark_prompt
 
+# The terminal's magenta is too faint on a light background, so use a darker
+# purple for the directory when macOS is in light mode
+if [[ "$OSTYPE" == darwin* && "$(defaults read -g AppleInterfaceStyle 2>/dev/null)" != "Dark" ]]; then
+  WORKING_DIRECTORY_COLOR=%F{90}
+fi
+
 setopt promptsubst
 
 function dir_with_optional_status() {
