@@ -9,6 +9,7 @@ source $DOTFILES/shell_scripts/mise.sh
 
 # Helper aliases/functions
 source $DOTFILES/shell_scripts/git.sh
+source $DOTFILES/shell_scripts/github.sh
 source $DOTFILES/shell_scripts/tmux.sh
 source $DOTFILES/shell_scripts/herdr.sh
 source $DOTFILES/shell_scripts/vim.sh
