@@ -1,7 +1,7 @@
 export EDITOR=nvim
 
 # Commands installed per user: mise (its Linux installer puts it here) and the
-# links bootstrap_v2's dotfiles step makes, like tmux_switch_session.
+# links bootstrap's dotfiles step makes, like tmux_switch_session.
 export PATH="$HOME/.local/bin:$PATH"
 
 # Node, Ruby and Python versions

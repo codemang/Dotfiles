@@ -1,15 +1,14 @@
-# bootstrap_v2
+# bootstrap
 
 Machine setup in plain bash: nothing to install first, and it runs on macOS's
-built-in bash 3.2. It sits alongside the old `justfile`/`Rakefile` bootstrap,
-which is unchanged.
+built-in bash 3.2.
 
 ```sh
-bootstrap_v2/install.sh osx              # set up a Mac
-bootstrap_v2/install.sh linux            # set up a Linux machine
-bootstrap_v2/install.sh cli-tools nvim-config   # just these
-bootstrap_v2/install.sh --dry-run osx    # print what would run, in order
-bootstrap_v2/install.sh --list           # every recipe and ingredient
+bootstrap/install.sh osx              # set up a Mac
+bootstrap/install.sh linux            # set up a Linux machine
+bootstrap/install.sh cli-tools nvim-config   # just these
+bootstrap/install.sh --dry-run osx    # print what would run, in order
+bootstrap/install.sh --list           # every recipe and ingredient
 ```
 
 ## Ingredients and recipes

@@ -12,7 +12,7 @@ For a first time installation
 $ xcode-select --install
 $ git clone https://github.com/codemang/Dotfiles.git
 $ cd Dotfiles
-$ rake setup
+$ bootstrap/install.sh osx
 ```
 
 This requires your password at a few steps. Once this completes, you must...
@@ -68,7 +68,7 @@ From then on any changes to the repo will be applied by pulling the latest versi
 
 ```
 $ git fetch; git reset --hard origin/master
-$ rake setup
+$ bootstrap/install.sh osx
 ```
 
 Overview

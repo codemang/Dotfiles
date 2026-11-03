@@ -1,5 +1,5 @@
 # Global tool versions for mise (https://mise.jdx.dev), linked to
-# ~/.config/mise/config.toml by bootstrap_v2's `mise` step. A project's own
+# ~/.config/mise/config.toml by bootstrap's `mise` step. A project's own
 # mise.toml or version file overrides these inside that project.
 [tools]
 node = "lts"
