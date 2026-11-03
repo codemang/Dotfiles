@@ -112,7 +112,8 @@ return {
       "DiffviewFileHistory",
     },
     keys = {
-      { "<leader>gr", "<cmd>DiffviewOpen upstream/main...HEAD<CR>", desc = "Review branch against upstream/main" },
+      { "<leader>gra", "<cmd>DiffviewOpen upstream/main...HEAD<CR>", desc = "Review branch against upstream/main" },
+      { "<leader>gru", "<cmd>DiffviewOpen --untracked-files=no<CR>", desc = "Review uncommitted changes" },
       { "<leader>gc", "<cmd>DiffviewClose<CR>", desc = "Close diffview" },
     },
   },
