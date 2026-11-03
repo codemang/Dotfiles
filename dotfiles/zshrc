@@ -7,12 +7,12 @@ export DOTFILES=${${(%):-%x}:A:h:h}
 
 [ -f ~/.before_init_private_scripts.sh ] && source ~/.before_init_private_scripts.sh
 
-source $DOTFILES/shell_scripts/dev_box_entrypoint.sh
+source $DOTFILES/dotfiles/shell_scripts/dev_box_entrypoint.sh
 
 # Create prompt
-source $DOTFILES/shell_scripts/zshrc_prompt
+source $DOTFILES/dotfiles/shell_scripts/zshrc_prompt
 
 # Zsh shell initializer
-source $DOTFILES/shell_scripts/zsh_shell_initializer.zsh
+source $DOTFILES/dotfiles/shell_scripts/zsh_shell_initializer.zsh
 
 [ -f ~/.private_scripts.zsh ] && source ~/.private_scripts.zsh

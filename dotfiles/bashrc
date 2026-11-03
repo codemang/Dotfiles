@@ -4,9 +4,9 @@
 
 # Repo root, found by this file's path (sourced from ~/.bashrc, or ~/.profile symlinked here).
 export DOTFILES=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.." && pwd)
-source $DOTFILES/shell_scripts/dev_box_entrypoint.sh
+source $DOTFILES/dotfiles/shell_scripts/dev_box_entrypoint.sh
 
 # Create prompt
-source $DOTFILES/shell_scripts/bash_prompt
+source $DOTFILES/dotfiles/shell_scripts/bash_prompt
 
 [ -f ~/.private_scripts.zsh ] && source ~/.private_scripts.zsh

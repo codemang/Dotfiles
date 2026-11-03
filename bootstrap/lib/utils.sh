@@ -121,7 +121,7 @@ activate_mise() {
   # The repo's config, in case the dotfiles step hasn't linked it into place yet.
   export MISE_GLOBAL_CONFIG_FILE="$DOTFILES_DIR/dotfiles/mise.toml"
   # So gem, npm and pip can verify HTTPS behind a corporate TLS proxy.
-  source "$DOTFILES_DIR/shell_scripts/ca_certs.sh"
+  source "$DOTFILES_DIR/dotfiles/shell_scripts/ca_certs.sh"
   command -v mise > /dev/null || die "mise isn't installed; run the mise ingredient first"
 }
 

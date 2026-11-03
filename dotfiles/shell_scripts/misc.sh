@@ -31,7 +31,7 @@ alias serv="python -m SimpleHTTPServer 8000"
 alias ecron="env EDITOR=nvim crontab -e"
 alias mem="top -l 1 | ag Phys"
 alias notifyDone='reattach-to-user-namespace terminal-notifier -title "Hey Nate" -message "Done with task!"'
-alias zprompt="vim $DOTFILES/shell_scripts/zshrc_prompt"
+alias zprompt="vim $DOTFILES/dotfiles/shell_scripts/zshrc_prompt"
 alias findp="ps aux | grep"
 alias dl="cd ~/Downloads"
 alias ssha="ssh-add ~/.ssh/id_rsa_github"

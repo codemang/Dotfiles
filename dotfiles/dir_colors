@@ -43,7 +43,7 @@ TERM xterm*
 #FILE 00 # regular file: use no color at all
 RESET 0 # reset to "normal" color
 # Colors below match macOS's LSCOLORS=GxBxhxDxfxhxhxhxhxcxcx (set in
-# shell_scripts/zsh_shell_initializer.zsh), so ls looks the same in iTerm and
+# dotfiles/shell_scripts/zsh_shell_initializer.zsh), so ls looks the same in iTerm and
 # over SSH.
 DIR 01;36 # directory (G: bold cyan)
 LINK 01;31 # symbolic link (B: bold red)

@@ -6,8 +6,8 @@ alias vim=nvim
 alias v=nvim
 
 vdot() {
-  file=$(ls ~/Dotfiles/shell_scripts/ | fzf)
-  vim ~/Dotfiles/shell_scripts/$file
+  file=$(ls ~/Dotfiles/dotfiles/shell_scripts/ | fzf)
+  vim ~/Dotfiles/dotfiles/shell_scripts/$file
 }
 
 function fancy-ctrl-z () {

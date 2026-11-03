@@ -1,4 +1,4 @@
-# Bash port of shell_scripts/zshrc_prompt. Works with macOS's bash 3.2, but the vim-mode
+# Bash port of dotfiles/shell_scripts/zshrc_prompt. Works with macOS's bash 3.2, but the vim-mode
 # indicator needs bash 4.4+.
 
 # Enable vim mode in the shell
