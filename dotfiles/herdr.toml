@@ -81,7 +81,7 @@ type = "shell"
 command = "herdr pane send-keys \"$(herdr pane current | jq -r .result.pane.pane_id)\" ctrl+l"
 
 # prefix + l: Jump to the last workspace (tmux: switch-client -l). Needs the
-# local plugin: 'herdr plugin link ~/dotfiles/herdr_plugins/last-workspace --enabled'.
+# local plugin util/herdr_plugins/last-workspace, which bootstrap's herdr-plugins step links.
 [[keys.command]]
 key = "prefix+l"
 type = "plugin_action"

@@ -5,6 +5,7 @@ language-packages
 shell-rc
 zsh
 dotfiles
+herdr-plugins
 nvim-config
 tmux-config
 mac-misc

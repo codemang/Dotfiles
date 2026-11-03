@@ -2,5 +2,6 @@
 shell-rc
 cli-tools
 dotfiles
+herdr-plugins
 nvim-config
 tmux-config
