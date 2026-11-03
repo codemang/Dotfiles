@@ -2,7 +2,7 @@
 
 # Cycle iTerm and Neovim to the next color scheme without changing macOS's
 # appearance. Saves the choice to ~/.color-scheme-env, which Neovim watches
-# (nvim_chad/lua/utils/colorscheme.lua).
+# (dotfiles/nvim_chad/lua/utils/colorscheme.lua).
 #
 # Usage: toggle_colors.sh
 
