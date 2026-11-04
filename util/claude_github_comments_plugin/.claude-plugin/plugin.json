@@ -1,0 +1,74 @@
+{
+  "name": "pr-autopilot",
+  "version": "0.6.1",
+  "author": {
+    "name": "nrubin19"
+  },
+  "description": "Polls GitHub for new reviews/comments and CI results on this session's PR and asks Claude to address them",
+  "userConfig": {
+    "mcpServer": {
+      "type": "string",
+      "title": "General: MCP server",
+      "description": "BBGitHub MCP server name, as /mcp lists it",
+      "default": "bbgithub"
+    },
+    "intervalSeconds": {
+      "type": "number",
+      "title": "General: Interval seconds",
+      "description": "How often each session checks; the poller's request rate",
+      "default": 10
+    },
+    "feedbackAutomationEnabled": {
+      "type": "boolean",
+      "title": "Feedback: Automation enabled",
+      "description": "Whether new reviews and comments on your PR are sent to Claude. Feedback that arrives while this is off is never sent.",
+      "default": true
+    },
+    "feedbackSkill": {
+      "type": "string",
+      "title": "Feedback: Feedback skill",
+      "description": "Skill Claude is told to use for PR feedback: its name (my-pr-feedback) or its folder (~/.claude/skills/my-pr-feedback).",
+      "default": "pr-autopilot:address-pr-feedback"
+    },
+    "feedbackTriggerOnlyInRealTime": {
+      "type": "boolean",
+      "title": "Feedback: Trigger only in real time",
+      "description": "What happens to feedback posted while no Claude session is running for that PR's branch. false: it waits, and the next Claude session started on the branch will immediately start processing it. true: it's skipped.",
+      "default": false
+    },
+    "ciAutomationEnabled": {
+      "type": "boolean",
+      "title": "CI: Automation enabled",
+      "description": "Whether CI results on your PR are sent to Claude. CI that finishes while this is off is never sent.",
+      "default": true
+    },
+    "ciSkill": {
+      "type": "string",
+      "title": "CI: CI skill",
+      "description": "Skill Claude is asked to use for CI results, given the same way as feedbackSkill",
+      "default": "pr-autopilot:address-ci-results"
+    },
+    "ciTriggerCadence": {
+      "type": "string",
+      "options": [
+        "onAllChecksFinish",
+        "onSingleCheckFinish"
+      ],
+      "title": "CI: Trigger cadence",
+      "description": "When CI results are sent. onAllChecksFinish: one prompt once every check on the PR's latest commit has finished. onSingleCheckFinish: a prompt each time a check finishes",
+      "default": "onAllChecksFinish"
+    },
+    "onlyTriggerWhenCiFailed": {
+      "type": "boolean",
+      "title": "CI: Only trigger when failed",
+      "description": "true: CI results are sent only when a check failed (failure, error, timed_out, action_required). If onAllChecksFinish is set to true and some checks failed, ALL checks and their statuses are sent to Claude. false: pass check status to Claude whether they passed or failed.",
+      "default": true
+    },
+    "ciTriggerOnlyInRealTime": {
+      "type": "boolean",
+      "title": "CI: Trigger only in real time",
+      "description": "What happens to CI results that arrive while no Claude session is running for that PR's branch. false: they wait, and the next Claude session started on the branch will immediately start processing them. true: they're skipped.",
+      "default": false
+    }
+  }
+}

@@ -1,6 +1,6 @@
 ---
 name: address-pr-feedback
-description: Address new GitHub PR feedback (reviews, comments, /claude instructions) that the pr-feedback-watcher plugin relays to this session
+description: Address new GitHub PR feedback (reviews, comments, /claude instructions) that the pr-autopilot plugin relays to this session
 ---
 
 ## PRs

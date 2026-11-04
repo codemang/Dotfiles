@@ -3,6 +3,7 @@ import type { Engine, MockClock } from 'claude-code/testing'
 import type { On } from 'claude-code'
 
 import { hash, isOlderVersion } from './feedback'
+import type { ChecksCommit } from './feedback'
 
 const PR_URL = 'https://bbgithub.dev.bloomberg.com/me/repo/pull/7'
 const BROKEN_PR_URL = 'https://bbgithub.dev.bloomberg.com/me/other/pull/8'
@@ -27,6 +28,8 @@ type GitHub = {
   // Make the search fail with this error, or never answer.
   searchError?: string
   isSearchHung?: boolean
+  // CI on the PR's head commit; none when unset.
+  checks?: ChecksCommit
 }
 
 /** A folder tree in memory: a path maps to file text, or to null for a folder. */
@@ -76,12 +79,12 @@ class FakeFs {
   }
 }
 
-type World = { fs: FakeFs; prompts: string[]; mcpCalls: string[]; clock: MockClock; calls: number; ticks: number; branch: string; threadReads: number; reactions: unknown[]; prReads: number[]; transcriptLines: string[]; statusLine?: string }
+type World = { fs: FakeFs; prompts: string[]; mcpCalls: string[]; clock: MockClock; calls: number; ticks: number; branch: string; threadReads: number; checksReads: number; reactions: unknown[]; prReads: number[]; transcriptLines: string[]; statusLine?: string }
 
 /** Stand in for git, the filesystem, bbgithub and the session. */
 function fakeWorld(on: On, github: GitHub, branch = 'feature'): World {
   const fs = new FakeFs()
-  const world: World = { fs, prompts: [], mcpCalls: [], clock: mock.clock(on, { now: 1_000_000 }), calls: 0, ticks: 0, branch, threadReads: 0, reactions: [], prReads: [], transcriptLines: [] }
+  const world: World = { fs, prompts: [], mcpCalls: [], clock: mock.clock(on, { now: 1_000_000 }), calls: 0, ticks: 0, branch, threadReads: 0, checksReads: 0, reactions: [], prReads: [], transcriptLines: [] }
   // Counts every call the plugin makes, so step() can tell when a tick has finished.
   const counted: On = ((event: string, ...rest: unknown[]) => {
     const hook = rest.pop() as (...args: unknown[]) => unknown
@@ -158,10 +161,12 @@ function fakeWorld(on: On, github: GitHub, branch = 'feature'): World {
       }
       const actions = e.args.actions as string[]
       if (e.args.includeReviewComments) world.threadReads++
+      if (actions.includes('checks')) world.checksReads++
       const threads = e.args.includeReviewComments ? github.threads ?? [] : null
       const data = {
         view: actions.includes('view') ? view : null,
         reviews: { reviews: github.reviews, comments: github.comments, reviewThreads: threads },
+        checks: actions.includes('checks') ? [github.checks ?? { sha: 'none', checkRuns: [], statuses: [] }] : null,
       }
       if (!github.oversized) return reply(data)
       const saved = `/home/me/.claude/projects/x/tool-results/mcp-bbgithub-pr-read-${world.calls}.txt`
@@ -188,6 +193,8 @@ function fakeWorld(on: On, github: GitHub, branch = 'feature'): World {
  *  the plugin has stopped making calls: the clock's settle alone can return while a tick is
  *  still starting or running on a busy machine. */
 async function step(world: World, ms: number): Promise<void> {
+  // One interval at a time: a longer jump starts the next tick while one is still running.
+  for (; ms > 10_000; ms -= 10_000) await step(world, 10_000)
   const ticks = world.ticks + ms / 10_000
   await world.clock.advance(ms)
   for (let quiet = 0, rounds = 0; world.ticks < ticks || quiet < 5; rounds++) {
@@ -219,7 +226,7 @@ test('seeds existing feedback, then sends only new feedback', async ($, on) => {
   github.updatedAt = 't1'
   await step(world, 10_000)
   expect(world.prompts.length).toBe(1)
-  expect(world.prompts[0]).toContain('Please use the pr-feedback-watcher:address-pr-feedback skill')
+  expect(world.prompts[0]).toContain('Please use the pr-autopilot:address-pr-feedback skill')
   expect(world.prompts[0]).toContain('Feedback from alice.')
 
   await step(world, 10_000)
@@ -230,6 +237,8 @@ test('makes one request per tick while no PR changes', async ($, on) => {
   const world = fakeWorld(on, { updatedAt: 't0', reviews: [], comments: [] })
 
   await start($, world)
+  // Checks are read every tick until CI has settled, 2 minutes after the first read.
+  await step(world, 120_000)
   world.mcpCalls.length = 0
   for (let i = 0; i < 3; i++) await step(world, 10_000)
   expect(world.mcpCalls).toEqual(Array(3).fill('bbgithub-search-issues-and-pull-requests'))
@@ -246,7 +255,7 @@ test('ignores my own comments unless they start with /claude or @claude', async 
   await step(world, 10_000)
 
   expect(world.prompts.length).toBe(1)
-  expect(world.prompts[0]).toContain('Please use the pr-feedback-watcher:address-pr-feedback skill')
+  expect(world.prompts[0]).toContain('Please use the pr-autopilot:address-pr-feedback skill')
   expect(world.prompts[0]).toContain(`Instruction from the PR author (${PR_URL}#issuecomment-2):\nrename this to isDone`)
   expect(world.prompts[0]).not.toContain('Feedback from')
 })
@@ -274,7 +283,7 @@ test("delivers inbox items filed by another session's poller", async ($, on) => 
     headRefName: 'feature', repoNames: ['repo'], updatedAt: 't0', format: 2,
   }
   world.fs.write(`${DIR}/prs.json`, JSON.stringify({ [PR_URL]: pr }))
-  // Posted before this session started; sent anyway, as onlyTriggerInRealTime is off by default.
+  // Posted before this session started; sent anyway, as feedbackTriggerOnlyInRealTime is off by default.
   world.fs.write(`${DIR}/inbox/${h}/a.json`, JSON.stringify({ id: 'x', kind: 'comment', author: 'alice', postedAt: new Date(0).toISOString() }))
   world.fs.write(`${DIR}/inbox/${h}/b.json`, JSON.stringify({ id: 'y', kind: 'comment', author: 'carol' }))
   // Another session on this branch claims b.json first.
@@ -312,7 +321,7 @@ test('/pr-watch reports the PR and the poller', async ($, on) => {
   expect(text).toContain('Poller: this session')
 })
 
-test('accepts the skill option as a folder path', { options: { skill: '~/.claude/skills/my-skill/' } }, async ($, on) => {
+test('accepts the feedbackSkill option as a folder path', { options: { feedbackSkill: '~/.claude/skills/my-skill/' } }, async ($, on) => {
   const github: GitHub = { updatedAt: 't0', reviews: [], comments: [] }
   const world = fakeWorld(on, github)
 
@@ -324,7 +333,7 @@ test('accepts the skill option as a folder path', { options: { skill: '~/.claude
   expect(world.prompts[0]).toContain('Please use the my-skill skill')
 })
 
-test('treats options saved as empty strings as unset', { options: { skill: '', mcpServer: '' } }, async ($, on) => {
+test('treats options saved as empty strings as unset', { options: { feedbackSkill: '', mcpServer: '' } }, async ($, on) => {
   const github: GitHub = { updatedAt: 't0', reviews: [], comments: [] }
   const world = fakeWorld(on, github)
 
@@ -333,7 +342,7 @@ test('treats options saved as empty strings as unset', { options: { skill: '', m
   github.updatedAt = 't1'
   await step(world, 10_000)
 
-  expect(world.prompts[0]).toContain('Please use the pr-feedback-watcher:address-pr-feedback skill')
+  expect(world.prompts[0]).toContain('Please use the pr-autopilot:address-pr-feedback skill')
   // fakeWorld's bbgithub answers only on the default server name, so this also checks mcpServer.
 })
 
@@ -403,7 +412,7 @@ test('compares versions numerically', () => {
   expect(isOlderVersion(undefined, '0.2.4')).toBe(true)
 })
 
-test('with onlyTriggerInRealTime, skips feedback posted before the session started', { options: { onlyTriggerInRealTime: true } }, async ($, on) => {
+test('with feedbackTriggerOnlyInRealTime, skips feedback posted before the session started', { options: { feedbackTriggerOnlyInRealTime: true } }, async ($, on) => {
   const github: GitHub = { updatedAt: 't0', reviews: [], comments: [] }
   const world = fakeWorld(on, github)
   const h = await hash(PR_URL)
@@ -429,7 +438,7 @@ test('with onlyTriggerInRealTime, skips feedback posted before the session start
   expect(world.prompts[0]).not.toContain('bob')
 })
 
-test('with onlyTriggerInRealTime, skips feedback posted before a checkout onto the branch', { options: { onlyTriggerInRealTime: true } }, async ($, on) => {
+test('with feedbackTriggerOnlyInRealTime, skips feedback posted before a checkout onto the branch', { options: { feedbackTriggerOnlyInRealTime: true } }, async ($, on) => {
   const github: GitHub = { updatedAt: 't0', reviews: [], comments: [] }
   const world = fakeWorld(on, github, 'other-branch')
   const h = await hash(PR_URL)
@@ -523,7 +532,7 @@ test('reads inline threads only when a new review has arrived', async ($, on) =>
   expect(world.prompts[1]).toContain('Feedback from carol.')
 })
 
-test('with onlyTriggerInRealTime, times an inline comment by its review, not its draft', { options: { onlyTriggerInRealTime: true } }, async ($, on) => {
+test('with feedbackTriggerOnlyInRealTime, times an inline comment by its review, not its draft', { options: { feedbackTriggerOnlyInRealTime: true } }, async ($, on) => {
   const github: GitHub = { updatedAt: 't0', reviews: [], comments: [], threads: [] }
   const world = fakeWorld(on, github)
 
@@ -656,4 +665,221 @@ test("gives up on a bbgithub call that hasn't answered within 60s", async ($, on
   expect(world.ticks).toBe(1)
   for (let i = 0; i < 2_000 && !world.fs.nodes.has(`${DIR}/errors.log`); i++) await world.clock.settle()
   expect(world.fs.nodes.get(`${DIR}/errors.log`)).toContain("bbgithub-search-issues-and-pull-requests didn't answer within 60s")
+})
+
+type CheckRun = ChecksCommit['checkRuns'][number]
+
+function checkRun(n: number, name: string, conclusion: string | null): CheckRun {
+  return {
+    id: n, name, htmlUrl: `https://bbgithub.dev.bloomberg.com/me/repo/runs/${n}`,
+    status: conclusion === null ? 'in_progress' : 'completed', conclusion, completedAt: conclusion === null ? null : iso(1_000_000),
+  }
+}
+
+function finish(github: GitHub, n: number, conclusion: string): void {
+  const runs = github.checks!.checkRuns
+  runs[runs.findIndex(r => r.id === n)] = checkRun(n, runs.find(r => r.id === n)!.name, conclusion)
+}
+
+test('once all CI on a commit has finished, sends one prompt with every result', async ($, on) => {
+  const github: GitHub = {
+    updatedAt: 't0', reviews: [], comments: [],
+    checks: { sha: 'abc1234def', checkRuns: [checkRun(1, 'eslint', null)], statuses: [] },
+  }
+  const world = fakeWorld(on, github)
+
+  await start($, world)
+  finish(github, 1, 'success')
+  github.checks!.statuses.push({ id: 5, context: 'jenkins', state: 'failure', targetUrl: 'https://ci/5', updatedAt: iso(1_020_000) })
+  await step(world, 10_000)
+  // Nothing pending, but within 2 minutes of the first read: more CI may still register.
+  expect(world.prompts).toEqual([])
+
+  await step(world, 110_000)
+  expect(world.prompts.length).toBe(1)
+  expect(world.prompts[0]).toContain('Please use the pr-autopilot:address-ci-results skill')
+  expect(world.prompts[0]).toContain('All CI on commit abc1234 has finished:')
+  expect(world.prompts[0]).toContain('- eslint: success (https://bbgithub.dev.bloomberg.com/me/repo/runs/1)')
+  expect(world.prompts[0]).toContain('- jenkins: failure (https://ci/5)')
+
+  // Done: its checks aren't read again.
+  const reads = world.checksReads
+  await step(world, 30_000)
+  expect(world.checksReads).toBe(reads)
+  expect(world.prompts.length).toBe(1)
+})
+
+test('a push starts watching CI again', async ($, on) => {
+  const github: GitHub = {
+    updatedAt: 't0', reviews: [], comments: [],
+    checks: { sha: 'aaaaaaa1', checkRuns: [checkRun(1, 'build', 'success')], statuses: [] },
+  }
+  const world = fakeWorld(on, github)
+
+  await start($, world)
+  await step(world, 120_000)
+  // Finished before the plugin first read it: backlog, not sent.
+  expect(world.prompts).toEqual([])
+
+  github.checks = { sha: 'bbbbbbb2', checkRuns: [checkRun(2, 'build', null)], statuses: [] }
+  github.updatedAt = 't1'
+  await step(world, 10_000)
+  finish(github, 2, 'failure')
+  await step(world, 120_000)
+  expect(world.prompts.length).toBe(1)
+  expect(world.prompts[0]).toContain('All CI on commit bbbbbbb has finished:')
+  expect(world.prompts[0]).toContain('- build: failure')
+})
+
+test('with ciTriggerCadence onSingleCheckFinish, sends each check as it finishes', { options: { ciTriggerCadence: 'onSingleCheckFinish', ciSkill: 'my-ci', onlyTriggerWhenCiFailed: false } }, async ($, on) => {
+  const github: GitHub = {
+    updatedAt: 't0', reviews: [], comments: [],
+    checks: { sha: 'abc1234def', checkRuns: [checkRun(1, 'eslint', null), checkRun(2, 'tests', null)], statuses: [] },
+  }
+  const world = fakeWorld(on, github)
+
+  await start($, world)
+  finish(github, 1, 'success')
+  await step(world, 10_000)
+  expect(world.prompts.length).toBe(1)
+  expect(world.prompts[0]).toContain('Please use the my-ci skill')
+  expect(world.prompts[0]).toContain('Finished on commit abc1234:\n- eslint: success')
+
+  finish(github, 2, 'failure')
+  await step(world, 10_000)
+  expect(world.prompts.length).toBe(2)
+  expect(world.prompts[1]).toContain('- tests: failure')
+  expect(world.prompts[1]).not.toContain('eslint')
+})
+
+
+test("by default, doesn't send a commit whose CI all passed", async ($, on) => {
+  const github: GitHub = {
+    updatedAt: 't0', reviews: [], comments: [],
+    checks: { sha: 'abc1234def', checkRuns: [checkRun(1, 'eslint', null), checkRun(2, 'tests', null)], statuses: [] },
+  }
+  const world = fakeWorld(on, github)
+
+  await start($, world)
+  finish(github, 1, 'success')
+  finish(github, 2, 'skipped')
+  await step(world, 130_000)
+  expect(world.prompts).toEqual([])
+  // Still done: its checks aren't read again.
+  const reads = world.checksReads
+  await step(world, 20_000)
+  expect(world.checksReads).toBe(reads)
+})
+
+test('with ciTriggerCadence onSingleCheckFinish, by default sends only failed checks', { options: { ciTriggerCadence: 'onSingleCheckFinish' } }, async ($, on) => {
+  const github: GitHub = {
+    updatedAt: 't0', reviews: [], comments: [],
+    checks: { sha: 'abc1234def', checkRuns: [checkRun(1, 'eslint', null), checkRun(2, 'tests', null)], statuses: [] },
+  }
+  const world = fakeWorld(on, github)
+
+  await start($, world)
+  finish(github, 1, 'success')
+  await step(world, 10_000)
+  expect(world.prompts).toEqual([])
+
+  finish(github, 2, 'timed_out')
+  await step(world, 10_000)
+  expect(world.prompts.length).toBe(1)
+  expect(world.prompts[0]).toContain('- tests: timed_out')
+  expect(world.prompts[0]).not.toContain('eslint')
+})
+
+test('with onlyTriggerWhenCiFailed off, sends a commit whose CI all passed', { options: { onlyTriggerWhenCiFailed: false } }, async ($, on) => {
+  const github: GitHub = {
+    updatedAt: 't0', reviews: [], comments: [],
+    checks: { sha: 'abc1234def', checkRuns: [checkRun(1, 'eslint', null)], statuses: [] },
+  }
+  const world = fakeWorld(on, github)
+
+  await start($, world)
+  finish(github, 1, 'success')
+  await step(world, 130_000)
+  expect(world.prompts.length).toBe(1)
+  expect(world.prompts[0]).toContain('- eslint: success')
+})
+
+test('files CI results apart from feedback, so sessions older than 0.5.0 never claim them', async ($, on) => {
+  const github: GitHub = {
+    updatedAt: 't0', reviews: [], comments: [],
+    checks: { sha: 'abc1234def', checkRuns: [checkRun(1, 'tests', null)], statuses: [] },
+  }
+  // On another branch, so nothing is delivered and the inbox can be inspected.
+  const world = fakeWorld(on, github, 'other-branch')
+  const h = await hash(PR_URL)
+
+  await start($, world)
+  finish(github, 1, 'failure')
+  await step(world, 120_000)
+  const ci = `${DIR}/inbox-ci/${h}/${await hash('https://bbgithub.dev.bloomberg.com/me/repo/runs/1')}.json`
+  expect(world.fs.nodes.has(ci)).toBe(false)
+  expect(world.fs.under(`${DIR}/inbox-ci/${h}`).length).toBe(2)
+  expect(world.fs.under(`${DIR}/inbox/${h}`).length).toBe(1)
+
+  world.branch = 'feature'
+  await step(world, 10_000)
+  expect(world.prompts.length).toBe(1)
+  expect(world.prompts[0]).toContain('- tests: failure')
+})
+
+test('ciTriggerOnlyInRealTime skips CI results from before the session, apart from feedbackTriggerOnlyInRealTime', { options: { ciTriggerOnlyInRealTime: true } }, async ($, on) => {
+  const world = fakeWorld(on, { updatedAt: 't0', reviews: [], comments: [] })
+  const h = await hash(PR_URL)
+  const pr = {
+    url: PR_URL, title: 'My PR', owner: 'me', repo: 'repo', number: 7, author: 'me',
+    headRefName: 'feature', repoNames: ['repo'], updatedAt: 't0', format: 2,
+  }
+  const before = new Date(999_000).toISOString()
+  const result = { id: 'run-1', name: 'tests', conclusion: 'failure', url: 'https://ci/1', completedAt: before }
+  world.fs.write(`${DIR}/prs.json`, JSON.stringify({ [PR_URL]: pr }))
+  world.fs.write(`${DIR}/inbox/${h}/a.json`, JSON.stringify({ id: 'x', kind: 'comment', author: 'alice', postedAt: before }))
+  world.fs.write(`${DIR}/inbox-ci/${h}/b.json`, JSON.stringify({ id: 'run-1', kind: 'ci', author: 'tests', postedAt: before, ci: [result], sha: 'abc1234' }))
+  world.fs.mkdirs(LOCK)
+  world.fs.write(`${LOCK}/heartbeat`, JSON.stringify({ sessionId: 'session-b', at: 1_000_000, version: VERSION }))
+
+  await start($, world)
+  expect(world.prompts.length).toBe(1)
+  expect(world.prompts[0]).toContain('Feedback from alice.')
+  expect(world.prompts[0]).not.toContain('CI results')
+  expect(JSON.parse(world.fs.nodes.get(`${DIR}/delivered/${h}/b.json`)!).skipped).toBe('posted before this session was on this branch')
+})
+
+test('with feedbackAutomationEnabled off, sends CI results but not feedback, and marks the feedback seen', { options: { feedbackAutomationEnabled: false } }, async ($, on) => {
+  const github: GitHub = {
+    updatedAt: 't0', reviews: [], comments: [],
+    checks: { sha: 'abc1234def', checkRuns: [checkRun(1, 'tests', null)], statuses: [] },
+  }
+  const world = fakeWorld(on, github)
+  const h = await hash(PR_URL)
+
+  await start($, world)
+  github.comments.push(comment(1, 'alice'))
+  github.updatedAt = 't1'
+  finish(github, 1, 'failure')
+  await step(world, 130_000)
+  expect(world.prompts.length).toBe(1)
+  expect(world.prompts[0]).toContain('- tests: failure')
+  expect(world.prompts[0]).not.toContain('alice')
+  // Marked seen, so it isn't sent later either.
+  expect(world.fs.nodes.has(`${DIR}/seen/${h}/${await hash(`${PR_URL}#issuecomment-1`)}`)).toBe(true)
+})
+
+test('with ciAutomationEnabled off, never reads checks', { options: { ciAutomationEnabled: false } }, async ($, on) => {
+  const github: GitHub = { updatedAt: 't0', reviews: [], comments: [], checks: { sha: 'a', checkRuns: [checkRun(1, 'eslint', null)], statuses: [] } }
+  const world = fakeWorld(on, github)
+
+  await start($, world)
+  finish(github, 1, 'failure')
+  github.comments.push(comment(1, 'alice'))
+  github.updatedAt = 't1'
+  await step(world, 130_000)
+  expect(world.checksReads).toBe(0)
+  expect(world.prompts.length).toBe(1)
+  expect(world.prompts[0]).toContain('Feedback from alice.')
+  expect(world.prompts[0]).not.toContain('CI results')
 })

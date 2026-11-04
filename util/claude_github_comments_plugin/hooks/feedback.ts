@@ -38,6 +38,17 @@ export type PullRequest = {
   // The newest review's submittedAt. Every inline comment arrives in a review, so inline
   // threads (big: each carries a diff hunk) are only read when this moves.
   lastReviewAt?: string
+  // CI on the head commit, as of the last checks read. Checks are read every tick until isDone.
+  ci?: CiState
+}
+
+export type CiState = {
+  sha: string
+  // When this commit was first read (ms); CI isn't done until CI_SETTLE_MS after it.
+  firstSeenAt: number
+  isDone: boolean
+  // All its CI had finished when the PR's checks were first read: backlog, so not sent.
+  isBacklog?: boolean
 }
 
 // Bump when a newer plugin reads more of a PR than older ones recorded, so every PR is
@@ -58,17 +69,31 @@ export type ReviewThread = {
   comments: { htmlUrl: string; body: string | null; author: User; createdAt?: string }[]
 }
 
+/** One commit's entry in the `checks` section of bbgithub-pr-read. */
+export type ChecksCommit = {
+  sha: string
+  checkRuns: { id: number; name: string; htmlUrl: string; status: string; conclusion: string | null; completedAt: string | null }[]
+  // Commit statuses (e.g. Jenkins): the latest one per context.
+  statuses: { id: number; context: string; state: string; targetUrl: string | null; updatedAt: string }[]
+}
+
+/** A check run or commit status. conclusion is null while it's still running. */
+export type CiResult = { id: string; name: string; conclusion: string | null; url: string; completedAt?: string }
+
 export type Feedback = {
-  // The comment's or review's URL, which is unique.
+  // The comment's or review's URL, which is unique. For CI, see ciFeedback.
   id: string
   // "command" is my own /claude or @claude comment.
-  kind: 'review' | 'comment' | 'command'
+  kind: 'review' | 'comment' | 'command' | 'ci'
   author: string
   instruction?: string
   // For an inline comment: where in the code, e.g. "README.md:44".
   location?: string
   // When it was posted (ISO 8601), per GitHub.
   postedAt?: string
+  // For CI: the finished checks it reports, and the commit they ran on.
+  ci?: CiResult[]
+  sha?: string
 }
 
 /** `owner`, `repo` and `number` from a PR's URL. */
@@ -165,17 +190,78 @@ function toFeedback(id: string, kind: 'review' | 'comment', login: string | unde
   return { id, kind: 'command', author, instruction: (body ?? '').replace(COMMAND_PREFIX, '').trim() }
 }
 
-/** The prompt that asks Claude to address `items` with `skill`. */
-export function buildMessage(pr: Pick<PullRequest, 'title' | 'url'>, items: Feedback[], skill: string): string {
-  const authors = [...new Set(items.filter(i => i.kind !== 'command').map(i => i.author))].sort()
-  let message = `New GitHub activity on your PR "${pr.title}": ${pr.url}\nPlease use the ${skill} skill to address it.`
-  if (authors.length) message += `\nFeedback from ${authors.join(', ')}.`
-  for (const item of items) {
-    if (item.kind !== 'command') continue
-    const where = item.location ? ` on ${item.location}` : ''
-    message += `\nInstruction from the PR author${where} (${item.id}):\n${item.instruction}`
+/** A commit's check runs and statuses. A status's id changes with each update, so a finished
+ *  one has its own id. */
+export function ciResults(commit: ChecksCommit, prUrl: string): CiResult[] {
+  const runs = commit.checkRuns.map(run => ({
+    id: run.htmlUrl,
+    name: run.name,
+    conclusion: run.status === 'completed' ? run.conclusion ?? 'unknown' : null,
+    url: run.htmlUrl,
+    completedAt: run.completedAt ?? undefined,
+  }))
+  const statuses = commit.statuses.map(status => ({
+    id: `${prUrl}/statuses/${status.id}`,
+    name: status.context,
+    conclusion: status.state === 'pending' ? null : status.state,
+    url: status.targetUrl ?? prUrl,
+    completedAt: status.updatedAt,
+  }))
+  return [...runs, ...statuses]
+}
+
+// Conclusions that count as failed. cancelled, skipped and neutral don't.
+const FAILED_CONCLUSIONS = new Set(['failure', 'error', 'timed_out', 'action_required'])
+
+/** CI items to file: with `isEach`, one per finished check; otherwise one for the whole commit,
+ *  once it's done. With `isFailuresOnly`, only failed checks, or a commit with a failed check. */
+export function ciFeedback(
+  results: CiResult[],
+  sha: string,
+  prUrl: string,
+  { isDone, isEach, isFailuresOnly }: { isDone: boolean; isEach: boolean; isFailuresOnly: boolean },
+): Feedback[] {
+  const finished = results.filter(r => r.conclusion !== null)
+  const isFailed = (r: CiResult) => FAILED_CONCLUSIONS.has(r.conclusion ?? '')
+  if (isEach) {
+    return finished
+      .filter(r => !isFailuresOnly || isFailed(r))
+      .map(r => ({ id: r.id, kind: 'ci', author: r.name, postedAt: r.completedAt, ci: [r], sha }))
   }
-  return message
+  if (!isDone || !finished.length) return []
+  // The passed checks still go in, for context.
+  if (isFailuresOnly && !finished.some(isFailed)) return []
+  const postedAt = finished.map(r => r.completedAt).filter((t): t is string => !!t).sort().pop()
+  return [{ id: `${prUrl}/checks/${sha}`, kind: 'ci', author: 'all checks', postedAt, ci: finished, sha }]
+}
+
+/** The prompt that asks Claude to address `items`: feedback with `skills.feedback`, CI results
+ *  with `skills.ci`. */
+export function buildMessage(pr: Pick<PullRequest, 'title' | 'url'>, items: Feedback[], skills: { feedback: string; ci: string }): string {
+  const parts: string[] = []
+  const feedback = items.filter(i => i.kind !== 'ci')
+  if (feedback.length) {
+    const authors = [...new Set(feedback.filter(i => i.kind !== 'command').map(i => i.author))].sort()
+    let message = `New GitHub activity on your PR "${pr.title}": ${pr.url}\nPlease use the ${skills.feedback} skill to address it.`
+    if (authors.length) message += `\nFeedback from ${authors.join(', ')}.`
+    for (const item of feedback) {
+      if (item.kind !== 'command') continue
+      const where = item.location ? ` on ${item.location}` : ''
+      message += `\nInstruction from the PR author${where} (${item.id}):\n${item.instruction}`
+    }
+    parts.push(message)
+  }
+  const ci = items.filter(i => i.kind === 'ci')
+  if (ci.length) {
+    let message = `CI results on your PR "${pr.title}": ${pr.url}\nPlease use the ${skills.ci} skill to address them.`
+    for (const item of ci) {
+      const sha = item.sha?.slice(0, 7) ?? '?'
+      message += item.id.endsWith(`/checks/${item.sha}`) ? `\nAll CI on commit ${sha} has finished:` : `\nFinished on commit ${sha}:`
+      for (const r of item.ci ?? []) message += `\n- ${r.name}: ${r.conclusion} (${r.url})`
+    }
+    parts.push(message)
+  }
+  return parts.join('\n\n')
 }
 
 /** A skill's name from the skill option, which may be a name or the skill's folder. */

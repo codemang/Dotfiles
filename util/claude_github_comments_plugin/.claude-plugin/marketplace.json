@@ -1,0 +1,13 @@
+{
+  "name": "pr-autopilot",
+  "description": "Claude Code plugin that relays GitHub PR feedback to the session on that PR's branch",
+  "owner": {
+    "name": "nrubin19"
+  },
+  "plugins": [
+    {
+      "name": "pr-autopilot",
+      "source": "./"
+    }
+  ]
+}

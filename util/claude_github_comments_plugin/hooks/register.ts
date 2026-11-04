@@ -3,6 +3,8 @@ import type { EngineInterface, Register } from 'claude-code'
 import {
   RECORD_FORMAT,
   buildMessage,
+  ciFeedback,
+  ciResults,
   feedbackOn,
   findPr,
   hash,
@@ -13,7 +15,7 @@ import {
   skillName,
   toPullRequest,
 } from './feedback'
-import type { Feedback, PrView, PullRequest, ReviewsPage, SearchItem } from './feedback'
+import type { ChecksCommit, CiState, Feedback, PrView, PullRequest, ReviewsPage, SearchItem } from './feedback'
 
 // Every session ticks. Each tick, one session (the poller, holding the lease) asks bbgithub for
 // new feedback on all my open PRs and drops it into per-PR inbox folders; every session then
@@ -36,8 +38,22 @@ const MCP_TIMEOUT_MS = 60_000
 const ERROR_LOG_MAX_BYTES = 256 * 1024
 // An error lasting this long also shows on the status line, until it clears.
 const STATUS_LINE_AFTER_MS = 3 * 60_000
+const DEFAULT_FEEDBACK_SKILL = 'pr-autopilot:address-pr-feedback'
 // Stops paging through a PR's reviews/comments after this many pages.
 const MAX_PAGES = 10
+// A commit's CI counts as done once nothing is pending and it's been this long since its checks
+// were first read: some CI (e.g. Jenkins) posts its first status a minute after the rest.
+const CI_SETTLE_MS = 2 * 60_000
+// Stop reading a commit's checks this long after first reading them, even if some never finish.
+const CI_GIVE_UP_MS = 2 * 60 * 60_000
+// Files in a PR's seen/ folder, written once its inline threads / its CI have first been read.
+// Until then, what that read finds is backlog: marked seen, not sent.
+const THREADS_READ = 'threads-read'
+const CI_READ = 'ci-read'
+// Per-PR inbox folders under STATE_DIR. CI items get their own: sessions older than 0.5.0 claim
+// everything in inbox/ and would send CI results as review feedback.
+const INBOXES = ['inbox', 'inbox-ci'] as const
+const inboxOf = (item: Feedback) => (item.kind === 'ci' ? 'inbox-ci' : 'inbox')
 
 // `version` is the poller's plugin version; versions before 0.2.4 don't write it.
 type Heartbeat = { sessionId: string; at: number; version?: string }
@@ -46,17 +62,28 @@ type Delivered = Feedback & { deliveredAt?: string; sessionId?: string; skipped?
 
 // Set by register() and session.start. A reload re-runs both, so these reset.
 const config = {
-  skill: 'pr-feedback-watcher:address-pr-feedback',
+  feedbackSkill: DEFAULT_FEEDBACK_SKILL,
   mcpServer: 'bbgithub',
   intervalMs: 10_000,
-  isRealTimeOnly: false,
+  // Whether review feedback / CI results are sent at all.
+  isFeedbackEnabled: true,
+  isCiEnabled: true,
+  // Skip feedback / CI results posted before this session was on the PR's branch.
+  isFeedbackRealTimeOnly: false,
+  isCiRealTimeOnly: false,
+  ciSkill: 'pr-autopilot:address-ci-results',
+  // onAllChecksFinish: one prompt once all of a commit's CI has finished; onSingleCheckFinish: one per
+  // finished check.
+  ciTriggerCadence: 'onAllChecksFinish' as 'onAllChecksFinish' | 'onSingleCheckFinish',
+  // Send only failed CI: with onAllChecksFinish, skip a commit whose checks all passed.
+  isCiFailuresOnly: true,
 }
 const paths = { dir: '', lock: '', heartbeat: '', prs: '', errorLog: '' }
 let sessionId = ''
 let version = ''
 let startedAt = 0
 // The branch on the last tick, and since when this session has been on it. With
-// onlyTriggerInRealTime, feedback posted before onBranchSince is skipped.
+// feedbackTriggerOnlyInRealTime, feedback posted before onBranchSince is skipped.
 let lastBranch: string | undefined
 let onBranchSince = 0
 const status: {
@@ -213,30 +240,61 @@ async function readPr(
   return { pr, page }
 }
 
+/** The PR's CI on its head commit: the CI items to file, and the PR's new CI state. */
+async function readCi($: EngineInterface, pr: PullRequest): Promise<{ items: Feedback[]; ci: CiState }> {
+  const result = await mcp<{ checks: ChecksCommit[] | null }>($, 'bbgithub-pr-read', {
+    owner: pr.owner,
+    repo: pr.repo,
+    pullNumber: pr.number,
+    actions: ['checks'],
+  })
+  const commit = result.checks?.[0]
+  if (!commit) throw new Error(`bbgithub-pr-read returned no checks for ${pr.url}`)
+  const now = await $.clock.now()
+  const results = ciResults(commit, pr.url)
+  const isFinished = results.every(r => r.conclusion !== null)
+  const isSameCommit = pr.ci?.sha === commit.sha
+  const firstSeenAt = isSameCommit ? pr.ci!.firstSeenAt : now
+  const isBacklog = isSameCommit ? pr.ci!.isBacklog : pr.ci === undefined && isFinished
+  const isDone = (isFinished && now - firstSeenAt >= CI_SETTLE_MS) || now - firstSeenAt >= CI_GIVE_UP_MS
+  const items = isBacklog ? [] : ciFeedback(results, commit.sha, pr.url, {
+    isDone,
+    isEach: config.ciTriggerCadence === 'onSingleCheckFinish',
+    isFailuresOnly: config.isCiFailuresOnly,
+  })
+  return { items, ci: { sha: commit.sha, firstSeenAt, isDone, isBacklog } }
+}
+
 /** Put the PR's unseen feedback in its inbox. The first time a PR is seen, its existing
- *  feedback is only marked seen; so are its existing inline comments the first time they're
- *  read (older versions didn't read them, and their backlog isn't new). */
-async function fileFeedback($: EngineInterface, pr: PullRequest, items: Feedback[], hasThreads: boolean): Promise<void> {
+ *  feedback is only marked seen; so are its existing inline comments and CI results the first
+ *  time those are read (older versions didn't read them, and their backlog isn't new). `reads`
+ *  lists which of THREADS_READ and CI_READ this poll read. */
+async function fileFeedback($: EngineInterface, pr: PullRequest, items: Feedback[], reads: string[]): Promise<void> {
   const h = await hash(pr.url)
   const seenDir = `${paths.dir}/seen/${h}`
-  const inboxDir = `${paths.dir}/inbox/${h}`
-  const threadsMarker = `${seenDir}/threads-read`
   const isNew = !(await $.fs.exists(seenDir))
-  const isFirstThreadRead = !(await $.fs.exists(threadsMarker))
-  await run($, 'mkdir', '-p', seenDir, inboxDir)
+  const firstReads = new Set<string>()
+  for (const marker of [THREADS_READ, CI_READ]) {
+    if (!(await $.fs.exists(`${seenDir}/${marker}`))) firstReads.add(marker)
+  }
+  await run($, 'mkdir', '-p', seenDir, `${paths.dir}/inbox/${h}`, `${paths.dir}/inbox-ci/${h}`)
   for (const item of items) {
     const seenFile = `${seenDir}/${await hash(item.id)}`
     if (await $.fs.exists(seenFile)) continue
-    const isBacklog = isNew || (item.location !== undefined && isFirstThreadRead)
+    const marker = item.kind === 'ci' ? CI_READ : item.location !== undefined ? THREADS_READ : undefined
+    // Feedback while it's turned off is only marked seen, so turning it on doesn't send it.
+    const isOff = item.kind !== 'ci' && !config.isFeedbackEnabled
+    const isBacklog = isNew || isOff || (marker !== undefined && firstReads.has(marker))
     // Inbox first, then seen: a crash in between re-files the item (a duplicate prompt at
     // worst) instead of losing it.
-    if (!isBacklog) await writeAtomic($, `${inboxDir}/${await hash(item.id)}.json`, JSON.stringify(item))
+    if (!isBacklog) await writeAtomic($, `${paths.dir}/${inboxOf(item)}/${h}/${await hash(item.id)}.json`, JSON.stringify(item))
     await $.fs.write(seenFile, '')
   }
-  if (hasThreads) await $.fs.write(threadsMarker, '')
+  for (const marker of reads) await $.fs.write(`${seenDir}/${marker}`, '')
 }
 
-/** As the poller: one search for my open PRs, then a read of each PR that changed. */
+/** As the poller: one search for my open PRs, then a read of each PR that changed, and of the
+ *  checks of each PR that changed or whose CI is still running. */
 async function pollGitHub($: EngineInterface): Promise<void> {
   const search = await mcp<{ items: SearchItem[] }>($, 'bbgithub-search-issues-and-pull-requests', {
     q: 'is:pr is:open author:@me',
@@ -247,9 +305,13 @@ async function pollGitHub($: EngineInterface): Promise<void> {
   const failures: string[] = []
   for (const item of search.items) {
     const pr = known[item.htmlUrl]
-    // Reviews and comments bump updatedAt, so an unchanged PR has nothing new.
-    if (pr?.updatedAt === item.updatedAt && pr.format === RECORD_FORMAT) {
-      prs[item.htmlUrl] = pr
+    // Reviews, comments and pushes bump updatedAt, so an unchanged PR has nothing new, except
+    // CI results, which don't.
+    const isChanged = pr?.updatedAt !== item.updatedAt || pr.format !== RECORD_FORMAT
+    const isCiDue = config.isCiEnabled && (isChanged || !pr?.ci?.isDone)
+    if (pr && !isChanged && !isCiDue) {
+      // With CI off, forget its state: when it's turned on, CI already finished isn't sent.
+      prs[item.htmlUrl] = config.isCiEnabled ? pr : { ...pr, ci: undefined }
       continue
     }
     // A PR that failed recently: keep its old record and error until it's due for a retry, so
@@ -261,10 +323,24 @@ async function pollGitHub($: EngineInterface): Promise<void> {
       continue
     }
     try {
-      const read = await readPr($, item, pr)
-      // The search was for my PRs, so the PR's author is me.
-      await fileFeedback($, read.pr, feedbackOn(read.page, read.pr.author), read.page.reviewThreads !== null)
-      prs[item.htmlUrl] = read.pr
+      let next = pr!
+      const items: Feedback[] = []
+      const reads: string[] = []
+      if (isChanged) {
+        const read = await readPr($, item, pr)
+        next = { ...read.pr, ci: config.isCiEnabled ? pr?.ci : undefined }
+        // The search was for my PRs, so the PR's author is me.
+        items.push(...feedbackOn(read.page, read.pr.author))
+        if (read.page.reviewThreads !== null) reads.push(THREADS_READ)
+      }
+      if (isCiDue) {
+        const read = await readCi($, next)
+        next = { ...next, ci: read.ci }
+        items.push(...read.items)
+        reads.push(CI_READ)
+      }
+      await fileFeedback($, next, items, reads)
+      prs[item.htmlUrl] = next
       failedPrs.delete(item.htmlUrl)
     } catch (err) {
       // One bad PR mustn't stop the rest. Keeping its old record (old updatedAt) retries it
@@ -279,7 +355,7 @@ async function pollGitHub($: EngineInterface): Promise<void> {
   for (const url of Object.keys(known)) {
     if (prs[url]) continue
     const h = await hash(url)
-    await run($, 'rm', '-rf', `${paths.dir}/inbox/${h}`, `${paths.dir}/delivered/${h}`)
+    await run($, 'rm', '-rf', `${paths.dir}/inbox/${h}`, `${paths.dir}/inbox-ci/${h}`, `${paths.dir}/delivered/${h}`)
   }
   await writeAtomic($, paths.prs, JSON.stringify(prs))
   if (failures.length) throw new Error(`couldn't read ${failures.join('; ')}`)
@@ -300,21 +376,32 @@ async function deliver($: EngineInterface): Promise<void> {
   if (!pr) return
 
   const h = await hash(pr.url)
-  const inboxDir = `${paths.dir}/inbox/${h}`
   const deliveredDir = `${paths.dir}/delivered/${h}`
-  const files = (await $.fs.list(inboxDir).catch(() => [])).filter(f => f.name.endsWith('.json'))
+  const files: string[] = []
+  for (const inbox of INBOXES) {
+    const listed = await $.fs.list(`${paths.dir}/${inbox}/${h}`).catch(() => [])
+    files.push(...listed.filter(f => f.name.endsWith('.json')).map(f => `${paths.dir}/${inbox}/${h}/${f.name}`))
+  }
   if (!files.length) return
   await run($, 'mkdir', '-p', deliveredDir)
   const deliveredAt = new Date(await $.clock.now()).toISOString()
   const claimed: { file: string; item: Feedback }[] = []
-  for (const { name } of files) {
-    const file = `${deliveredDir}/${name}`
+  for (const inboxFile of files) {
+    const file = `${deliveredDir}/${inboxFile.slice(inboxFile.lastIndexOf('/') + 1)}`
     // mv succeeds for exactly one session, so only one sends each item.
-    if (!(await run($, 'mv', `${inboxDir}/${name}`, file))) continue
+    if (!(await run($, 'mv', inboxFile, file))) continue
     const item = await readJson<Feedback>($, file)
     if (!item) continue
-    // Posted before this session was on this branch: with onlyTriggerInRealTime, drop it.
-    if (config.isRealTimeOnly && item.postedAt && Date.parse(item.postedAt) < onBranchSince) {
+    // Posted before this session was on this branch: with feedbackTriggerOnlyInRealTime (or
+    // ciTriggerOnlyInRealTime for CI), drop it.
+    const isEnabled = item.kind === 'ci' ? config.isCiEnabled : config.isFeedbackEnabled
+    if (!isEnabled) {
+      const record: Delivered = { ...item, deliveredAt, sessionId, skipped: `${item.kind === 'ci' ? 'CI' : 'feedback'} is turned off` }
+      await writeAtomic($, file, JSON.stringify(record))
+      continue
+    }
+    const isRealTimeOnly = item.kind === 'ci' ? config.isCiRealTimeOnly : config.isFeedbackRealTimeOnly
+    if (isRealTimeOnly && item.postedAt && Date.parse(item.postedAt) < onBranchSince) {
       const record: Delivered = { ...item, deliveredAt, sessionId, skipped: 'posted before this session was on this branch' }
       await writeAtomic($, file, JSON.stringify(record))
       continue
@@ -323,7 +410,7 @@ async function deliver($: EngineInterface): Promise<void> {
   }
   if (!claimed.length) return
 
-  await $.prompt.submit({ text: buildMessage(pr, claimed.map(c => c.item), config.skill) })
+  await $.prompt.submit({ text: buildMessage(pr, claimed.map(c => c.item), { feedback: config.feedbackSkill, ci: config.ciSkill }) })
   for (const { file, item } of claimed) {
     const record: Delivered = { ...item, deliveredAt, sessionId }
     await writeAtomic($, file, JSON.stringify(record))
@@ -408,13 +495,16 @@ async function describe($: EngineInterface): Promise<string> {
     : heartbeat
       ? `session ${heartbeat.sessionId} (v${heartbeat.version ?? '<0.2.4'}), heartbeat ${Math.round(((await $.clock.now()) - heartbeat.at) / 1000)}s ago`
       : 'none'
+  const realTime = [config.isFeedbackRealTimeOnly && 'feedback', config.isCiRealTimeOnly && 'CI'].filter(Boolean).join(' and ')
+  const since = new Date(onBranchSince).toISOString()
   const lines = [
     `Branch: ${status.branch || '(none)'}`,
     `PR: ${status.prUrl ?? 'no open PR of yours for this branch'}`,
     `Poller: ${poller}`,
     `Last tick: ${status.lastTick ?? 'not yet'}, every ${config.intervalMs / 1000}s`,
-    `Skill: ${config.skill}`,
-    `Only real-time feedback: ${config.isRealTimeOnly ? `yes, since ${new Date(onBranchSince).toISOString()}` : 'no'}`,
+    `Feedback: ${config.isFeedbackEnabled ? `on, skill ${config.feedbackSkill}` : 'off'}`,
+    `CI: ${!config.isCiEnabled ? 'off' : `${config.ciTriggerCadence === 'onAllChecksFinish' ? 'once all checks finish' : 'each check'}${config.isCiFailuresOnly ? ', failures only' : ''}, skill ${config.ciSkill}`}`,
+    `Only real-time: ${realTime ? `${realTime}, since ${since}` : 'no'}`,
     `Plugin version: ${version}`,
     `State: ${paths.dir}`,
   ]
@@ -422,10 +512,11 @@ async function describe($: EngineInterface): Promise<string> {
   lines.push(`Error log: ${paths.errorLog}`)
   if (status.prUrl) {
     const h = await hash(status.prUrl)
-    const waiting = await $.fs.list(`${paths.dir}/inbox/${h}`).catch(() => [])
+    let waiting = 0
+    for (const inbox of INBOXES) waiting += (await $.fs.list(`${paths.dir}/${inbox}/${h}`).catch(() => [])).length
     const delivered = await $.fs.list(`${paths.dir}/delivered/${h}`).catch(() => [])
     const recent = [...delivered].sort((a, b) => a.mtimeMs - b.mtimeMs).slice(-10)
-    lines.push('', `Waiting in inbox: ${waiting.length}`, 'Recently delivered:')
+    lines.push('', `Waiting in inbox: ${waiting}`, 'Recently delivered:')
     if (!recent.length) lines.push('(none)')
     for (const { name } of recent) {
       const item = await readJson<Delivered>($, `${paths.dir}/delivered/${h}/${name}`)
@@ -439,10 +530,16 @@ async function describe($: EngineInterface): Promise<string> {
 export const register: Register = (on, options) => {
   // An option saved as an empty string counts as unset.
   const option = (key: string) => String(options[key] ?? '').trim() || undefined
-  config.skill = skillName(option('skill') ?? config.skill)
+  config.feedbackSkill = skillName(option('feedbackSkill') ?? DEFAULT_FEEDBACK_SKILL)
   config.mcpServer = option('mcpServer') ?? config.mcpServer
   config.intervalMs = Math.max(5, Number(option('intervalSeconds') ?? 10)) * 1000
-  config.isRealTimeOnly = option('onlyTriggerInRealTime') === 'true'
+  config.isFeedbackRealTimeOnly = option('feedbackTriggerOnlyInRealTime') === 'true'
+  config.isCiRealTimeOnly = option('ciTriggerOnlyInRealTime') === 'true'
+  config.ciSkill = skillName(option('ciSkill') ?? config.ciSkill)
+  config.ciTriggerCadence = option('ciTriggerCadence')?.toLowerCase() === 'onsinglecheckfinish' ? 'onSingleCheckFinish' : 'onAllChecksFinish'
+  config.isCiFailuresOnly = option('onlyTriggerWhenCiFailed') !== 'false'
+  config.isFeedbackEnabled = option('feedbackAutomationEnabled') !== 'false'
+  config.isCiEnabled = option('ciAutomationEnabled') !== 'false'
 
   on('session.start', async ($, e, next) => {
     const home = await $.env.get('HOME')
