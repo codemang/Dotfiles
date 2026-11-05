@@ -112,7 +112,30 @@ return {
       "DiffviewFileHistory",
     },
     keys = {
-      { "<leader>gra", "<cmd>DiffviewOpen upstream/main...HEAD<CR>", desc = "Review branch against upstream/main" },
+      {
+        "<leader>gra",
+        function()
+          -- Prefer 'upstream' over 'origin', and use the remote's default branch.
+          local remote = vim.tbl_contains(vim.fn.systemlist("git remote"), "upstream") and "upstream" or "origin"
+          local base = vim.fn.systemlist({ "git", "symbolic-ref", "--short", "refs/remotes/" .. remote .. "/HEAD" })[1]
+          if vim.v.shell_error ~= 0 then
+            base = nil
+            for _, branch in ipairs({ "main", "master" }) do
+              vim.fn.system({ "git", "rev-parse", "--verify", "--quiet", remote .. "/" .. branch })
+              if vim.v.shell_error == 0 then
+                base = remote .. "/" .. branch
+                break
+              end
+            end
+          end
+          if not base then
+            vim.notify("No main/master branch found on " .. remote, vim.log.levels.ERROR)
+            return
+          end
+          vim.cmd("DiffviewOpen " .. base .. "...HEAD")
+        end,
+        desc = "Review branch against the main remote's default branch",
+      },
       { "<leader>gru", "<cmd>DiffviewOpen --untracked-files=no<CR>", desc = "Review uncommitted changes" },
       { "<leader>gc", "<cmd>DiffviewClose<CR>", desc = "Close diffview" },
     },
