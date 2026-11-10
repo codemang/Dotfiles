@@ -2,23 +2,22 @@ Machine Provisioner
 -------------------
 
 This is a set of bootstrapping scripts, configuration files, and other assets
-that bootstrap a new Macbook with all the Desktop applications, software
+that bootstrap a  with all the Desktop applications, software
 packages, and other tools I use daily.
 
 ## Installation and usage
 
 For a first time installation
 ```
-$ xcode-select --install
-$ git clone https://github.com/codemang/Dotfiles.git
-$ cd Dotfiles
+$ git clone https://github.com/codemang/dotfiles.git
+$ cd dotfiles
 $ bootstrap/install.sh osx
 ```
 
 This requires your password at a few steps. Once this completes, you must...
 
 * Restart your computer for certain configurations to take effect.
-* Complete the manual steps.
+* Complete any manual steps if applicable
 
 ### Manual Steps
 
@@ -30,7 +29,7 @@ This requires your password at a few steps. Once this completes, you must...
 SSH version
 
     ```
-    $ git remote set-url origin git@github.com:codemang/Dotfiles.git
+    $ git remote set-url origin git@github.com:codemang/dotfiles.git
     ```
 
 1) [Remap caps lock to control](https://stackoverflow.com/questions/127591/using-caps-lock-as-esc-in-mac-os-x/40254864#40254864)
@@ -56,7 +55,7 @@ keys](https://superuser.com/questions/497526/how-to-customize-google-chrome-keyb
 
 1) Create [github
 token](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line)
-to be used by the [Copy Commit To PR](https://github.com/codemang/Dotfiles/blob/master/util/copy_commit_to_pr.rb) script
+to be used by the [Copy Commit To PR](https://github.com/codemang/dotfiles/blob/master/util/copy_commit_to_pr.rb) script
 
 1)  Run `$ token_manager add github_copy_commit_to_pr [GITHUB TOKEN]`
 

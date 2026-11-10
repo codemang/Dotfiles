@@ -45,34 +45,34 @@ focus_pane_right = ""
 [[keys.command]]
 key = "ctrl+h"
 type = "shell"
-command = "$HOME/Dotfiles/util/herdr_navigate.sh left ctrl+h"
+command = "$HOME/dotfiles/util/herdr_navigate.sh left ctrl+h"
 
 [[keys.command]]
 key = "ctrl+j"
 type = "shell"
-command = "$HOME/Dotfiles/util/herdr_navigate.sh down ctrl+j"
+command = "$HOME/dotfiles/util/herdr_navigate.sh down ctrl+j"
 
 [[keys.command]]
 key = "ctrl+k"
 type = "shell"
-command = "$HOME/Dotfiles/util/herdr_navigate.sh up ctrl+k"
+command = "$HOME/dotfiles/util/herdr_navigate.sh up ctrl+k"
 
 [[keys.command]]
 key = "ctrl+l"
 type = "shell"
-command = "$HOME/Dotfiles/util/herdr_navigate.sh right ctrl+l"
+command = "$HOME/dotfiles/util/herdr_navigate.sh right ctrl+l"
 
 # prefix + { / }: Swap the current pane with the previous/next pane
 # (tmux: swap-pane -U / -D).
 [[keys.command]]
 key = "prefix+{"
 type = "shell"
-command = "$HOME/Dotfiles/util/herdr_swap_pane.sh prev"
+command = "$HOME/dotfiles/util/herdr_swap_pane.sh prev"
 
 [[keys.command]]
 key = "prefix+}"
 type = "shell"
-command = "$HOME/Dotfiles/util/herdr_swap_pane.sh next"
+command = "$HOME/dotfiles/util/herdr_swap_pane.sh next"
 
 # prefix + Ctrl-l: Restore 'clear screen'.
 [[keys.command]]

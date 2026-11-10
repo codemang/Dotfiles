@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Set global ENV vars.
-export DOTFILES=$HOME/Dotfiles
+export DOTFILES=$HOME/dotfiles
 export EDITOR=nvim
 
 [ -f ~/.before_init_private_scripts.sh ] && source ~/.before_init_private_scripts.sh
