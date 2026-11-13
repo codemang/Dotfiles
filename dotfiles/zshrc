@@ -15,4 +15,4 @@ source $DOTFILES/dotfiles/shell_scripts/zshrc_prompt
 # Zsh shell initializer
 source $DOTFILES/dotfiles/shell_scripts/zsh_shell_initializer.zsh
 
-[ -f ~/.private_scripts.zsh ] && source ~/.private_scripts.zsh
+[ -f ~/.private_scripts.sh ] && source ~/.private_scripts.sh
